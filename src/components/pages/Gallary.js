@@ -1,0 +1,973 @@
+import React, { useEffect, useRef, useState } from "react";
+// ../../images/image-gallery/thumb/thumb-1.jpg"
+import pdfLogo from "../comman/images/PDF.png";
+import msDoc from "../comman/images/msss.jpg";
+import msXls from "../comman/images/excel.png";
+import Header from "../comman/Header";
+import SideBar from "../comman/SideBar";
+
+import { Link, useSearchParams } from "react-router-dom";
+import {
+  AddDocument,
+  createZipAndUpload,
+  deleteDocumentfunction,
+  getDocument,
+} from "../../api/api";
+import Swal from "sweetalert2";
+
+import LightGallery from "lightgallery/react/Lightgallery.es5";
+import "lightgallery/css/lightgallery.css";
+
+import "lightgallery/css/lg-zoom.css";
+import "lightgallery/css/lg-thumbnail.css";
+import "lightgallery/css/lg-autoplay.css";
+import "lightgallery/css/lg-share.css";
+import "lightgallery/css/lg-rotate.css";
+// import plugins if you need
+import lgThumbnail from "lightgallery/plugins/thumbnail";
+import lgZoom from "lightgallery/plugins/zoom";
+import lgAutoplay from "lightgallery/plugins/autoplay";
+import lgVideo from "lightgallery/plugins/video";
+import lgShare from "lightgallery/plugins/share";
+import lgRotate from "lightgallery/plugins/rotate";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
+const Gallary = () => {
+  const [searchparams] = useSearchParams();
+
+  let encoded;
+
+  let checkboxUrl = [];
+
+  const admin_id = localStorage.getItem("admin_id");
+  const [fileUrls, setFileUrls] = useState([]);
+  const [searchDocumentName, setSearchDocumentName] = useState("");
+  const [searchDocumenttype, setSearchDocumentType] = useState("");
+  const [customvalidated, setcustomValidated] = useState("");
+  const [modelshow, setModelshow] = useState(false);
+  const [emailBtnLoader, setEmailBtnLoader] = useState(false);
+  const [documentType, setDocumentType] = useState("");
+  const [documentName, setDocumentName] = useState("");
+
+  const [DocumentUpload, setDocumentUpload] = useState("");
+  const [Modelclassvalue, setModelclassvalue] = useState("");
+  const [getDocumentData, setGetDocmentData] = useState([]);
+  const [apicall, setapicall] = useState(false);
+  const ref = useRef();
+  const clienttId = searchparams.get("client_id");
+  const clientNamee = localStorage.getItem("client_name");
+  const clientEmail = localStorage.getItem("client_email");
+  // onchange for document name
+  const OndocumentName = (e) => {
+    setDocumentName(e.target.value);
+    setcustomValidated("");
+  };
+
+  // onchange for email input when user send zip on gmail
+
+  // useEffect for target model classname
+  useEffect(() => {
+    setModelclassvalue(ref.current.className);
+  }, [Modelclassvalue]);
+
+  //intial state of model input field-----
+  const initialFormState = {
+    admin_id: admin_id,
+    client_id: clienttId,
+    client_name: clientNamee,
+    document_title: documentName,
+    document_type: documentType,
+    document_url: DocumentUpload,
+  };
+
+  const [modelClass, setModelclass] = useState(false);
+
+  // funtion for close model and reset document name and customvalidation and upload input field
+  const onCloseModel = () => {
+    setDocumentName("");
+    setcustomValidated("");
+    setDocumentUpload(null);
+  };
+
+  // funtion for model open and reset customvalidation and document name and customvalidation
+  const onModelOpen = async () => {
+    setModelshow(false);
+    setcustomValidated("");
+    setDocumentName("");
+    setDocumentUpload(null);
+  };
+
+  // funtion for base 64 file reader
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+
+      const { name } = file;
+      fileReader.addEventListener("load", () => {
+        resolve({ name: name, base64: fileReader.result });
+      });
+      fileReader.readAsDataURL(file);
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  // onChange function for document upload and formate validation
+  const imguploadchange = async (e) => {
+    encoded = await convertToBase64(e.target.files[0]);
+    const [first, ...rest] = encoded.base64.split(",");
+    let imgvalidation = first.split("/").pop();
+
+    if (
+      imgvalidation === "jpeg;base64" ||
+      imgvalidation === "jpg;base64" ||
+      imgvalidation === "png;base64" ||
+      imgvalidation === "pdf;base64" ||
+      imgvalidation === "csv;base64" ||
+      imgvalidation === "msword;base64" ||
+      imgvalidation ===
+        "vnd.openxmlformats-officedocument.wordprocessingml.document;base64" ||
+      imgvalidation === "vnd.ms-excel;base64" ||
+      imgvalidation ===
+        "vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64"
+    ) {
+      const productimg = rest.join("-");
+      setDocumentUpload(productimg);
+      setcustomValidated("");
+    } else {
+      setcustomValidated("imgformat");
+    }
+
+    imgvalidation = imgvalidation.replace(";base64", "");
+
+    setDocumentType(imgvalidation);
+    // e.target.value = null;
+  };
+
+  // funtion for add document
+  const addDocument = async (e) => {
+    e.preventDefault();
+    if (documentName === "") {
+      setcustomValidated("name is empty");
+    } else if (DocumentUpload === null) {
+      console.log("in document");
+      setcustomValidated("document is empty");
+    } else {
+      const response = await AddDocument(initialFormState);
+      console.log(JSON.stringify(response));
+      if (response.message === "Document upload successfully") {
+        Swal.fire({
+          title: "Success",
+          text: "Document upload succuessfully",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(function() {
+          setModelclass(true);
+          setDocumentName("");
+          setDocumentUpload("");
+          setapicall(true);
+        });
+      }
+      setModelclass(false);
+      setapicall(false);
+    }
+  };
+
+  // useEffect get document based on id----
+  useEffect(() => {
+    getDocumentByid(clienttId);
+  }, [clienttId, apicall, searchDocumentName, searchDocumenttype]);
+
+  //function for get document based on client id
+  const getDocumentByid = async (clientID) => {
+    const response = await getDocument(
+      clientID,
+      searchDocumentName,
+      searchDocumenttype
+    );
+    setGetDocmentData(response);
+    setapicall(false);
+  };
+
+  const DocumentNameOnChange = (e) => {
+    setSearchDocumentName(e.target.value);
+    setapicall(true);
+  };
+
+  const DocumentTypeOnChange = (e) => {
+    setSearchDocumentType(e.target.value);
+    setapicall(true);
+  };
+
+  const handleSelectAllChange = (v) => {
+    setGetDocmentData((prevData) => {
+      return prevData.map((item) => {
+        return { ...item, isChecked: v.target.checked };
+      });
+    });
+  };
+
+  const handleCheckboxChange = (event, id) => {
+    setGetDocmentData((prevData) =>
+      prevData.map((item) => {
+        if (item.id === id) {
+          return { ...item, isChecked: event.target.checked };
+        }
+        return item;
+      })
+    );
+  };
+
+  const handleDownload = async () => {
+    let newArray = getDocumentData.filter(function(el) {
+      return el.isChecked === true;
+    });
+    console.log(newArray);
+    if (newArray.length === 0) {
+      Swal.fire({
+        title: "warning",
+        text: "Please select any one document for download",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+    } else {
+      newArray.map((item) => {
+        checkboxUrl.push(item.document_url);
+        return {};
+      });
+      const zip = new JSZip();
+
+      // Fetch each file and add it to the zip
+      const promises = checkboxUrl.map(async (url) => {
+        const response = await fetch(url);
+        const data = await response.blob();
+        const fileName = getFileNameFromURL(url); // Implement this function to extract the file name from the URL
+
+        zip.file(fileName, data);
+      });
+      // console.log("wait");
+      // Wait for all files to be added to the zip
+      await Promise.all(promises);
+      // console.log("start");
+      // Generate the zip file
+      const content = await zip.generateAsync({ type: "blob" });
+      // console.log("end");
+
+      // Save the zip file
+      console.log(" save start");
+      saveAs(content, `${clientNamee}_Document.zip`);
+      console.log(" save end");
+    }
+  };
+
+  const handleOpenMailBox = async () => {
+    document.getElementById("mailBox").removeAttribute("data-toggle", "modal");
+    document
+      .getElementById("mailBox")
+      .removeAttribute("data-target", "#exampleModal1");
+
+    let newArray = getDocumentData.filter(function(el) {
+      return el.isChecked === true;
+    });
+
+    if (newArray.length === 0) {
+      Swal.fire({
+        title: "warning",
+        text: "Please select any one document for mail",
+        icon: "warning",
+        confirmButtonText: "OK",
+      }).then(() => {
+        document
+          .getElementById("mailBox")
+          .removeAttribute("data-toggle", "modal");
+        document
+          .getElementById("mailBox")
+          .removeAttribute("data-target", "#exampleModal1");
+      });
+    } else {
+      newArray.map((item) => {
+        setFileUrls((prevArray) => [...prevArray, item.document_url]);
+        return {};
+      });
+
+      // data-toggle="modal"
+      // data-target="#exampleModal1"
+      document.getElementById("mailBox").setAttribute("data-toggle", "modal");
+      document
+        .getElementById("mailBox")
+        .setAttribute("data-target", "#exampleModal1");
+    }
+  };
+
+  // funtion for delete document sweet alert------
+  const onDeleteModelClick = (name, id) => {
+    Swal.fire({
+      title: "Warning",
+      text: `You want to delete ${name}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await deleteDocumentfunction(id);
+        if (response.message === "delete document successfully") {
+          Swal.fire("Deleted!", "Your file has been deleted.", "success");
+          setapicall(true);
+        }
+      }
+    });
+    setapicall(false);
+  };
+
+  //funtion for get file name from document_url array
+  const getFileNameFromURL = (url) => {
+    const urlParts = url.split("/");
+    return urlParts[urlParts.length - 1];
+  };
+
+  //funtion for create zip and and send upload on server in certain folder------
+  const downloadFiles = async (e) => {
+    e.preventDefault();
+
+    setEmailBtnLoader(true);
+    const zip = new JSZip();
+    console.log("zip---" + JSON.stringify(fileUrls));
+    // Fetch each file and add it to the zip
+    const promises = fileUrls.map(async (url) => {
+      const response = await fetch(url);
+      const data = await response.blob();
+      const fileName = getFileNameFromURL(url); // Implement this function to extract the file name from the URL
+
+      zip.file(fileName, data);
+    });
+    // console.log("wait");
+    // Wait for all files to be added to the zip
+    await Promise.all(promises);
+    // console.log("start");
+    // Generate the zip file
+    const content = await zip.generateAsync({ type: "blob" });
+    // console.log("end");
+
+    const response = await createZipAndUpload(
+      clientEmail,
+      content,
+      clientNamee
+    );
+    setEmailBtnLoader(false);
+
+    if (response.message === "email send successfully") {
+      Swal.fire({
+        title: "Success",
+        text: "Email send successfully",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(function() {
+        setModelclass(true);
+
+        // setState(initialFormState);
+        setapicall(true);
+      });
+    }
+    setapicall(false);
+    setModelclass(false);
+
+    // // Save the zip file
+    // console.log(" save start");
+    // saveAs(content, `${clientNamee}_Document.zip`);
+    // console.log(" save end");
+  };
+
+  return (
+    <>
+      <div className="theme-red ">
+        <Header />
+        <SideBar />
+        <section className="content">
+          <div className="container-fluid">
+            {/* <!-- Image Gallery --> */}
+            <div className="block-header">
+              <h2>Document Details of {clientNamee}</h2>
+              <div className=" text-right">
+                <button
+                  className="btn btn-success"
+                  data-toggle="modal"
+                  data-target="#exampleModal"
+                  onClick={() => onModelOpen()}
+                >
+                  ADD DOCUMENTS
+                </button>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div className="card">
+                  <div className="header zip_downlode">
+                    <h2>{clientNamee.toUpperCase()}'S DOCUMENTS</h2>
+
+                    <button
+                      className="btn btn-info"
+                      style={{ marginRight: "-43%" }}
+                      onClick={handleDownload}
+                    >
+                      Download document
+                    </button>
+                    <button
+                      id="mailBox"
+                      className="btn btn-primary text-end"
+                      onClick={handleOpenMailBox}
+                    >
+                      Send Mail your document
+                    </button>
+                  </div>
+                  <label style={{ marginLeft: "93%" }}>
+                    <input
+                      type="checkbox"
+                      // checked={selectAllChecked}
+                      onChange={handleSelectAllChange}
+                    />
+                    Select All
+                  </label>
+                  <div className="body">
+                    <div className="row ">
+                      <div className="col-sm-3">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Search by document name"
+                              onChange={(e) => DocumentNameOnChange(e)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-sm-3" style={{ marginTop: "10px" }}>
+                        <select
+                          className="form-control "
+                          value={searchDocumenttype}
+                          name="type"
+                          onChange={(e) => DocumentTypeOnChange(e)}
+                        >
+                          <option value="" className="text-center">
+                            -- Please select document type --
+                          </option>
+                          <option value="">All</option>
+                          <option value="jpg">Jpg</option>
+                          <option value="jpeg">Jpeg</option>
+                          <option value="png">Png</option>
+                          <option value="pdf">Pdf</option>
+                          <option value="csv">Csv</option>
+                          <option value="doc">Doc</option>
+                          <option value="docx">Docx</option>
+                          <option value="xls">Xls</option>
+                          <option value="xlsx">Xlsx</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div
+                      id="aniimated-thumbnials"
+                      className="list-unstyled row clearfix"
+                    >
+                      {getDocumentData.length === 0 ? (
+                        <h1 className="text-center">No record Found</h1>
+                      ) : (
+                        getDocumentData.map((item) => {
+                          return (
+                            <>
+                              <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12 doucment_box">
+                                {item.document_type === "pdf" ? (
+                                  <>
+                                    <Link
+                                      to={item.document_url}
+                                      target="_blank"
+                                    >
+                                      <img
+                                        className="img-responsive thumbnail"
+                                        src={pdfLogo}
+                                        alt={pdfLogo}
+                                      />
+                                      <h4 style={{ textAlign: "center" }}>
+                                        {" "}
+                                        {item.document_title}
+                                      </h4>
+                                    </Link>
+                                    <div className="profile_edit_delete">
+                                      {/* <i
+                                      class="material-icons text-primary"
+                                      data-toggle="modal"
+                                      data-target="#exampleModal"
+                                      // onClick={() =>
+                                      //   onUpdateModelClick(item.id)
+                                      // }
+                                    >
+                                      edit
+                                    </i> */}
+                                      <label>
+                                        <input
+                                          type="checkbox"
+                                          checked={item.isChecked}
+                                          onChange={(e) => {
+                                            handleCheckboxChange(e, item.id);
+                                          }}
+                                        />
+                                      </label>
+                                      <i
+                                        class="material-icons text-danger"
+                                        onClick={() =>
+                                          onDeleteModelClick(
+                                            item.document_title,
+                                            item.id
+                                          )
+                                        }
+                                      >
+                                        delete
+                                      </i>
+                                    </div>
+                                  </>
+                                ) : item.document_type === "doc" ||
+                                  item.document_type === "docx" ? (
+                                  <>
+                                    <Link
+                                      to={item.document_url}
+                                      target="_blank"
+                                    >
+                                      <img
+                                        className="img-responsive thumbnail"
+                                        src={msDoc}
+                                        alt={msDoc}
+                                      />
+                                      <h4 style={{ textAlign: "center" }}>
+                                        {" "}
+                                        {item.document_title}
+                                      </h4>
+                                    </Link>
+                                    <div className="profile_edit_delete">
+                                      {/* <i
+                                      class="material-icons text-primary"
+                                      data-toggle="modal"
+                                      data-target="#exampleModal"
+                                      // onClick={() =>
+                                      //   onUpdateModelClick(item.id)
+                                      // }
+                                    >
+                                      edit
+                                    </i> */}
+                                      <label>
+                                        <input
+                                          type="checkbox"
+                                          checked={item.isChecked}
+                                          onChange={(e) => {
+                                            handleCheckboxChange(e, item.id);
+                                          }}
+                                        />
+                                      </label>
+                                      <i
+                                        class="material-icons text-danger"
+                                        onClick={() =>
+                                          onDeleteModelClick(
+                                            item.document_title,
+                                            item.id
+                                          )
+                                        }
+                                      >
+                                        delete
+                                      </i>
+                                    </div>
+                                  </>
+                                ) : item.document_type === "xls" ||
+                                  item.document_type === "xlsx" ||
+                                  item.document_type === "csv" ? (
+                                  <>
+                                    <Link
+                                      to={item.document_url}
+                                      target="_blank"
+                                    >
+                                      <img
+                                        className="img-responsive thumbnail"
+                                        src={msXls}
+                                        alt={msXls}
+                                      />
+                                      <h4 style={{ textAlign: "center" }}>
+                                        {" "}
+                                        {item.document_title}
+                                      </h4>
+                                    </Link>
+                                    <div className="profile_edit_delete">
+                                      {/* <i
+                                    class="material-icons text-primary"
+                                    data-toggle="modal"
+                                    data-target="#exampleModal"
+                                    // onClick={() =>
+                                    //   onUpdateModelClick(item.id)
+                                    // }
+                                  >
+                                    edit
+                                  </i> */}
+                                      <label>
+                                        <input
+                                          type="checkbox"
+                                          checked={item.isChecked}
+                                          onChange={(e) => {
+                                            handleCheckboxChange(e, item.id);
+                                          }}
+                                        />
+                                      </label>
+
+                                      <i
+                                        class="material-icons text-danger"
+                                        onClick={() =>
+                                          onDeleteModelClick(
+                                            item.document_title,
+                                            item.id
+                                          )
+                                        }
+                                      >
+                                        delete
+                                      </i>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <LightGallery
+                                      speed={200}
+                                      plugins={[
+                                        lgThumbnail,
+                                        lgZoom,
+                                        lgShare,
+                                        lgRotate,
+                                        lgVideo,
+                                        lgAutoplay,
+                                      ]}
+                                    >
+                                      {/* <a href="https://procodestore.com/wp-content/uploads/2021/03/164508084_271381191136191_654097929788476286_n.jpg">
+                                 <img
+                                   alt="img1"
+                                   src="https://procodestore.com/wp-content/uploads/2021/03/164508084_271381191136191_654097929788476286_n.jpg"
+                                 />
+                               </a>
+                               <a href="https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60">
+                                 <img
+                                   alt="img2"
+                                   src="https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60"
+                                 />
+                               </a>
+                                 */}
+                                      {/* <a href="https://images.unsplash.com/photo-1679746584014-fb31d4eb0a5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60">
+                                 <img
+                                   alt="img3"
+                                   src="https://images.unsplash.com/photo-1679746584014-fb31d4eb0a5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60"
+                                 />
+                               </a> */}
+
+                                      <Link to={item.document_url}>
+                                        <img
+                                          alt={item.document_title}
+                                          className="img-responsive thumbnail"
+                                          src={item.document_url}
+                                        />
+
+                                        <h4 style={{ textAlign: "center" }}>
+                                          {" "}
+                                          {item.document_title}
+                                        </h4>
+                                      </Link>
+                                    </LightGallery>
+                                    <div className="profile_edit_delete">
+                                      {/* <i
+                                      class="material-icons text-primary"
+                                      data-toggle="modal"
+                                      data-target="#exampleModal"
+                                      // onClick={() =>
+                                      //   onUpdateModelClick(item.id)
+                                      // }
+                                    >
+                                      edit
+                                    </i> */}
+
+                                      <label>
+                                        <input
+                                          type="checkbox"
+                                          checked={item.isChecked}
+                                          onChange={(e) => {
+                                            handleCheckboxChange(e, item.id);
+                                          }}
+                                        />
+                                      </label>
+
+                                      <i
+                                        class="material-icons text-danger"
+                                        onClick={() =>
+                                          onDeleteModelClick(item.name, item.id)
+                                        }
+                                      >
+                                        delete
+                                      </i>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div
+          ref={ref}
+          className={
+            Modelclassvalue === "modal fade"
+              ? "modal fade"
+              : modelClass === true
+              ? "modal fade"
+              : "modal fade in"
+          }
+          id="exampleModal"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="back_drop"></div>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  {modelshow === true ? "Update Client" : " Add Document"}
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                  onClick={() => onCloseModel()}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="body">
+                  <form
+                    className="form-horizontal"
+                    onSubmit={(e) => {
+                      addDocument(e);
+                    }}
+                  >
+                    <div className="row clearfix">
+                      <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                        <label htmlFor="name"> Title</label>
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="text"
+                              id="name"
+                              name="name"
+                              value={documentName}
+                              onChange={(e) => {
+                                OndocumentName(e);
+                              }}
+                              className="form-control"
+                              placeholder="Enter document name"
+                            />
+                            {customvalidated === "name is empty" ? (
+                              <small className="text-danger">
+                                {" "}
+                                Document name is empty
+                              </small>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row clearfix">
+                      <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                        <label htmlFor="name">Documents </label>
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="file"
+                              id="img_64"
+                              name={"img_64"}
+                              // value={state.name}
+                              onChange={(e) => imguploadchange(e)}
+                              className="form-control"
+                            />
+                          </div>
+                          {customvalidated === "document is empty" ? (
+                            <small className="text-danger">
+                              {" "}
+                              please Select file first
+                            </small>
+                          ) : null}
+
+                          {customvalidated === "imgformat" ? (
+                            <span
+                              className="mt-2   text-center fs-6 text-danger"
+                              type="invalid"
+                            >
+                              Document Format should be in jpg, jpeg or png,
+                              doc, docx, xls, xlsx and pdf
+                            </span>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row clearfix">
+                      <div className="modal-footer">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          data-dismiss="modal"
+                          id="closeButton1"
+                          onClick={() => onCloseModel()}
+                        >
+                          Close
+                        </button>
+                        <button type="submit" className="btn btn-primary">
+                          Add
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          ref={ref}
+          className={
+            Modelclassvalue === "modal fade"
+              ? "modal fade"
+              : modelClass === true
+              ? "modal fade"
+              : "modal fade in"
+          }
+          id="exampleModal1"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="back_drop"></div>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  {modelshow === true ? "Update Client" : " Send Document"}
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                  onClick={() => onCloseModel()}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="body">
+                  <form
+                    className="form-horizontal"
+                    onSubmit={(e) => {
+                      downloadFiles(e);
+                    }}
+                  >
+                    <div className="row clearfix">
+                      <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                        <label htmlFor="name"> Email</label>
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="email"
+                              id="email"
+                              name="email"
+                              value={clientEmail}
+                              disabled
+                              className="form-control"
+                              placeholder="Enter document name"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="row clearfix">
+                      <div className="modal-footer">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          data-dismiss="modal"
+                          id="closeButton1"
+                          disabled={
+                            emailBtnLoader === true
+                              ? true
+                              : emailBtnLoader === false
+                              ? false
+                              : false
+                          }
+                          onClick={() => onCloseModel()}
+                        >
+                          Close
+                        </button>
+                        <button
+                          type="submit"
+                          className="btn btn-primary email_send_btn"
+                        >
+                          <div className="loader_btn">
+                            <div class="preloader pl-size-xs">
+                              <div class="spinner-layer pl-red-grey">
+                                <div class="circle-clipper left">
+                                  <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                  <div class="circle"></div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <span
+                              className={
+                                emailBtnLoader === true
+                                  ? " show_loader"
+                                  : "none"
+                              }
+                            >
+                              Send Mail
+                            </span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Gallary;

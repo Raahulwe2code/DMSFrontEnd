@@ -165,6 +165,12 @@ const Clients = () => {
           icon: "success",
           confirmButtonText: "OK",
         }).then(function() {
+          // document
+          //   .getElementById("exampleModal")
+          //   .setAttribute("style", "display:none");
+          // document
+          //   .getElementById("exampleModal")
+          //   .setAttribute("class", "model fade");
           setModelclass(true);
           setState(state);
           setapicall(true);
@@ -294,7 +300,10 @@ const Clients = () => {
                         </div>
                       </div>
 
-                      <div className="col-sm-3" style={{ marginTop: "10px" }}>
+                      <div
+                        className="col-sm-3"
+                        style={{ marginBottom: "16px" }}
+                      >
                         <select
                           className="form-control "
                           value={clienttype}
@@ -318,21 +327,15 @@ const Clients = () => {
                         getClientsData.map((item) => {
                           return (
                             <>
-                              <div className="col-sm-2">
+                              <div className="col-sm-3 col-md-2">
                                 <div className="card deshbord_user_card ">
                                   <div className="header">
                                     {item.type === "individual" ? (
-                                      <span
-                                        class="badge btn btn-success"
-                                        style={{ marginRight: "150px" }}
-                                      >
+                                      <span class="badge btn btn-success type_icon">
                                         <i class="material-icons">person</i>
                                       </span>
                                     ) : item.type === "company" ? (
-                                      <span
-                                        class="badge btn btn-danger"
-                                        style={{ marginRight: "150px" }}
-                                      >
+                                      <span class="badge btn btn-danger type_icon">
                                         <i class="material-icons">
                                           account_balance
                                         </i>

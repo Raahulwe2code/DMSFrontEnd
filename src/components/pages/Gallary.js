@@ -389,7 +389,6 @@ const Gallary = () => {
           <div className="container-fluid">
             {/* <!-- Image Gallery --> */}
             <div className="block-header">
-              <h2>Document Details of {clientNamee}</h2>
               <div className=" text-right">
                 <button
                   className="btn btn-success"
@@ -404,33 +403,23 @@ const Gallary = () => {
 
             <div className="row">
               <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div className="card">
+                <div className="card document_card">
                   <div className="header zip_downlode">
                     <h2>{clientNamee.toUpperCase()}'S DOCUMENTS</h2>
-
-                    <button
-                      className="btn btn-info"
-                      style={{ marginRight: "-43%" }}
-                      onClick={handleDownload}
-                    >
-                      Download document
-                    </button>
-                    <button
-                      id="mailBox"
-                      className="btn btn-primary text-end"
-                      onClick={handleOpenMailBox}
-                    >
-                      Send Mail your document
-                    </button>
+                    <div className="download_emai_btn d-flex">
+                      <button className="btn btn-info" onClick={handleDownload}>
+                        <i class="material-icons">get_app</i>
+                      </button>
+                      <button
+                        id="mailBox"
+                        className="btn btn-primary text-end"
+                        onClick={handleOpenMailBox}
+                      >
+                        <i class="material-icons">email</i>
+                      </button>
+                    </div>
                   </div>
-                  <label style={{ marginLeft: "93%" }}>
-                    <input
-                      type="checkbox"
-                      // checked={selectAllChecked}
-                      onChange={handleSelectAllChange}
-                    />
-                    Select All
-                  </label>
+
                   <div className="body">
                     <div className="row ">
                       <div className="col-sm-3">
@@ -446,7 +435,7 @@ const Gallary = () => {
                         </div>
                       </div>
 
-                      <div className="col-sm-3" style={{ marginTop: "10px" }}>
+                      <div className="col-sm-3">
                         <select
                           className="form-control "
                           value={searchDocumenttype}
@@ -468,7 +457,18 @@ const Gallary = () => {
                           <option value="xlsx">Xlsx</option>
                         </select>
                       </div>
+                      <div className="col-sm-6">
+                        <label>
+                          <input
+                            type="checkbox"
+                            // checked={selectAllChecked}
+                            onChange={handleSelectAllChange}
+                          />
+                          <span> Select All</span>
+                        </label>
+                      </div>
                     </div>
+
                     <div
                       id="aniimated-thumbnials"
                       className="list-unstyled row clearfix"

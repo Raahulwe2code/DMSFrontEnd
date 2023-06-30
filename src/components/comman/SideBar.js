@@ -9,9 +9,10 @@ const SideBar = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const adminLogged = localStorage.getItem("admin_token");
-  console.log("admin toekn in sidebar----" + adminLogged);
+
   const logout = () => {
-    if (adminLogged) {
+    console.log("admin toekn in sidebar----" + adminLogged);
+    if (adminLogged !== null) {
       localStorage.removeItem("admin_token");
       localStorage.removeItem("user_type");
       localStorage.removeItem("admin_id");
@@ -22,6 +23,8 @@ const SideBar = () => {
       localStorage.removeItem("client_email");
       setIsLoggedIn(false);
       navigate("/");
+      const adminLoggedd = localStorage.getItem("admin_token");
+      console.log(" after-- logout admin toekn in  sidebar----" + adminLoggedd);
     } else {
       console.log("in else");
     }

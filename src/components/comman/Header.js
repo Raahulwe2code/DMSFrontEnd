@@ -3,11 +3,30 @@ import { Link, useNavigate } from "react-router-dom";
 import SideBar from "./SideBar";
 
 const Header = () => {
+  const [newClass, setNewClass] = useState(false);
   function AddBodyClassFunction() {
+    alert("kkkk");
     // document.body.classList.add('salmon');
-    document.body.classList.add("ls-closed", "overlay-open");
-    const dd = document.body.classList.remove("ls-closed");
+    // overlay-open ls-closed
+    document.body.classList.remove("overlay-open", "ls-closed");
+
+    document.body.classList.add("ls-closed");
   }
+
+  function AddBodyClassFunctionn() {
+    // setNewClass(true);
+    if (newClass === false) {
+      // document.body.classList.remove("ls-closed");
+      document.body.classList.add("overlay-open");
+      setNewClass(true);
+    } else if (newClass === true) {
+      document.body.classList.remove("overlay-open");
+
+      document.body.classList.add("ls-closed");
+      setNewClass(false);
+    }
+  }
+
   return (
     <>
       {/* <!-- Search Bar --> */}
@@ -39,9 +58,9 @@ const Header = () => {
             <Link
               to=""
               className="bars"
-              // onClick={() => {
-              //   AddBodyClassFunction();
-              // }}
+              onClick={() => {
+                AddBodyClassFunctionn();
+              }}
             ></Link>
             <Link className="navbar-brand" to="/home">
               Document Management System
@@ -313,7 +332,7 @@ const Header = () => {
 
       {/* // sidebar0------------ */}
 
-      <SideBar />
+      <SideBar newClass={newClass} />
     </>
   );
 };

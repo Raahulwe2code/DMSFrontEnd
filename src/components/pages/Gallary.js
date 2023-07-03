@@ -54,9 +54,23 @@ const Gallary = () => {
   const [getDocumentData, setGetDocmentData] = useState([]);
   const [apicall, setapicall] = useState(false);
   const ref = useRef();
-  const clienttId = searchparams.get("client_id");
+  const [clienttId, setClientID] = useState("");
+
   const clientNamee = localStorage.getItem("client_name");
   const clientEmail = localStorage.getItem("client_email");
+  const [modelView, setModelView] = useState(false);
+
+  useEffect(() => {
+    if (
+      searchparams.get("client_id") === null ||
+      searchparams.get("client_id") === "" ||
+      searchparams.get("client_id") === undefined
+    ) {
+      setClientID("");
+    } else {
+      setClientID(searchparams.get("client_id"));
+    }
+  }, []);
   // onchange for document name
   const OndocumentName = (e) => {
     setDocumentName(e.target.value);
@@ -84,6 +98,7 @@ const Gallary = () => {
 
   // funtion for close model and reset document name and customvalidation and upload input field
   const onCloseModel = () => {
+    setModelView(false);
     setDocumentName("");
     setcustomValidated("");
     setDocumentUpload(null);
@@ -91,6 +106,7 @@ const Gallary = () => {
 
   // funtion for model open and reset customvalidation and document name and customvalidation
   const onModelOpen = async () => {
+    setModelView(true);
     setModelshow(false);
     setcustomValidated("");
     setDocumentName("");
@@ -163,6 +179,7 @@ const Gallary = () => {
           icon: "success",
           confirmButtonText: "OK",
         }).then(function() {
+          setModelView(false);
           setModelclass(true);
           setDocumentName("");
           setDocumentUpload("");
@@ -724,18 +741,19 @@ const Gallary = () => {
         </section>
         <div
           ref={ref}
-          className={
-            Modelclassvalue === "modal fade"
-              ? "modal fade"
-              : modelClass === true
-              ? "modal fade"
-              : "modal fade in"
-          }
+          // className={
+          //   Modelclassvalue === "modal fade"
+          //     ? "modal fade"
+          //     : modelClass === true
+          //     ? "modal fade"
+          //     : "modal fade in"
+          // }
           id="exampleModal"
           tabindex="-1"
           role="dialog"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
+          // aria-labelledby="exampleModalLabel"
+          // aria-hidden="true"
+          className={modelView === true ? "modal show_modal" : "modal"}
         >
           <div className="back_drop"></div>
           <div className="modal-dialog" role="document">

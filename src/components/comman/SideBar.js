@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import userImage from "../comman/images/user.png";
-const SideBar = () => {
+const SideBar = (props) => {
   const navigate = useNavigate();
   const usertype = localStorage.getItem("user_type");
   const admin_name = localStorage.getItem("admin_name");
@@ -37,15 +37,15 @@ const SideBar = () => {
 
   function AddBodyClassFunction() {
     // document.body.classList.add('salmon');
-    document.body.classList.remove("ls-closed", "overlay-open");
-    const dd = document.body.classList.add("ls-closed");
+    document.body.classList.remove("overlay-open");
+    document.body.classList.add("ls-closed");
   }
 
   return (
     <>
       <section>
         {/* <!-- Left Sidebar --> */}
-        <aside id="leftsidebar" className="sidebar">
+        <aside id="leftsidebar" className={`sidebar ${props.newClass}`}>
           {/* <!-- User Info --> */}
           <div className="user-info">
             <div className="image">
@@ -109,9 +109,9 @@ const SideBar = () => {
             <ul className="list">
               <li className="header">MAIN NAVIGATION</li>
               <li
-              // onClick={() => {
-              //   AddBodyClassFunction();
-              // }}
+                onClick={() => {
+                  AddBodyClassFunction();
+                }}
               >
                 <Link to="/home">
                   <i className="material-icons">home</i>
@@ -120,9 +120,9 @@ const SideBar = () => {
               </li>
 
               <li
-              // onClick={() => {
-              //   AddBodyClassFunction();
-              // }}
+                onClick={() => {
+                  AddBodyClassFunction();
+                }}
               >
                 <Link to="/clients">
                   <i className="material-icons">text_fields</i>
@@ -131,9 +131,9 @@ const SideBar = () => {
               </li>
               {usertype === "employee" ? null : (
                 <li
-                // onClick={() => {
-                //   AddBodyClassFunction();
-                // }}
+                  onClick={() => {
+                    AddBodyClassFunction();
+                  }}
                 >
                   <Link to="/users">
                     <i className="material-icons">text_fields</i>

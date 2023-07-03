@@ -9,7 +9,7 @@ import {
   UpdateUser,
 } from "../../api/api";
 import Header from "../comman/Header";
-import SideBar from "../comman/SideBar";
+// import SideBar from "../comman/SideBar";
 import Swal from "sweetalert2";
 
 // const ref = useRef();
@@ -18,6 +18,7 @@ const Users = () => {
   const admin_id = localStorage.getItem("admin_id");
   const [Modelclassvalue, setModelclassvalue] = useState("");
   const [apicall, setapicall] = useState(false);
+  const [modelView, setModelView] = useState(false);
   const ref = useRef();
 
   // useEffect for target model classname
@@ -125,6 +126,7 @@ const Users = () => {
           icon: "success",
           confirmButtonText: "OK",
         }).then(function() {
+          setModelView(false);
           setModelclass(true);
           setState(initialFormState);
           setapicall(true);
@@ -148,6 +150,7 @@ const Users = () => {
           icon: "success",
           confirmButtonText: "OK",
         }).then(function() {
+          setModelView(false);
           setModelclass(true);
           setState(initialFormState);
           setapicall(true);
@@ -178,6 +181,7 @@ const Users = () => {
 
   // funtion for close model and reset input feild and error massage hide
   const onCloseModel = () => {
+    setModelView(false);
     setState(initialFormState);
     setEmailError(false);
     setErrors({});
@@ -185,6 +189,7 @@ const Users = () => {
 
   // funtion for open model
   const onModelOpen = async () => {
+    setModelView(true);
     setModelshow(false);
 
     setState(state);
@@ -192,6 +197,7 @@ const Users = () => {
 
   // function for update empolyee model and get detail based on employee id
   const onUpdateModelClick = async (id) => {
+    setModelView(true);
     setModelshow(true);
     const response = await getUserByID(id);
     setState(response[0]);
@@ -223,7 +229,7 @@ const Users = () => {
     <>
       <div className="theme-red ">
         <Header />
-        <SideBar />
+        {/* <SideBar /> */}
         <section className="content">
           <div className="container-fluid">
             <div className="block-header">
@@ -231,8 +237,8 @@ const Users = () => {
               <div className=" text-right">
                 <button
                   className="btn btn-success"
-                  data-toggle="modal"
-                  data-target="#exampleModal"
+                  // data-toggle="modal"
+                  // data-target="#exampleModal"
                   onClick={() => onModelOpen()}
                 >
                   ADD EMPLOYEE
@@ -278,8 +284,8 @@ const Users = () => {
                                     <div className="profile_edit_delete">
                                       <i
                                         class="material-icons text-primary"
-                                        data-toggle="modal"
-                                        data-target="#exampleModal"
+                                        // data-toggle="modal"
+                                        // data-target="#exampleModal"
                                         onClick={() =>
                                           onUpdateModelClick(item.id)
                                         }
@@ -327,18 +333,19 @@ const Users = () => {
 
       <div
         ref={ref}
-        className={
-          Modelclassvalue === "modal fade"
-            ? "modal fade"
-            : modelClass === true
-            ? "modal fade"
-            : "modal fade in"
-        }
+        // className={
+        //   Modelclassvalue === "modal fade"
+        //     ? "modal fade"
+        //     : modelClass === true
+        //     ? "modal fade"
+        //     : "modal fade in"
+        // }
         id="exampleModal"
         tabindex="-1"
         role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
+        // aria-labelledby="exampleModalLabel"
+        // aria-hidden="true"
+        className={modelView === true ? "modal show_modal" : "modal"}
       >
         <div className="back_drop"></div>
         <div className="modal-dialog" role="document">
@@ -350,8 +357,8 @@ const Users = () => {
               <button
                 type="button"
                 className="close"
-                data-dismiss="modal"
-                aria-label="Close"
+                // data-dismiss="modal"
+                // aria-label="Close"
                 onClick={() => onCloseModel()}
               >
                 <span aria-hidden="true">&times;</span>

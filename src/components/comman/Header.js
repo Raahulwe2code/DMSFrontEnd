@@ -1,7 +1,13 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import SideBar from "./SideBar";
 
 const Header = () => {
+  function AddBodyClassFunction() {
+    // document.body.classList.add('salmon');
+    document.body.classList.add("ls-closed", "overlay-open");
+    const dd = document.body.classList.remove("ls-closed");
+  }
   return (
     <>
       {/* <!-- Search Bar --> */}
@@ -26,8 +32,17 @@ const Header = () => {
               data-toggle="collapse"
               data-target="#navbar-collapse"
               aria-expanded="false"
+              // onClick={() => {
+              //   AddBodyClassFunction();
+              // }}
             ></Link>
-            <Link to="" className="bars"></Link>
+            <Link
+              to=""
+              className="bars"
+              // onClick={() => {
+              //   AddBodyClassFunction();
+              // }}
+            ></Link>
             <Link className="navbar-brand" to="/home">
               Document Management System
             </Link>
@@ -295,6 +310,10 @@ const Header = () => {
         </div>
       </nav>
       {/* <!-- #Top Bar --> */}
+
+      {/* // sidebar0------------ */}
+
+      <SideBar />
     </>
   );
 };

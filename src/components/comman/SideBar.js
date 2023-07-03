@@ -34,6 +34,13 @@ const SideBar = () => {
       navigate("/", { replace: true });
     }
   }, [isLoggedIn, navigate]);
+
+  function AddBodyClassFunction() {
+    // document.body.classList.add('salmon');
+    document.body.classList.remove("ls-closed", "overlay-open");
+    const dd = document.body.classList.add("ls-closed");
+  }
+
   return (
     <>
       <section>
@@ -101,21 +108,33 @@ const SideBar = () => {
           <div className="menu">
             <ul className="list">
               <li className="header">MAIN NAVIGATION</li>
-              <li>
+              <li
+              // onClick={() => {
+              //   AddBodyClassFunction();
+              // }}
+              >
                 <Link to="/home">
                   <i className="material-icons">home</i>
-                  <span>Home</span>
+                  <span>Homes</span>
                 </Link>
               </li>
 
-              <li>
+              <li
+              // onClick={() => {
+              //   AddBodyClassFunction();
+              // }}
+              >
                 <Link to="/clients">
                   <i className="material-icons">text_fields</i>
                   <span>Clients</span>
                 </Link>
               </li>
               {usertype === "employee" ? null : (
-                <li>
+                <li
+                // onClick={() => {
+                //   AddBodyClassFunction();
+                // }}
+                >
                   <Link to="/users">
                     <i className="material-icons">text_fields</i>
                     <span>Employee</span>

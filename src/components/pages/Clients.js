@@ -20,15 +20,12 @@ const Clients = () => {
   const [modelshow, setModelshow] = useState(false);
   const [clientName, setClientName] = useState("");
   const [clienttype, setClientType] = useState("");
+  const [modelView, setModelView] = useState(false);
 
-  const [Modelclassvalue, setModelclassvalue] = useState("");
   const [apicall, setapicall] = useState(false);
   const ref = useRef();
 
   // for target model className------
-  useEffect(() => {
-    setModelclassvalue(ref.current.className);
-  }, [Modelclassvalue]);
 
   // model input field input field intialstate---------
   const initialFormState = {
@@ -43,7 +40,7 @@ const Clients = () => {
   };
 
   const [showCompany, setShowCompany] = useState(false);
-  const [modelClass, setModelclass] = useState(false);
+
   const [getClientsData, setGetClientsData] = useState([]);
 
   const [emailError, setEmailError] = useState(false);
@@ -142,14 +139,13 @@ const Clients = () => {
           icon: "success",
           confirmButtonText: "OK",
         }).then(function() {
-          setModelclass(true);
           setState(state);
           setapicall(true);
+          setModelView(false);
         });
       }
     }
     setapicall(false);
-    setModelclass(false);
   };
 
   // function update client when Update  button click
@@ -165,13 +161,8 @@ const Clients = () => {
           icon: "success",
           confirmButtonText: "OK",
         }).then(function() {
-          // document
-          //   .getElementById("exampleModal")
-          //   .setAttribute("style", "display:none");
-          // document
-          //   .getElementById("exampleModal")
-          //   .setAttribute("class", "model fade");
-          setModelclass(true);
+          setModelView(false);
+
           setState(state);
           setapicall(true);
         });
@@ -179,7 +170,6 @@ const Clients = () => {
     }
 
     setapicall(false);
-    setModelclass(false);
   };
 
   // useEffcet use for get client  api fucntion call
@@ -211,6 +201,7 @@ const Clients = () => {
 
   // funtion for update model open and get data from api based on client id
   const onUpdateModelClick = async (id) => {
+    setModelView(true);
     setModelshow(true);
     const response = await getClientByID(id);
 
@@ -219,6 +210,7 @@ const Clients = () => {
 
   // funtion for close model and reset input feild
   const onCloseModel = () => {
+    setModelView(false);
     setState(initialFormState);
     setErrors({});
     setEmailError(false);
@@ -226,6 +218,7 @@ const Clients = () => {
 
   // funtion for open  model and reset input feild
   const onModelOpen = async () => {
+    setModelView(true);
     setModelshow(false);
     setState(initialFormState);
     setEmailError(false);
@@ -264,7 +257,7 @@ const Clients = () => {
     <>
       <div className="theme-red ">
         <Header />
-        <SideBar />
+        {/* <SideBar /> */}
         <section className="content">
           <div className="container-fluid">
             <div className="block-header">
@@ -272,8 +265,8 @@ const Clients = () => {
               <div className=" text-right">
                 <button
                   className="btn btn-success"
-                  data-toggle="modal"
-                  data-target="#exampleModal"
+                  // data-toggle="modal"
+                  // data-target="#exampleModal"
                   onClick={() => onModelOpen()}
                 >
                   ADD CLIENTS
@@ -359,8 +352,8 @@ const Clients = () => {
                                     <div className="profile_edit_delete">
                                       <i
                                         class="material-icons text-primary"
-                                        data-toggle="modal"
-                                        data-target="#exampleModal"
+                                        // data-toggle="modal"
+                                        // data-target="#exampleModal"
                                         onClick={() =>
                                           onUpdateModelClick(item.id)
                                         }
@@ -396,18 +389,19 @@ const Clients = () => {
       </div>
       <div
         ref={ref}
-        className={
-          Modelclassvalue === "modal fade"
-            ? "modal fade"
-            : modelClass === true
-            ? "modal fade"
-            : "modal fade in"
-        }
+        // className={
+        //   Modelclassvalue === "modal fade"
+        //     ? "modal fade"
+        //     : modelClass === true
+        //     ? "modal fade"
+        //     : "modal fade in"
+        // }
         id="exampleModal"
         tabindex="-1"
         role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
+        // aria-labelledby="exampleModalLabel"
+        // aria-hidden="true"
+        className={modelView === true ? "modal show_modal" : "modal"}
       >
         <div className="back_drop"></div>
         <div className="modal-dialog" role="document">
@@ -419,8 +413,8 @@ const Clients = () => {
               <button
                 type="button"
                 className="close"
-                data-dismiss="modal"
-                aria-label="Close"
+                // data-dismiss="modal"
+                // aria-label="Close"
                 onClick={() => onCloseModel()}
               >
                 <span aria-hidden="true">&times;</span>
@@ -650,8 +644,8 @@ const Clients = () => {
                       <button
                         type="button"
                         className="btn btn-secondary"
-                        data-dismiss="modal"
-                        id="closeButton1"
+                        // data-dismiss="modal"
+                        // id="closeButton1"
                         onClick={() => onCloseModel()}
                       >
                         Close

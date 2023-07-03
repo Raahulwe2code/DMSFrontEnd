@@ -17,7 +17,7 @@
   z-index: 12;
   width: 100%;
 }
-.modal.fade.in .back_drop {
+.modal.show_modal .back_drop {
   position: absolute;
   background-color: #000000ab;
   width: 100%;
@@ -29,6 +29,11 @@
 }
 .modal-backdrop.fade.in {
   display: none;
+}
+.modal.show_modal {
+  transition: opacity 0.15s linear;
+  opacity: 1;
+  display: block;
 }
 .navbar .navbar-brand {
   white-space: nowrap;
@@ -2973,7 +2978,7 @@
 }
 /* my css classes */
 .deshbord_user_card .header {
-  padding: 6px !important;
+  /* padding: 6px !important; */
   text-align: center;
 }
 .deshbord_user_card .header img {
@@ -10692,6 +10697,6 @@ html.ie11 .bs-searchbox .form-control {
     margin-bottom: 8px;
   }
   section.content {
-    margin: 82px 15px 0 315px;
+    margin: 82px 15px 0 15px;
   }
 }

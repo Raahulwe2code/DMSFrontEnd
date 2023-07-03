@@ -384,7 +384,7 @@ const Gallary = () => {
     <>
       <div className="theme-red ">
         <Header />
-        <SideBar />
+        {/* <SideBar /> */}
         <section className="content">
           <div className="container-fluid">
             {/* <!-- Image Gallery --> */}

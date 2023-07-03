@@ -62,13 +62,9 @@
   overflow: visible;
 }
 
-.ls-closed .sidebar {
-  margin-left: -300px;
-}
-
-.ls-closed section.content {
+/* .ls-closed section.content {
   margin-left: 15px;
-}
+} */
 
 .ls-closed .bars:after,
 .ls-closed .bars:before {
@@ -5569,6 +5565,13 @@ section.content {
 }
 
 /* Modals ====================================== */
+
+.modal .close {
+  position: absolute;
+  right: 18px;
+  top: 22px;
+}
+
 .modal .modal-header {
   border: none;
   padding: 25px 25px 5px 25px;
@@ -6678,14 +6681,39 @@ section.content {
   font-size: 18px;
 }
 
-.form-control-label {
+/* .form-control-label {
   text-align: right;
-}
-.form-control-label label {
+} */
+/* .form-control-label label {
   margin-top: 8px;
+} */
+.modal .form-control-label {
+  display: flex;
+  align-items: start;
 }
-.document_card {
+.modal .clearfix {
+  display: flex;
+  align-items: center;
 }
+
+.modal small.text-danger {
+  margin-left: 2px;
+}
+.modal .modal-footer {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+}
+
+@media (max-width: 1167px) {
+  .ls-closed .sidebar {
+    margin-left: -300px;
+  }
+  .ls-closed section.content {
+    margin-left: 15px;
+  }
+}
+
 @media (max-width: 767px) {
   .form-control-label {
     text-align: left;
@@ -8822,13 +8850,9 @@ fieldset[disabled] .form-control {
   overflow: visible;
 }
 
-.ls-closed .sidebar {
-  margin-left: -300px;
-}
-
-.ls-closed section.content {
+/* .ls-closed section.content {
   margin-left: 15px;
-}
+} */
 
 .ls-closed .bars:after,
 .ls-closed .bars:before {
@@ -10689,6 +10713,7 @@ html.ie11 .dropdown-menu ul.menu li a {
 html.ie11 .bs-searchbox .form-control {
   width: 90%;
 }
+
 @media (max-width: 722px) {
   .zip_downlode #mailBox {
     margin-left: 3px;

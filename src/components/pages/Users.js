@@ -438,9 +438,8 @@ const Users = () => {
                   </div>
                   <div className="row clearfix">
                     <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
-                      <label htmlFor="name">
-                        Phone No. <small className="text-danger">*</small>
-                      </label>
+                      <label htmlFor="name">PhoneNo. </label>
+                      <small className="text-danger">*</small>
                     </div>
                     <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
                       <div className="form-group">
@@ -474,16 +473,18 @@ const Users = () => {
                       <small className="text-danger">*</small>
                     </div>
                     <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                      <select
-                        className="form-control "
-                        value={state.is_active}
-                        name="is_active"
-                        onChange={onInputChange}
-                      >
-                        <option value="">-- Please select Status --</option>
-                        <option value="1">Active</option>
-                        <option value="0">Unactive</option>
-                      </select>
+                      <div className="form-line">
+                        <select
+                          className="form-control "
+                          value={state.is_active}
+                          name="is_active"
+                          onChange={onInputChange}
+                        >
+                          <option value="">-- Please select Status --</option>
+                          <option value="1">Active</option>
+                          <option value="0">Unactive</option>
+                        </select>
+                      </div>
                     </div>
                     {errors.is_active
                       ? (errors.is_active || []).map((error, i) => {

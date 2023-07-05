@@ -9,15 +9,19 @@ import {
   UpdateClient,
 } from "../../api/api";
 import Header from "../comman/Header";
-import SideBar from "../comman/SideBar";
+
 import Swal from "sweetalert2";
+
 import { useNavigate } from "react-router-dom";
+import Loader from "../comman/loader";
 // const ref = useRef();
 
 const Clients = () => {
   const navigate = useNavigate();
   const admin_id = localStorage.getItem("admin_id");
   const [modelshow, setModelshow] = useState(false);
+  const [loadidng, setLoading] = useState(true);
+  const [submitLoader, setSubmitLoader] = useState(false);
   const [clientName, setClientName] = useState("");
   const [clienttype, setClientType] = useState("");
   const [modelView, setModelView] = useState(false);
@@ -124,6 +128,7 @@ const Clients = () => {
 
   // function add client when submit button click
   const onClientAdd = async (e) => {
+    setSubmitLoader(true);
     e.preventDefault();
     if (validate()) {
       const response = await AddClientByadmin(state);
@@ -139,19 +144,23 @@ const Clients = () => {
           icon: "success",
           confirmButtonText: "OK",
         }).then(function() {
+          setSubmitLoader(false);
           setState(state);
           setapicall(true);
           setModelView(false);
         });
       }
     }
+    setSubmitLoader(false);
     setapicall(false);
   };
 
   // function update client when Update  button click
   const onClientUpdate = async (e) => {
     e.preventDefault();
+
     if (validate()) {
+      setSubmitLoader(true);
       const response = await UpdateClient(state);
 
       if (response.message === "updated Client successfully") {
@@ -162,13 +171,13 @@ const Clients = () => {
           confirmButtonText: "OK",
         }).then(function() {
           setModelView(false);
-
+          setSubmitLoader(false);
           setState(state);
           setapicall(true);
         });
       }
     }
-
+    setSubmitLoader(false);
     setapicall(false);
   };
 
@@ -187,6 +196,7 @@ const Clients = () => {
 
     setGetClientsData(response);
     setapicall(false);
+    setLoading(false);
   };
 
   const clientNameOnChange = (e) => {
@@ -228,7 +238,7 @@ const Clients = () => {
   const onClientClick = (id, name, email) => {
     localStorage.setItem("client_name", name);
     localStorage.setItem("client_email", email);
-    navigate(`/gallary?client_id=${id}`);
+    navigate(`/gallary?client_id=${id}&&loading=${loadidng}`);
   };
 
   // funtion for open delete sweet alert
@@ -243,13 +253,16 @@ const Clients = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        setSubmitLoader(true);
         const response = await deleteClientfunction(id);
         if (response.message === "delete clients successfully") {
           Swal.fire("Deleted!", "Your file has been deleted.", "success");
           setapicall(true);
+          setSubmitLoader(false);
         }
       }
     });
+    setSubmitLoader(false);
     setapicall(false);
   };
 
@@ -257,6 +270,9 @@ const Clients = () => {
     <>
       <div className="theme-red ">
         <Header />
+        {/* <Loader /> */}
+        {loadidng ? <Loader /> : null}
+        {submitLoader ? <Loader /> : null}
         {/* <SideBar /> */}
         <section className="content">
           <div className="container-fluid">
@@ -435,21 +451,25 @@ const Clients = () => {
                   }
                 >
                   <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                    <div className="modal_label col-md-2 form-control-label">
                       <label htmlFor="password_2">Type</label>{" "}
                       <small className="text-danger">*</small>
                     </div>
-                    <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                      <select
-                        className="form-control "
-                        value={state.type}
-                        name="type"
-                        onChange={onInputChange}
-                      >
-                        <option value="">-- Please select type --</option>
-                        <option value="individual">Individual</option>
-                        <option value="company">Company</option>
-                      </select>
+                    <div className="modal_input col-md-10 ">
+                      <div className="form-group">
+                        <div className="form-line">
+                          <select
+                            className="form-control "
+                            value={state.type}
+                            name="type"
+                            onChange={onInputChange}
+                          >
+                            <option value="">-- Please select type --</option>
+                            <option value="individual">Individual</option>
+                            <option value="company">Company</option>
+                          </select>
+                        </div>
+                      </div>
                       {errors.type
                         ? (errors.type || []).map((error, i) => {
                             return (
@@ -462,11 +482,11 @@ const Clients = () => {
                     </div>
                   </div>
                   <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                    <div className="modal_label col-md-2 form-control-label">
                       <label htmlFor="name">Name</label>
                       <small className="text-danger">*</small>
                     </div>
-                    <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                    <div className="modal_input col-md-10">
                       <div className="form-group">
                         <div className="form-line">
                           <input
@@ -483,7 +503,10 @@ const Clients = () => {
                         {errors.name
                           ? (errors.name || []).map((error, i) => {
                               return (
-                                <small className="text-danger" key={i}>
+                                <small
+                                  className="text-danger error_massage"
+                                  key={i}
+                                >
                                   {error}
                                 </small>
                               );
@@ -493,12 +516,12 @@ const Clients = () => {
                     </div>
                   </div>
                   <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                    <div className="modal_label col-md-2 form-control-label">
                       <label htmlFor="email">Email</label>
                       <small className="text-danger">*</small>
                     </div>
                     <div
-                      className="col-lg-10 col-md-10 col-sm-12 col-xs-12
+                      className="modal_input col-md-10 
                     "
                     >
                       <div className="form-group">
@@ -516,14 +539,17 @@ const Clients = () => {
                         {errors.email
                           ? (errors.email || []).map((error, i) => {
                               return (
-                                <small className="text-danger" key={i}>
+                                <small
+                                  className="text-danger error_massage"
+                                  key={i}
+                                >
                                   {error}
                                 </small>
                               );
                             })
                           : null}
                         {emailError === true ? (
-                          <small className="text-danger">
+                          <small className="text-danger error_massage">
                             Client already registerd by this admin
                           </small>
                         ) : null}
@@ -532,12 +558,11 @@ const Clients = () => {
                   </div>
 
                   <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
-                      <label htmlFor="name">
-                        Phone No. <small className="text-danger">*</small>
-                      </label>
+                    <div className="modal_label col-md-2 form-control-label">
+                      <label htmlFor="name">PhoneNo.</label>
+                      <small className="text-danger">*</small>
                     </div>
-                    <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                    <div className="modal_input col-md-10 ">
                       <div className="form-group">
                         <div className="form-line">
                           <input
@@ -554,7 +579,10 @@ const Clients = () => {
                         {errors.phone_no
                           ? (errors.phone_no || []).map((error, i) => {
                               return (
-                                <small className="text-danger" key={i}>
+                                <small
+                                  className="text-danger error_massage"
+                                  key={i}
+                                >
                                   {error}
                                 </small>
                               );
@@ -565,12 +593,11 @@ const Clients = () => {
                   </div>
 
                   <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
-                      <label htmlFor="name">
-                        Address <small className="text-danger">*</small>
-                      </label>
+                    <div className="modal_label col-md-2 form-control-label">
+                      <label htmlFor="name">Address </label>{" "}
+                      <small className="text-danger">*</small>
                     </div>
-                    <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                    <div className="modal_input col-md-10 ">
                       <div className="form-group">
                         <div className="form-line">
                           <textarea
@@ -585,7 +612,10 @@ const Clients = () => {
                         {errors.address
                           ? (errors.address || []).map((error, i) => {
                               return (
-                                <small className="text-danger" key={i}>
+                                <small
+                                  className="text-danger error_massage"
+                                  key={i}
+                                >
                                   {error}
                                 </small>
                               );
@@ -598,10 +628,10 @@ const Clients = () => {
                   {showCompany === false ? (
                     <div>
                       <div className="row clearfix">
-                        <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                        <div className="modal_label col-md-2 form-control-label">
                           <label htmlFor="name">Company Name. </label>
                         </div>
-                        <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        <div className="modal_input col-md-10 ">
                           <div className="form-group">
                             <div className="form-line">
                               <input
@@ -619,10 +649,10 @@ const Clients = () => {
                         </div>
                       </div>
                       <div className="row clearfix">
-                        <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                        <div className="modal_label col-md-2 form-control-label">
                           <label htmlFor="name">Company Address </label>
                         </div>
-                        <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        <div className="modal_input col-md-10 ">
                           <div className="form-group">
                             <div className="form-line">
                               <textarea

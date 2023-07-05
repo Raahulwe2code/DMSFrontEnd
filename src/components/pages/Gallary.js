@@ -4,7 +4,6 @@ import pdfLogo from "../comman/images/PDF.png";
 import msDoc from "../comman/images/msss.jpg";
 import msXls from "../comman/images/excel.png";
 import Header from "../comman/Header";
-import SideBar from "../comman/SideBar";
 
 import { Link, useSearchParams } from "react-router-dom";
 import {
@@ -32,13 +31,15 @@ import lgShare from "lightgallery/plugins/share";
 import lgRotate from "lightgallery/plugins/rotate";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import Loader from "../comman/loader";
 const Gallary = () => {
   const [searchparams] = useSearchParams();
 
   let encoded;
 
   let checkboxUrl = [];
-
+  const [loadidng, setLoading] = useState(false);
+  const [submitLoader, setSubmitLoader] = useState(false);
   const admin_id = localStorage.getItem("admin_id");
   const [fileUrls, setFileUrls] = useState([]);
   const [searchDocumentName, setSearchDocumentName] = useState("");
@@ -70,7 +71,11 @@ const Gallary = () => {
     } else {
       setClientID(searchparams.get("client_id"));
     }
-  }, []);
+
+    if (searchparams.get("loading") === "false") {
+      setLoading(true);
+    }
+  }, [clienttId]);
   // onchange for document name
   const OndocumentName = (e) => {
     setDocumentName(e.target.value);
@@ -150,6 +155,7 @@ const Gallary = () => {
     ) {
       const productimg = rest.join("-");
       setDocumentUpload(productimg);
+
       setcustomValidated("");
     } else {
       setcustomValidated("imgformat");
@@ -164,14 +170,17 @@ const Gallary = () => {
   // funtion for add document
   const addDocument = async (e) => {
     e.preventDefault();
+
     if (documentName === "") {
       setcustomValidated("name is empty");
     } else if (DocumentUpload === null) {
       console.log("in document");
       setcustomValidated("document is empty");
     } else {
+      setSubmitLoader(true);
+
       const response = await AddDocument(initialFormState);
-      console.log(JSON.stringify(response));
+      setSubmitLoader(false);
       if (response.message === "Document upload successfully") {
         Swal.fire({
           title: "Success",
@@ -180,13 +189,16 @@ const Gallary = () => {
           confirmButtonText: "OK",
         }).then(function() {
           setModelView(false);
+
           setModelclass(true);
           setDocumentName("");
           setDocumentUpload("");
           setapicall(true);
         });
       }
+      setSubmitLoader(false);
       setModelclass(false);
+      setModelView(false);
       setapicall(false);
     }
   };
@@ -203,7 +215,9 @@ const Gallary = () => {
       searchDocumentName,
       searchDocumenttype
     );
+    setLoading(false);
     setGetDocmentData(response);
+
     setapicall(false);
   };
 
@@ -268,6 +282,7 @@ const Gallary = () => {
       await Promise.all(promises);
       // console.log("start");
       // Generate the zip file
+      setSubmitLoader(true);
       const content = await zip.generateAsync({ type: "blob" });
       // console.log("end");
 
@@ -275,6 +290,7 @@ const Gallary = () => {
       console.log(" save start");
       saveAs(content, `${clientNamee}_Document.zip`);
       console.log(" save end");
+      setSubmitLoader(false);
     }
   };
 
@@ -329,14 +345,17 @@ const Gallary = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        setSubmitLoader(true);
         const response = await deleteDocumentfunction(id);
         if (response.message === "delete document successfully") {
           Swal.fire("Deleted!", "Your file has been deleted.", "success");
           setapicall(true);
+          setSubmitLoader(false);
         }
       }
     });
     setapicall(false);
+    setSubmitLoader(false);
   };
 
   //funtion for get file name from document_url array
@@ -350,8 +369,9 @@ const Gallary = () => {
     e.preventDefault();
 
     setEmailBtnLoader(true);
+
     const zip = new JSZip();
-    console.log("zip---" + JSON.stringify(fileUrls));
+
     // Fetch each file and add it to the zip
     const promises = fileUrls.map(async (url) => {
       const response = await fetch(url);
@@ -402,6 +422,8 @@ const Gallary = () => {
       <div className="theme-red ">
         <Header />
         {/* <SideBar /> */}
+        {loadidng ? <Loader /> : null}
+        {submitLoader === true ? <Loader /> : null}
         <section className="content">
           <div className="container-fluid">
             {/* <!-- Image Gallery --> */}
@@ -409,8 +431,8 @@ const Gallary = () => {
               <div className=" text-right">
                 <button
                   className="btn btn-success"
-                  data-toggle="modal"
-                  data-target="#exampleModal"
+                  // data-toggle="modal"
+                  // data-target="#exampleModal"
                   onClick={() => onModelOpen()}
                 >
                   ADD DOCUMENTS

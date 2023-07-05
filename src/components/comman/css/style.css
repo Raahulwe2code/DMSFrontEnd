@@ -2344,6 +2344,9 @@
 
 .block-header {
   margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .block-header h2 {
@@ -2976,6 +2979,12 @@
 .deshbord_user_card .header {
   /* padding: 6px !important; */
   text-align: center;
+}
+.card.deshbord_user_card {
+  min-height: 214px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 .deshbord_user_card .header img {
   width: 100px;
@@ -5999,7 +6008,12 @@ section.content {
 .modal-col-white .modal-footer .btn-link:focus {
   background-color: rgba(0, 0, 0, 0.12);
 }
-
+.modal .form-line {
+  border-bottom: none !important;
+}
+.modal .form-line .form-control {
+  box-shadow: none !important;
+}
 /* Labels ====================================== */
 .label {
   -webkit-border-radius: 0;
@@ -6696,13 +6710,16 @@ section.content {
   align-items: center;
 }
 
-.modal small.text-danger {
+.form-control-label .text-danger {
   margin-left: 2px;
 }
 .modal .modal-footer {
   display: flex;
   justify-content: end;
   width: 100%;
+}
+.modal .error_massage {
+  padding-left: 12px;
 }
 
 @media (max-width: 1167px) {
@@ -6727,6 +6744,10 @@ section.content {
   .card.deshbord_user_card {
     margin: 0 40px;
     padding: 6px;
+  }
+  .modal .modal-content {
+    overflow: scroll;
+    height: 94vh;
   }
 }
 .form-horizontal .form-group {
@@ -10713,10 +10734,23 @@ html.ie11 .dropdown-menu ul.menu li a {
 html.ie11 .bs-searchbox .form-control {
   width: 90%;
 }
-
+.bars {
+  display: none;
+}
+@media (max-width: 992px) {
+  .modal .modal_input {
+    width: 68%;
+  }
+  .modal .modal_label {
+    width: 32%;
+  }
+}
 @media (max-width: 722px) {
   .zip_downlode #mailBox {
     margin-left: 3px;
+  }
+  .bars {
+    display: block;
   }
   .form-group {
     margin-bottom: 8px;

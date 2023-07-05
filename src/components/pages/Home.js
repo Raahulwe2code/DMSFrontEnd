@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../comman/Header";
+
 import SideBar from "../comman/SideBar";
 
 const Home = () => {
@@ -9,6 +10,7 @@ const Home = () => {
       <div className="theme-red ">
         <Header />
         <SideBar />
+
         <section className="content">
           <div className="container-fluid">
             <div className="block-header">

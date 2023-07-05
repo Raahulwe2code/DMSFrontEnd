@@ -11,7 +11,7 @@ import {
 import Header from "../comman/Header";
 // import SideBar from "../comman/SideBar";
 import Swal from "sweetalert2";
-
+import Loader from "../comman/loader";
 // const ref = useRef();
 
 const Users = () => {
@@ -36,6 +36,8 @@ const Users = () => {
     email: "",
     password: "",
   };
+  const [loadidng, setLoading] = useState(true);
+  const [submitLoader, setSubmitLoader] = useState(false);
   const [employeeName, setemployeeName] = useState("");
   const [modelshow, setModelshow] = useState(false);
   const [getUsersData, setGetUsersData] = useState([]);
@@ -111,8 +113,9 @@ const Users = () => {
   const onUserAdd = async (e) => {
     e.preventDefault();
     if (validate()) {
+      setSubmitLoader(true);
       const response = await AddUsers(state);
-
+      setSubmitLoader(false);
       if (
         response.response ===
         "email already exist, check your mail or try after sometime"
@@ -141,8 +144,9 @@ const Users = () => {
   const onUserUpdate = async (e) => {
     e.preventDefault();
     if (validate()) {
+      setSubmitLoader(true);
       const response = await UpdateUser(state);
-
+      setSubmitLoader(false);
       if (response.message === "updated user successfully") {
         Swal.fire({
           title: "Success",
@@ -171,6 +175,7 @@ const Users = () => {
     const response = await getAllEmployeeswithFilter(admin_id, employeeName);
 
     setGetUsersData(response);
+    setLoading(false);
     setapicall(false);
   };
 
@@ -230,6 +235,8 @@ const Users = () => {
       <div className="theme-red ">
         <Header />
         {/* <SideBar /> */}
+        {loadidng ? <Loader /> : null}
+        {submitLoader ? <Loader /> : null}
         <section className="content">
           <div className="container-fluid">
             <div className="block-header">
@@ -379,11 +386,11 @@ const Users = () => {
                   }
                 >
                   {/* <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                    <div className="modal_label col-md-2 form-control-label">
                       <label for="password_2">Type</label>{" "}
                       <small className="text-danger">*</small>
                     </div>
-                    <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                    <div className="modal_input col-md-10">
                       <select
                         className="form-control "
                         value={state.type}
@@ -397,7 +404,7 @@ const Users = () => {
                       {errors.type
                         ? (errors.type || []).map((error, i) => {
                             return (
-                              <small className="text-danger" key={i}>
+                              <small className="text-danger error_massage" key={i}>
                                 {error}
                               </small>
                             );
@@ -406,11 +413,11 @@ const Users = () => {
                     </div>
                   </div> */}
                   <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                    <div className="modal_label col-md-2 form-control-label">
                       <label htmlFor="name">Name</label>
                       <small className="text-danger">*</small>
                     </div>
-                    <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                    <div className="modal_input col-md-10">
                       <div className="form-group">
                         <div className="form-line">
                           <input
@@ -427,7 +434,10 @@ const Users = () => {
                         {errors.name
                           ? (errors.name || []).map((error, i) => {
                               return (
-                                <small className="text-danger" key={i}>
+                                <small
+                                  className="text-danger error_massage"
+                                  key={i}
+                                >
                                   {error}
                                 </small>
                               );
@@ -437,11 +447,11 @@ const Users = () => {
                     </div>
                   </div>
                   <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                    <div className="modal_label col-md-2 form-control-label">
                       <label htmlFor="name">PhoneNo. </label>
                       <small className="text-danger">*</small>
                     </div>
-                    <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                    <div className="modal_input col-md-10">
                       <div className="form-group">
                         <div className="form-line">
                           <input
@@ -458,7 +468,10 @@ const Users = () => {
                         {errors.phone_no
                           ? (errors.phone_no || []).map((error, i) => {
                               return (
-                                <small className="text-danger" key={i}>
+                                <small
+                                  className="text-danger error_massage"
+                                  key={i}
+                                >
                                   {error}
                                 </small>
                               );
@@ -468,41 +481,44 @@ const Users = () => {
                     </div>
                   </div>
                   <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                    <div className="modal_label col-md-2 form-control-label">
                       <label htmlFor="password_2">Status</label>{" "}
                       <small className="text-danger">*</small>
                     </div>
-                    <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                      <div className="form-line">
-                        <select
-                          className="form-control "
-                          value={state.is_active}
-                          name="is_active"
-                          onChange={onInputChange}
-                        >
-                          <option value="">-- Please select Status --</option>
-                          <option value="1">Active</option>
-                          <option value="0">Unactive</option>
-                        </select>
+                    <div className="modal_input col-md-10">
+                      <div className="form-group">
+                        <div className="form-line">
+                          <select
+                            className="form-control "
+                            value={state.is_active}
+                            name="is_active"
+                            onChange={onInputChange}
+                          >
+                            <option value="">-- Please select Status --</option>
+                            <option value="1">Active</option>
+                            <option value="0">Unactive</option>
+                          </select>
+                        </div>
                       </div>
+
+                      {errors.is_active
+                        ? (errors.is_active || []).map((error, i) => {
+                            return (
+                              <small className="text-danger" key={i}>
+                                {error}
+                              </small>
+                            );
+                          })
+                        : null}
                     </div>
-                    {errors.is_active
-                      ? (errors.is_active || []).map((error, i) => {
-                          return (
-                            <small className="text-danger" key={i}>
-                              {error}
-                            </small>
-                          );
-                        })
-                      : null}
                   </div>
                   <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                    <div className="modal_label col-md-2 form-control-label">
                       <label htmlFor="email">Email</label>
                       <small className="text-danger">*</small>
                     </div>
                     <div
-                      className="col-lg-10 col-md-10 col-sm-12 col-xs-12
+                      className="modal_input col-md-10 
                     "
                     >
                       <div className="form-group">
@@ -520,7 +536,10 @@ const Users = () => {
                         {errors.email
                           ? (errors.email || []).map((error, i) => {
                               return (
-                                <small className="text-danger" key={i}>
+                                <small
+                                  className="text-danger error_massage"
+                                  key={i}
+                                >
                                   {error}
                                 </small>
                               );
@@ -537,12 +556,12 @@ const Users = () => {
                   </div>
 
                   <div className="row clearfix">
-                    <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                    <div className="modal_label col-md-2 form-control-label">
                       <label htmlFor="email">Password</label>
                       <small className="text-danger">*</small>
                     </div>
                     <div
-                      className="col-lg-10 col-md-10 col-sm-12 col-xs-12
+                      className="modal_input col-md-10 
                     "
                     >
                       <div className="form-group">
@@ -562,7 +581,10 @@ const Users = () => {
                         {errors.password
                           ? (errors.password || []).map((error, i) => {
                               return (
-                                <small className="text-danger" key={i}>
+                                <small
+                                  className="text-danger error_massage"
+                                  key={i}
+                                >
                                   {error}
                                 </small>
                               );

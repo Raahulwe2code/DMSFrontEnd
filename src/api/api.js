@@ -142,8 +142,10 @@ export const AddDocument = async (props) => {
 };
 
 export const getDocument = async (id, name, type) => {
+  var page = 1;
+  var limit = 4;
   const response = await axios.post(
-    `${process.env.REACT_APP_BASEURL}/search_document?client_id=${id}`,
+    `${process.env.REACT_APP_BASEURL}/search_document?client_id=${id}&page=${page}&limit=${limit}`,
     {
       document_title: name,
       document_type: type,

@@ -32,6 +32,9 @@ import lgRotate from "lightgallery/plugins/rotate";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import Loader from "../comman/loader";
+
+import ReactPaginate from "react-paginate";
+
 const Gallary = () => {
   const [searchparams] = useSearchParams();
 
@@ -216,7 +219,7 @@ const Gallary = () => {
       searchDocumenttype
     );
     setLoading(false);
-    setGetDocmentData(response);
+    setGetDocmentData(response.data);
 
     setapicall(false);
   };
@@ -755,6 +758,14 @@ const Gallary = () => {
                         })
                       )}
                     </div>
+                    <ReactPaginate
+                      pageCount={12}
+                      pageRangeDisplayed={12} // Adjust the number of pages to display in the pagination bar
+                      marginPagesDisplayed={2} // Adjust the number of margin pages to display
+                      // onPageChange={handlePageChange}
+                      containerClassName={"pagination"}
+                      activeClassName={"active"}
+                    />
                   </div>
                 </div>
               </div>

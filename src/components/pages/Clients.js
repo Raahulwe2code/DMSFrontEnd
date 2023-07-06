@@ -403,17 +403,19 @@ const Clients = () => {
                         })
                       )}
                     </div>
-                    <div className=" footer_pagination text-center">
-                      <ReactPaginate
-                        breakLabel="..."
-                        pageCount={pageCount}
-                        pageRangeDisplayed={3}
-                        marginPagesDisplayed={2}
-                        onPageChange={handlePageChange}
-                        containerClassName={"pagination"}
-                        activeClassName={"active"}
-                      />
-                    </div>
+                    {getClientsData.length === 0 ? null : (
+                      <div className=" footer_pagination text-center">
+                        <ReactPaginate
+                          breakLabel="..."
+                          pageCount={pageCount}
+                          pageRangeDisplayed={3}
+                          marginPagesDisplayed={2}
+                          onPageChange={handlePageChange}
+                          containerClassName={"pagination"}
+                          activeClassName={"active"}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

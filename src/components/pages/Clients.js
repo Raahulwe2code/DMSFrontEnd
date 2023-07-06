@@ -14,11 +14,14 @@ import Swal from "sweetalert2";
 
 import { useNavigate } from "react-router-dom";
 import Loader from "../comman/loader";
+import ReactPaginate from "react-paginate";
 // const ref = useRef();
 
 const Clients = () => {
   const navigate = useNavigate();
   const admin_id = localStorage.getItem("admin_id");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
   const [modelshow, setModelshow] = useState(false);
   const [loadidng, setLoading] = useState(true);
   const [submitLoader, setSubmitLoader] = useState(false);
@@ -184,17 +187,19 @@ const Clients = () => {
   // useEffcet use for get client  api fucntion call
   useEffect(() => {
     getClients();
-  }, [apicall, clientName, clienttype]);
+  }, [apicall, clientName, clienttype, currentPage]);
 
   // funtion for get list of client
   const getClients = async () => {
     const response = await getAllUserswithFilter(
       admin_id,
       clientName,
-      clienttype
+      clienttype,
+      currentPage
     );
 
-    setGetClientsData(response);
+    setGetClientsData(response.data);
+    setPageCount(response.totalPages);
     setapicall(false);
     setLoading(false);
   };
@@ -265,7 +270,9 @@ const Clients = () => {
     setSubmitLoader(false);
     setapicall(false);
   };
-
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected + 1);
+  };
   return (
     <>
       <div className="theme-red ">
@@ -395,6 +402,17 @@ const Clients = () => {
                           );
                         })
                       )}
+                    </div>
+                    <div className=" footer_pagination text-center">
+                      <ReactPaginate
+                        breakLabel="..."
+                        pageCount={pageCount}
+                        pageRangeDisplayed={3}
+                        marginPagesDisplayed={2}
+                        onPageChange={handlePageChange}
+                        containerClassName={"pagination"}
+                        activeClassName={"active"}
+                      />
                     </div>
                   </div>
                 </div>

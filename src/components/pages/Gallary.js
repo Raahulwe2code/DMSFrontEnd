@@ -41,6 +41,9 @@ const Gallary = () => {
   let encoded;
 
   let checkboxUrl = [];
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+  const [limit, setLimit] = useState(8);
   const [loadidng, setLoading] = useState(false);
   const [submitLoader, setSubmitLoader] = useState(false);
   const admin_id = localStorage.getItem("admin_id");
@@ -209,17 +212,31 @@ const Gallary = () => {
   // useEffect get document based on id----
   useEffect(() => {
     getDocumentByid(clienttId);
-  }, [clienttId, apicall, searchDocumentName, searchDocumenttype]);
+  }, [
+    clienttId,
+    apicall,
+    searchDocumentName,
+    searchDocumenttype,
+    currentPage,
+    limit,
+  ]);
 
   //function for get document based on client id
   const getDocumentByid = async (clientID) => {
     const response = await getDocument(
       clientID,
       searchDocumentName,
-      searchDocumenttype
+      searchDocumenttype,
+      currentPage,
+      limit
     );
     setLoading(false);
     setGetDocmentData(response.data);
+    if (response.totalPages === null) {
+      setPageCount(1);
+    } else {
+      setPageCount(response.totalPages);
+    }
 
     setapicall(false);
   };
@@ -419,6 +436,9 @@ const Gallary = () => {
     // saveAs(content, `${clientNamee}_Document.zip`);
     // console.log(" save end");
   };
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected + 1);
+  };
 
   return (
     <>
@@ -499,16 +519,34 @@ const Gallary = () => {
                           <option value="xlsx">Xlsx</option>
                         </select>
                       </div>
-                      <div className="col-sm-6">
-                        <label>
-                          <input
-                            type="checkbox"
-                            // checked={selectAllChecked}
-                            onChange={handleSelectAllChange}
-                          />
-                          <span> Select All</span>
-                        </label>
+                      <div className="col-sm-1 col-lg-1">
+                        <select
+                          className="form-control "
+                          value={limit}
+                          name="type"
+                          onChange={(e) => setLimit(e.target.value)}
+                        >
+                          <option value={""} disabled className="text-center">
+                            show
+                          </option>
+                          <option value={0}>All</option>
+                          <option value={4}>4</option>
+                          <option value={8}>{8}</option>
+                          <option value={12}>{12}</option>
+                        </select>
                       </div>
+                      {getDocumentData.length === 0 ? null : (
+                        <div className="col-sm-6">
+                          <label>
+                            <input
+                              type="checkbox"
+                              // checked={selectAllChecked}
+                              onChange={handleSelectAllChange}
+                            />
+                            <span> Select All</span>
+                          </label>
+                        </div>
+                      )}
                     </div>
 
                     <div
@@ -758,14 +796,19 @@ const Gallary = () => {
                         })
                       )}
                     </div>
-                    <ReactPaginate
-                      pageCount={12}
-                      pageRangeDisplayed={12} // Adjust the number of pages to display in the pagination bar
-                      marginPagesDisplayed={2} // Adjust the number of margin pages to display
-                      // onPageChange={handlePageChange}
-                      containerClassName={"pagination"}
-                      activeClassName={"active"}
-                    />
+                    {getDocumentData.length === 0 ? null : (
+                      <div className="footer_pagination text-center">
+                        <ReactPaginate
+                          breakLabel="..."
+                          pageCount={pageCount}
+                          pageRangeDisplayed={3}
+                          marginPagesDisplayed={2}
+                          onPageChange={handlePageChange}
+                          containerClassName={"pagination"}
+                          activeClassName={"active"}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

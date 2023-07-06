@@ -37,9 +37,10 @@ export const getAllUsers = async (id) => {
   return response.data;
 };
 
-export const getAllUserswithFilter = async (id, name, type) => {
+export const getAllUserswithFilter = async (id, name, type, currentPage) => {
+  var limit = 3;
   const response = await axios.post(
-    `${process.env.REACT_APP_BASEURL}/search_clients?admin_id=${id}`,
+    `${process.env.REACT_APP_BASEURL}/search_clients?admin_id=${id}&page=${currentPage}&limit=${limit}`,
     {
       name: name,
       type: type,
@@ -94,9 +95,10 @@ export const deleteUserfunction = async (id) => {
   return response.data;
 };
 
-export const getAllEmployeeswithFilter = async (id, name) => {
+export const getAllEmployeeswithFilter = async (id, name, currentPage) => {
+  var limit = 2;
   const response = await axios.post(
-    `${process.env.REACT_APP_BASEURL}/search_user?admin_id=${id}`,
+    `${process.env.REACT_APP_BASEURL}/search_user?admin_id=${id}&page=${currentPage}&limit=${limit}`,
     {
       name: name,
     }
@@ -141,11 +143,9 @@ export const AddDocument = async (props) => {
   return response.data;
 };
 
-export const getDocument = async (id, name, type) => {
-  var page = 1;
-  var limit = 4;
+export const getDocument = async (id, name, type, currentPage, limit) => {
   const response = await axios.post(
-    `${process.env.REACT_APP_BASEURL}/search_document?client_id=${id}&page=${page}&limit=${limit}`,
+    `${process.env.REACT_APP_BASEURL}/search_document?client_id=${id}&page=${currentPage}&limit=${limit}`,
     {
       document_title: name,
       document_type: type,

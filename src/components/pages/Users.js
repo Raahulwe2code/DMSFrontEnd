@@ -13,7 +13,7 @@ import Header from "../comman/Header";
 import Swal from "sweetalert2";
 import Loader from "../comman/loader";
 // const ref = useRef();
-
+import ReactPaginate from "react-paginate";
 const Users = () => {
   const admin_id = localStorage.getItem("admin_id");
   const [Modelclassvalue, setModelclassvalue] = useState("");
@@ -36,6 +36,8 @@ const Users = () => {
     email: "",
     password: "",
   };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
   const [loadidng, setLoading] = useState(true);
   const [submitLoader, setSubmitLoader] = useState(false);
   const [employeeName, setemployeeName] = useState("");
@@ -168,13 +170,18 @@ const Users = () => {
   // useEffect for get All employee
   useEffect(() => {
     getClients();
-  }, [apicall, employeeName]);
+  }, [apicall, employeeName, currentPage]);
 
   // funtion for get list of Employee
   const getClients = async () => {
-    const response = await getAllEmployeeswithFilter(admin_id, employeeName);
+    const response = await getAllEmployeeswithFilter(
+      admin_id,
+      employeeName,
+      currentPage
+    );
 
-    setGetUsersData(response);
+    setGetUsersData(response.data);
+    setPageCount(response.totalPages);
     setLoading(false);
     setapicall(false);
   };
@@ -229,7 +236,9 @@ const Users = () => {
     });
     setapicall(false);
   };
-
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected + 1);
+  };
   return (
     <>
       <div className="theme-red ">
@@ -329,6 +338,17 @@ const Users = () => {
                           );
                         })
                       )}
+                    </div>
+                    <div className="footer_pagination text-center">
+                      <ReactPaginate
+                        breakLabel="..."
+                        pageCount={pageCount}
+                        pageRangeDisplayed={3}
+                        marginPagesDisplayed={2}
+                        onPageChange={handlePageChange}
+                        containerClassName={"pagination"}
+                        activeClassName={"active"}
+                      />
                     </div>
                   </div>
                 </div>

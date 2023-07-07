@@ -423,110 +423,78 @@ const Clients = () => {
           </div>
         </section>
       </div>
-      <div
-        ref={ref}
-        // className={
-        //   Modelclassvalue === "modal fade"
-        //     ? "modal fade"
-        //     : modelClass === true
-        //     ? "modal fade"
-        //     : "modal fade in"
-        // }
-        id="exampleModal"
-        tabindex="-1"
-        role="dialog"
-        // aria-labelledby="exampleModalLabel"
-        // aria-hidden="true"
-        className={modelView === true ? "modal show_modal" : "modal"}
-      >
+      <div className={modelView === true ? "show_modal" : ""}>
         <div className="back_drop"></div>
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                {modelshow === true ? "Update Client" : " Add Client"}
-              </h5>
-              <button
-                type="button"
-                className="close"
-                // data-dismiss="modal"
-                // aria-label="Close"
-                onClick={() => onCloseModel()}
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="body">
-                <form
-                  className="form-horizontal"
-                  onSubmit={
-                    modelshow === true
-                      ? (e) => {
-                          onClientUpdate(e);
-                        }
-                      : (e) => {
-                          onClientAdd(e);
-                        }
-                  }
+        <div
+          ref={ref}
+          // className={
+          //   Modelclassvalue === "modal fade"
+          //     ? "modal fade"
+          //     : modelClass === true
+          //     ? "modal fade"
+          //     : "modal fade in"
+          // }
+          id="exampleModal"
+          tabindex="-1"
+          role="dialog"
+          // aria-labelledby="exampleModalLabel"
+          // aria-hidden="true"
+          className={"modal"}
+        >
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  {modelshow === true ? "Update Client" : " Add Client"}
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  // data-dismiss="modal"
+                  // aria-label="Close"
+                  onClick={() => onCloseModel()}
                 >
-                  <div className="row clearfix">
-                    <div className="modal_label col-md-2 form-control-label">
-                      <label htmlFor="password_2">Type</label>{" "}
-                      <small className="text-danger">*</small>
-                    </div>
-                    <div className="modal_input col-md-10 ">
-                      <div className="form-group">
-                        <div className="form-line">
-                          <select
-                            className="form-control "
-                            value={state.type}
-                            name="type"
-                            onChange={onInputChange}
-                          >
-                            <option value="">-- Please select type --</option>
-                            <option value="individual">Individual</option>
-                            <option value="company">Company</option>
-                          </select>
-                        </div>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="body">
+                  <form
+                    className="form-horizontal"
+                    onSubmit={
+                      modelshow === true
+                        ? (e) => {
+                            onClientUpdate(e);
+                          }
+                        : (e) => {
+                            onClientAdd(e);
+                          }
+                    }
+                  >
+                    <div className="row clearfix">
+                      <div className="modal_label col-md-2 form-control-label">
+                        <label htmlFor="password_2">Type</label>{" "}
+                        <small className="text-danger">*</small>
                       </div>
-                      {errors.type
-                        ? (errors.type || []).map((error, i) => {
-                            return (
-                              <small className="text-danger" key={i}>
-                                {error}
-                              </small>
-                            );
-                          })
-                        : null}
-                    </div>
-                  </div>
-                  <div className="row clearfix">
-                    <div className="modal_label col-md-2 form-control-label">
-                      <label htmlFor="name">Name</label>
-                      <small className="text-danger">*</small>
-                    </div>
-                    <div className="modal_input col-md-10">
-                      <div className="form-group">
-                        <div className="form-line">
-                          <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            maxLength={30}
-                            value={state.name}
-                            onChange={onInputChange}
-                            className="form-control"
-                            placeholder="Enter your name"
-                          />
+                      <div className="modal_input col-md-10 ">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <select
+                              className="form-control "
+                              value={state.type}
+                              name="type"
+                              onChange={onInputChange}
+                            >
+                              <option value="">-- Please select type --</option>
+                              <option value="individual">Individual</option>
+                              <option value="company">Company</option>
+                            </select>
+                          </div>
                         </div>
-                        {errors.name
-                          ? (errors.name || []).map((error, i) => {
+                        {errors.type
+                          ? (errors.type || []).map((error, i) => {
                               return (
-                                <small
-                                  className="text-danger error_massage"
-                                  key={i}
-                                >
+                                <small className="text-danger" key={i}>
                                   {error}
                                 </small>
                               );
@@ -534,178 +502,212 @@ const Clients = () => {
                           : null}
                       </div>
                     </div>
-                  </div>
-                  <div className="row clearfix">
-                    <div className="modal_label col-md-2 form-control-label">
-                      <label htmlFor="email">Email</label>
-                      <small className="text-danger">*</small>
+                    <div className="row clearfix">
+                      <div className="modal_label col-md-2 form-control-label">
+                        <label htmlFor="name">Name</label>
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div className="modal_input col-md-10">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="text"
+                              id="name"
+                              name="name"
+                              maxLength={30}
+                              value={state.name}
+                              onChange={onInputChange}
+                              className="form-control"
+                              placeholder="Enter your name"
+                            />
+                          </div>
+                          {errors.name
+                            ? (errors.name || []).map((error, i) => {
+                                return (
+                                  <small
+                                    className="text-danger error_massage"
+                                    key={i}
+                                  >
+                                    {error}
+                                  </small>
+                                );
+                              })
+                            : null}
+                        </div>
+                      </div>
                     </div>
-                    <div
-                      className="modal_input col-md-10 
+                    <div className="row clearfix">
+                      <div className="modal_label col-md-2 form-control-label">
+                        <label htmlFor="email">Email</label>
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div
+                        className="modal_input col-md-10 
                     "
-                    >
-                      <div className="form-group">
-                        <div className="form-line">
-                          <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            value={state.email}
-                            onChange={onInputChange}
-                            className="form-control"
-                            placeholder="Enter your email address"
-                          />
-                        </div>
-                        {errors.email
-                          ? (errors.email || []).map((error, i) => {
-                              return (
-                                <small
-                                  className="text-danger error_massage"
-                                  key={i}
-                                >
-                                  {error}
-                                </small>
-                              );
-                            })
-                          : null}
-                        {emailError === true ? (
-                          <small className="text-danger error_massage">
-                            Client already registerd by this admin
-                          </small>
-                        ) : null}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="row clearfix">
-                    <div className="modal_label col-md-2 form-control-label">
-                      <label htmlFor="name">PhoneNo.</label>
-                      <small className="text-danger">*</small>
-                    </div>
-                    <div className="modal_input col-md-10 ">
-                      <div className="form-group">
-                        <div className="form-line">
-                          <input
-                            type="number"
-                            id="phone_no"
-                            name="phone_no"
-                            maxLength={10}
-                            value={state.phone_no}
-                            onChange={onInputChange}
-                            className="form-control"
-                            placeholder="Enter your phone no"
-                          />
-                        </div>
-                        {errors.phone_no
-                          ? (errors.phone_no || []).map((error, i) => {
-                              return (
-                                <small
-                                  className="text-danger error_massage"
-                                  key={i}
-                                >
-                                  {error}
-                                </small>
-                              );
-                            })
-                          : null}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="row clearfix">
-                    <div className="modal_label col-md-2 form-control-label">
-                      <label htmlFor="name">Address </label>{" "}
-                      <small className="text-danger">*</small>
-                    </div>
-                    <div className="modal_input col-md-10 ">
-                      <div className="form-group">
-                        <div className="form-line">
-                          <textarea
-                            rows="4"
-                            className="form-control no-resize"
-                            placeholder="Please type what you want..."
-                            name="address"
-                            value={state.address}
-                            onChange={onInputChange}
-                          ></textarea>
-                        </div>
-                        {errors.address
-                          ? (errors.address || []).map((error, i) => {
-                              return (
-                                <small
-                                  className="text-danger error_massage"
-                                  key={i}
-                                >
-                                  {error}
-                                </small>
-                              );
-                            })
-                          : null}
-                      </div>
-                    </div>
-                  </div>
-
-                  {showCompany === false ? (
-                    <div>
-                      <div className="row clearfix">
-                        <div className="modal_label col-md-2 form-control-label">
-                          <label htmlFor="name">Company Name. </label>
-                        </div>
-                        <div className="modal_input col-md-10 ">
-                          <div className="form-group">
-                            <div className="form-line">
-                              <input
-                                type="text"
-                                id="company_name"
-                                maxLength={30}
-                                name="company_name"
-                                value={state.company_name}
-                                onChange={onInputChange}
-                                className="form-control"
-                                placeholder="Enter your company name"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row clearfix">
-                        <div className="modal_label col-md-2 form-control-label">
-                          <label htmlFor="name">Company Address </label>
-                        </div>
-                        <div className="modal_input col-md-10 ">
-                          <div className="form-group">
-                            <div className="form-line">
-                              <textarea
-                                rows="4"
-                                className="form-control no-resize"
-                                placeholder="Please type what you want..."
-                                name="company_address"
-                                value={state.company_address}
-                                onChange={onInputChange}
-                              ></textarea>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : null}
-                  <div className="row clearfix">
-                    <div className="modal-footer">
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        // data-dismiss="modal"
-                        // id="closeButton1"
-                        onClick={() => onCloseModel()}
                       >
-                        Close
-                      </button>
-                      <button type="submit" className="btn btn-primary">
-                        {modelshow === true ? "Update" : " Add "}
-                      </button>
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="email"
+                              name="email"
+                              id="email"
+                              value={state.email}
+                              onChange={onInputChange}
+                              className="form-control"
+                              placeholder="Enter your email address"
+                            />
+                          </div>
+                          {errors.email
+                            ? (errors.email || []).map((error, i) => {
+                                return (
+                                  <small
+                                    className="text-danger error_massage"
+                                    key={i}
+                                  >
+                                    {error}
+                                  </small>
+                                );
+                              })
+                            : null}
+                          {emailError === true ? (
+                            <small className="text-danger error_massage">
+                              Client already registerd by this admin
+                            </small>
+                          ) : null}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </form>
+
+                    <div className="row clearfix">
+                      <div className="modal_label col-md-2 form-control-label">
+                        <label htmlFor="name">PhoneNo.</label>
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div className="modal_input col-md-10 ">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="number"
+                              id="phone_no"
+                              name="phone_no"
+                              maxLength={10}
+                              value={state.phone_no}
+                              onChange={onInputChange}
+                              className="form-control"
+                              placeholder="Enter your phone no"
+                            />
+                          </div>
+                          {errors.phone_no
+                            ? (errors.phone_no || []).map((error, i) => {
+                                return (
+                                  <small
+                                    className="text-danger error_massage"
+                                    key={i}
+                                  >
+                                    {error}
+                                  </small>
+                                );
+                              })
+                            : null}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="row clearfix">
+                      <div className="modal_label col-md-2 form-control-label">
+                        <label htmlFor="name">Address </label>{" "}
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div className="modal_input col-md-10 ">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <textarea
+                              rows="4"
+                              className="form-control no-resize"
+                              placeholder="Please type what you want..."
+                              name="address"
+                              value={state.address}
+                              onChange={onInputChange}
+                            ></textarea>
+                          </div>
+                          {errors.address
+                            ? (errors.address || []).map((error, i) => {
+                                return (
+                                  <small
+                                    className="text-danger error_massage"
+                                    key={i}
+                                  >
+                                    {error}
+                                  </small>
+                                );
+                              })
+                            : null}
+                        </div>
+                      </div>
+                    </div>
+
+                    {showCompany === false ? (
+                      <div>
+                        <div className="row clearfix">
+                          <div className="modal_label col-md-2 form-control-label">
+                            <label htmlFor="name">Company Name. </label>
+                          </div>
+                          <div className="modal_input col-md-10 ">
+                            <div className="form-group">
+                              <div className="form-line">
+                                <input
+                                  type="text"
+                                  id="company_name"
+                                  maxLength={30}
+                                  name="company_name"
+                                  value={state.company_name}
+                                  onChange={onInputChange}
+                                  className="form-control"
+                                  placeholder="Enter your company name"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="row clearfix">
+                          <div className="modal_label col-md-2 form-control-label">
+                            <label htmlFor="name">Company Address </label>
+                          </div>
+                          <div className="modal_input col-md-10 ">
+                            <div className="form-group">
+                              <div className="form-line">
+                                <textarea
+                                  rows="4"
+                                  className="form-control no-resize"
+                                  placeholder="Please type what you want..."
+                                  name="company_address"
+                                  value={state.company_address}
+                                  onChange={onInputChange}
+                                ></textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+                    <div className="row clearfix">
+                      <div className="modal-footer">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          // data-dismiss="modal"
+                          // id="closeButton1"
+                          onClick={() => onCloseModel()}
+                        >
+                          Close
+                        </button>
+                        <button type="submit" className="btn btn-primary">
+                          {modelshow === true ? "Update" : " Add "}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>

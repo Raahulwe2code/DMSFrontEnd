@@ -17,8 +17,8 @@
   z-index: 12;
   width: 100%;
 }
-.modal.show_modal .back_drop {
-  position: absolute;
+.show_modal .back_drop {
+  position: fixed;
   background-color: #000000ab;
   width: 100%;
   height: 100%;
@@ -26,11 +26,12 @@
   left: 0;
   bottom: 0;
   top: 0;
+  z-index: 99;
 }
 .modal-backdrop.fade.in {
   display: none;
 }
-.modal.show_modal {
+.show_modal .modal {
   transition: opacity 0.15s linear;
   opacity: 1;
   display: block;
@@ -4351,9 +4352,21 @@ section.content {
 .loader_btn .spinner-layer {
   border-color: #fff;
 }
+
 .show_loader {
   display: none;
 }
+
+.loader_btn .preloader {
+  display: none;
+}
+.get_link_spinner .get_link_btn {
+  display: none;
+}
+.get_link_spinner .preloader {
+  display: block;
+}
+
 .email_send_btn {
   width: 82px;
 }
@@ -5575,6 +5588,12 @@ section.content {
 
 /* Modals ====================================== */
 
+.modal {
+  position: absolute;
+  top: 5%;
+  height: min-content;
+}
+
 .modal .close {
   position: absolute;
   right: 18px;
@@ -6745,10 +6764,10 @@ section.content {
     margin: 0 40px;
     padding: 6px;
   }
-  .modal .modal-content {
+  /* .modal .modal-content {
     overflow: scroll;
     height: 94vh;
-  }
+  } */
 }
 .form-horizontal .form-group {
   margin-bottom: 0;
@@ -8343,15 +8362,15 @@ fieldset[disabled] .form-control {
   right: 0;
   width: 100%;
   height: 100%;
-  background: #eee;
+  background: #02020291;
   overflow: hidden;
   text-align: center;
 }
 .page-loader-wrapper p {
-  font-size: 13px;
+  font-size: 16px;
   margin-top: 10px;
   font-weight: bold;
-  color: #444;
+  color: #e7e7e7;
 }
 .page-loader-wrapper .loader {
   position: relative;

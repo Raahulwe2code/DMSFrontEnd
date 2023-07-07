@@ -451,7 +451,7 @@ const Gallary = () => {
           <div className="container-fluid">
             {/* <!-- Image Gallery --> */}
             <div className="block-header">
-              <div className=" text-right">
+              <div className="text-right" style={{ width: "100%" }}>
                 <button
                   className="btn btn-success"
                   // data-toggle="modal"
@@ -815,129 +815,131 @@ const Gallary = () => {
             </div>
           </div>
         </section>
-        <div
-          ref={ref}
-          // className={
-          //   Modelclassvalue === "modal fade"
-          //     ? "modal fade"
-          //     : modelClass === true
-          //     ? "modal fade"
-          //     : "modal fade in"
-          // }
-          id="exampleModal"
-          tabindex="-1"
-          role="dialog"
-          // aria-labelledby="exampleModalLabel"
-          // aria-hidden="true"
-          className={modelView === true ? "modal show_modal" : "modal"}
-        >
+        <div className={modelView === true ? "show_modal" : ""}>
           <div className="back_drop"></div>
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLabel">
-                  {modelshow === true ? "Update Client" : " Add Document"}
-                </h5>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                  onClick={() => onCloseModel()}
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <div className="body">
-                  <form
-                    className="form-horizontal"
-                    onSubmit={(e) => {
-                      addDocument(e);
-                    }}
+          <div
+            ref={ref}
+            // className={
+            //   Modelclassvalue === "modal fade"
+            //     ? "modal fade"
+            //     : modelClass === true
+            //     ? "modal fade"
+            //     : "modal fade in"
+            // }
+            id="exampleModal"
+            tabindex="-1"
+            role="dialog"
+            // aria-labelledby="exampleModalLabel"
+            // aria-hidden="true"
+            className={"modal"}
+          >
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="exampleModalLabel">
+                    {modelshow === true ? "Update Client" : " Add Document"}
+                  </h5>
+                  <button
+                    type="button"
+                    className="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                    onClick={() => onCloseModel()}
                   >
-                    <div className="row clearfix">
-                      <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
-                        <label htmlFor="name"> Title</label>
-                        <small className="text-danger">*</small>
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <div className="body">
+                    <form
+                      className="form-horizontal"
+                      onSubmit={(e) => {
+                        addDocument(e);
+                      }}
+                    >
+                      <div className="row clearfix">
+                        <div className="modal_label col-md-2 form-control-label">
+                          <label htmlFor="name"> Title</label>
+                          <small className="text-danger">*</small>
+                        </div>
+                        <div className="modal_input col-md-10">
+                          <div className="form-group">
+                            <div className="form-line">
+                              <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={documentName}
+                                onChange={(e) => {
+                                  OndocumentName(e);
+                                }}
+                                className="form-control"
+                                placeholder="Enter document name"
+                              />
+                              {customvalidated === "name is empty" ? (
+                                <small className="text-danger">
+                                  {" "}
+                                  Document name is empty
+                                </small>
+                              ) : null}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                        <div className="form-group">
-                          <div className="form-line">
-                            <input
-                              type="text"
-                              id="name"
-                              name="name"
-                              value={documentName}
-                              onChange={(e) => {
-                                OndocumentName(e);
-                              }}
-                              className="form-control"
-                              placeholder="Enter document name"
-                            />
-                            {customvalidated === "name is empty" ? (
+                      <div className="row clearfix">
+                        <div className="modal_label col-md-2 form-control-label">
+                          <label htmlFor="name">Documents </label>
+                          <small className="text-danger">*</small>
+                        </div>
+                        <div className="modal_input col-md-10">
+                          <div className="form-group">
+                            <div className="form-line">
+                              <input
+                                type="file"
+                                id="img_64"
+                                name={"img_64"}
+                                // value={state.name}
+                                onChange={(e) => imguploadchange(e)}
+                                className="form-control"
+                              />
+                            </div>
+                            {customvalidated === "document is empty" ? (
                               <small className="text-danger">
                                 {" "}
-                                Document name is empty
+                                please Select file first
                               </small>
+                            ) : null}
+
+                            {customvalidated === "imgformat" ? (
+                              <span
+                                className="mt-2   text-center fs-6 text-danger"
+                                type="invalid"
+                              >
+                                Document Format should be in jpg, jpeg or png,
+                                doc, docx, xls, xlsx and pdf
+                              </span>
                             ) : null}
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="row clearfix">
-                      <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
-                        <label htmlFor="name">Documents </label>
-                        <small className="text-danger">*</small>
-                      </div>
-                      <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                        <div className="form-group">
-                          <div className="form-line">
-                            <input
-                              type="file"
-                              id="img_64"
-                              name={"img_64"}
-                              // value={state.name}
-                              onChange={(e) => imguploadchange(e)}
-                              className="form-control"
-                            />
-                          </div>
-                          {customvalidated === "document is empty" ? (
-                            <small className="text-danger">
-                              {" "}
-                              please Select file first
-                            </small>
-                          ) : null}
-
-                          {customvalidated === "imgformat" ? (
-                            <span
-                              className="mt-2   text-center fs-6 text-danger"
-                              type="invalid"
-                            >
-                              Document Format should be in jpg, jpeg or png,
-                              doc, docx, xls, xlsx and pdf
-                            </span>
-                          ) : null}
+                      <div className="row clearfix">
+                        <div className="modal-footer">
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            data-dismiss="modal"
+                            id="closeButton1"
+                            onClick={() => onCloseModel()}
+                          >
+                            Close
+                          </button>
+                          <button type="submit" className="btn btn-primary">
+                            Add
+                          </button>
                         </div>
                       </div>
-                    </div>
-                    <div className="row clearfix">
-                      <div className="modal-footer">
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          data-dismiss="modal"
-                          id="closeButton1"
-                          onClick={() => onCloseModel()}
-                        >
-                          Close
-                        </button>
-                        <button type="submit" className="btn btn-primary">
-                          Add
-                        </button>
-                      </div>
-                    </div>
-                  </form>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

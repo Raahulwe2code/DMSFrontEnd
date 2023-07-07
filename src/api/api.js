@@ -176,3 +176,22 @@ export const createZipAndUpload = async (email, content, clientNmae) => {
   );
   return response.data;
 };
+
+export const ForgetPasswordFunction = async (email) => {
+  const response = await axios.post(
+    `${process.env.REACT_APP_BASEURL}/forget_password`,
+    { email: email }
+  );
+  return response.data;
+};
+
+export const ResetPasswordFunction = async (password, token) => {
+  const response = await axios.post(
+    `${process.env.REACT_APP_BASEURL}/reset_password`,
+    { password: password },
+    {
+      headers: { email_token: token },
+    }
+  );
+  return response.data;
+};

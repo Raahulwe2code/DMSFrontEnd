@@ -10,6 +10,7 @@ import Register from "./components/pages/Register";
 import Clients from "./components/pages/Clients";
 import Users from "./components/pages/Users";
 import AuthWrapper from "./components/comman/AuthWrapper";
+import ResetPassword from "./components/pages/ResetPassword";
 
 const Layout = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -43,6 +44,7 @@ const Layout = () => {
           />
           <Route e path={"/signup"} element={<Register />} />
           <Route path={"/forgetepassword"} element={<ForgetPassword />} />
+          <Route path={"/resetpassword"} element={<ResetPassword />} />
           <Route exact element={<AuthWrapper />}>
             <Route path={"/home"} element={<Home />} />
             <Route path={"/users"} element={<Users />} />

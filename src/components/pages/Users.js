@@ -359,55 +359,55 @@ const Users = () => {
           </div>
         </section>
       </div>
-
-      <div
-        ref={ref}
-        // className={
-        //   Modelclassvalue === "modal fade"
-        //     ? "modal fade"
-        //     : modelClass === true
-        //     ? "modal fade"
-        //     : "modal fade in"
-        // }
-        id="exampleModal"
-        tabindex="-1"
-        role="dialog"
-        // aria-labelledby="exampleModalLabel"
-        // aria-hidden="true"
-        className={modelView === true ? "modal show_modal" : "modal"}
-      >
+      <div className={modelView === true ? "show_modal" : ""}>
         <div className="back_drop"></div>
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                {modelshow === true ? "Update Employee" : " Add Employee"}
-              </h5>
-              <button
-                type="button"
-                className="close"
-                // data-dismiss="modal"
-                // aria-label="Close"
-                onClick={() => onCloseModel()}
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="body">
-                <form
-                  className="form-horizontal"
-                  onSubmit={
-                    modelshow === true
-                      ? (e) => {
-                          onUserUpdate(e);
-                        }
-                      : (e) => {
-                          onUserAdd(e);
-                        }
-                  }
+        <div
+          ref={ref}
+          // className={
+          //   Modelclassvalue === "modal fade"
+          //     ? "modal fade"
+          //     : modelClass === true
+          //     ? "modal fade"
+          //     : "modal fade in"
+          // }
+          id="exampleModal"
+          tabindex="-1"
+          role="dialog"
+          // aria-labelledby="exampleModalLabel"
+          // aria-hidden="true"
+          className={"modal"}
+        >
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  {modelshow === true ? "Update Employee" : " Add Employee"}
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  // data-dismiss="modal"
+                  // aria-label="Close"
+                  onClick={() => onCloseModel()}
                 >
-                  {/* <div className="row clearfix">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="body">
+                  <form
+                    className="form-horizontal"
+                    onSubmit={
+                      modelshow === true
+                        ? (e) => {
+                            onUserUpdate(e);
+                          }
+                        : (e) => {
+                            onUserAdd(e);
+                          }
+                    }
+                  >
+                    {/* <div className="row clearfix">
                     <div className="modal_label col-md-2 form-control-label">
                       <label for="password_2">Type</label>{" "}
                       <small className="text-danger">*</small>
@@ -434,205 +434,208 @@ const Users = () => {
                         : null}
                     </div>
                   </div> */}
-                  <div className="row clearfix">
-                    <div className="modal_label col-md-2 form-control-label">
-                      <label htmlFor="name">Name</label>
-                      <small className="text-danger">*</small>
-                    </div>
-                    <div className="modal_input col-md-10">
-                      <div className="form-group">
-                        <div className="form-line">
-                          <input
-                            type="text"
-                            id="name"
-                            maxLength={30}
-                            name="name"
-                            value={state.name}
-                            onChange={onInputChange}
-                            className="form-control"
-                            placeholder="Enter your name"
-                          />
-                        </div>
-                        {errors.name
-                          ? (errors.name || []).map((error, i) => {
-                              return (
-                                <small
-                                  className="text-danger error_massage"
-                                  key={i}
-                                >
-                                  {error}
-                                </small>
-                              );
-                            })
-                          : null}
+                    <div className="row clearfix">
+                      <div className="modal_label col-md-2 form-control-label">
+                        <label htmlFor="name">Name</label>
+                        <small className="text-danger">*</small>
                       </div>
-                    </div>
-                  </div>
-                  <div className="row clearfix">
-                    <div className="modal_label col-md-2 form-control-label">
-                      <label htmlFor="name">PhoneNo. </label>
-                      <small className="text-danger">*</small>
-                    </div>
-                    <div className="modal_input col-md-10">
-                      <div className="form-group">
-                        <div className="form-line">
-                          <input
-                            type="number"
-                            id="phone_no"
-                            maxLength={10}
-                            name="phone_no"
-                            value={state.phone_no}
-                            onChange={onInputChange}
-                            className="form-control"
-                            placeholder="Enter your phone no"
-                          />
-                        </div>
-                        {errors.phone_no
-                          ? (errors.phone_no || []).map((error, i) => {
-                              return (
-                                <small
-                                  className="text-danger error_massage"
-                                  key={i}
-                                >
-                                  {error}
-                                </small>
-                              );
-                            })
-                          : null}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row clearfix">
-                    <div className="modal_label col-md-2 form-control-label">
-                      <label htmlFor="password_2">Status</label>{" "}
-                      <small className="text-danger">*</small>
-                    </div>
-                    <div className="modal_input col-md-10">
-                      <div className="form-group">
-                        <div className="form-line">
-                          <select
-                            className="form-control "
-                            value={state.is_active}
-                            name="is_active"
-                            onChange={onInputChange}
-                          >
-                            <option value="">-- Please select Status --</option>
-                            <option value="1">Active</option>
-                            <option value="0">Unactive</option>
-                          </select>
+                      <div className="modal_input col-md-10">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="text"
+                              id="name"
+                              maxLength={30}
+                              name="name"
+                              value={state.name}
+                              onChange={onInputChange}
+                              className="form-control"
+                              placeholder="Enter your name"
+                            />
+                          </div>
+                          {errors.name
+                            ? (errors.name || []).map((error, i) => {
+                                return (
+                                  <small
+                                    className="text-danger error_massage"
+                                    key={i}
+                                  >
+                                    {error}
+                                  </small>
+                                );
+                              })
+                            : null}
                         </div>
                       </div>
+                    </div>
+                    <div className="row clearfix">
+                      <div className="modal_label col-md-2 form-control-label">
+                        <label htmlFor="name">PhoneNo. </label>
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div className="modal_input col-md-10">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="number"
+                              id="phone_no"
+                              maxLength={10}
+                              name="phone_no"
+                              value={state.phone_no}
+                              onChange={onInputChange}
+                              className="form-control"
+                              placeholder="Enter your phone no"
+                            />
+                          </div>
+                          {errors.phone_no
+                            ? (errors.phone_no || []).map((error, i) => {
+                                return (
+                                  <small
+                                    className="text-danger error_massage"
+                                    key={i}
+                                  >
+                                    {error}
+                                  </small>
+                                );
+                              })
+                            : null}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row clearfix">
+                      <div className="modal_label col-md-2 form-control-label">
+                        <label htmlFor="password_2">Status</label>{" "}
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div className="modal_input col-md-10">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <select
+                              className="form-control "
+                              value={state.is_active}
+                              name="is_active"
+                              onChange={onInputChange}
+                            >
+                              <option value="">
+                                -- Please select Status --
+                              </option>
+                              <option value="1">Active</option>
+                              <option value="0">Unactive</option>
+                            </select>
+                          </div>
+                        </div>
 
-                      {errors.is_active
-                        ? (errors.is_active || []).map((error, i) => {
-                            return (
-                              <small className="text-danger" key={i}>
-                                {error}
-                              </small>
-                            );
-                          })
-                        : null}
+                        {errors.is_active
+                          ? (errors.is_active || []).map((error, i) => {
+                              return (
+                                <small className="text-danger" key={i}>
+                                  {error}
+                                </small>
+                              );
+                            })
+                          : null}
+                      </div>
                     </div>
-                  </div>
-                  <div className="row clearfix">
-                    <div className="modal_label col-md-2 form-control-label">
-                      <label htmlFor="email">Email</label>
-                      <small className="text-danger">*</small>
-                    </div>
-                    <div
-                      className="modal_input col-md-10 
+                    <div className="row clearfix">
+                      <div className="modal_label col-md-2 form-control-label">
+                        <label htmlFor="email">Email</label>
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div
+                        className="modal_input col-md-10 
                     "
-                    >
-                      <div className="form-group">
-                        <div className="form-line">
-                          <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            value={state.email}
-                            onChange={onInputChange}
-                            className="form-control"
-                            placeholder="Enter your email address"
-                          />
-                        </div>
-                        {errors.email
-                          ? (errors.email || []).map((error, i) => {
-                              return (
-                                <small
-                                  className="text-danger error_massage"
-                                  key={i}
-                                >
-                                  {error}
-                                </small>
-                              );
-                            })
-                          : null}
-
-                        {emailError === true ? (
-                          <small className="text-danger">
-                            Email Already Registered Please try another email
-                          </small>
-                        ) : null}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="row clearfix">
-                    <div className="modal_label col-md-2 form-control-label">
-                      <label htmlFor="email">Password</label>
-                      <small className="text-danger">*</small>
-                    </div>
-                    <div
-                      className="modal_input col-md-10 
-                    "
-                    >
-                      <div className="form-group">
-                        <div className="form-line">
-                          <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            minLength={4}
-                            maxLength={15}
-                            value={state.password}
-                            onChange={onInputChange}
-                            className="form-control"
-                            placeholder="Enter your password"
-                          />
-                        </div>
-                        {errors.password
-                          ? (errors.password || []).map((error, i) => {
-                              return (
-                                <small
-                                  className="text-danger error_massage"
-                                  key={i}
-                                >
-                                  {error}
-                                </small>
-                              );
-                            })
-                          : null}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="row clearfix">
-                    <div class="modal-footer">
-                      <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-dismiss="modal"
-                        id="closeButton1"
-                        onClick={() => onCloseModel()}
                       >
-                        Close
-                      </button>
-                      <button type="submit" class="btn btn-primary">
-                        {modelshow === true ? "Update" : " Add "}
-                      </button>
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="email"
+                              name="email"
+                              id="email"
+                              value={state.email}
+                              onChange={onInputChange}
+                              className="form-control"
+                              placeholder="Enter your email address"
+                            />
+                          </div>
+                          {errors.email
+                            ? (errors.email || []).map((error, i) => {
+                                return (
+                                  <small
+                                    className="text-danger error_massage"
+                                    key={i}
+                                  >
+                                    {error}
+                                  </small>
+                                );
+                              })
+                            : null}
+
+                          {emailError === true ? (
+                            <small className="text-danger">
+                              Email Already Registered Please try another email
+                            </small>
+                          ) : null}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </form>
+
+                    <div className="row clearfix">
+                      <div className="modal_label col-md-2 form-control-label">
+                        <label htmlFor="email">Password</label>
+                        <small className="text-danger">*</small>
+                      </div>
+                      <div
+                        className="modal_input col-md-10 
+                    "
+                      >
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="password"
+                              name="password"
+                              id="password"
+                              minLength={4}
+                              maxLength={15}
+                              value={state.password}
+                              onChange={onInputChange}
+                              className="form-control"
+                              placeholder="Enter your password"
+                            />
+                          </div>
+                          {errors.password
+                            ? (errors.password || []).map((error, i) => {
+                                return (
+                                  <small
+                                    className="text-danger error_massage"
+                                    key={i}
+                                  >
+                                    {error}
+                                  </small>
+                                );
+                              })
+                            : null}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="row clearfix">
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-dismiss="modal"
+                          id="closeButton1"
+                          onClick={() => onCloseModel()}
+                        >
+                          Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                          {modelshow === true ? "Update" : " Add "}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>

@@ -64,8 +64,10 @@ const Gallary = () => {
   const [clienttId, setClientID] = useState("");
 
   const clientNamee = localStorage.getItem("client_name");
-  const clientEmail = localStorage.getItem("client_email");
+  const [senderEmail, setSenderEmail] = useState("");
+  // const clientEmail = localStorage.getItem("client_email");
   const [modelView, setModelView] = useState(false);
+  const [modelVieww, setModelVieww] = useState(false);
 
   useEffect(() => {
     if (
@@ -110,6 +112,7 @@ const Gallary = () => {
   // funtion for close model and reset document name and customvalidation and upload input field
   const onCloseModel = () => {
     setModelView(false);
+    setModelVieww(false);
     setDocumentName("");
     setcustomValidated("");
     setDocumentUpload(null);
@@ -315,11 +318,6 @@ const Gallary = () => {
   };
 
   const handleOpenMailBox = async () => {
-    document.getElementById("mailBox").removeAttribute("data-toggle", "modal");
-    document
-      .getElementById("mailBox")
-      .removeAttribute("data-target", "#exampleModal1");
-
     let newArray = getDocumentData.filter(function(el) {
       return el.isChecked === true;
     });
@@ -331,25 +329,14 @@ const Gallary = () => {
         icon: "warning",
         confirmButtonText: "OK",
       }).then(() => {
-        document
-          .getElementById("mailBox")
-          .removeAttribute("data-toggle", "modal");
-        document
-          .getElementById("mailBox")
-          .removeAttribute("data-target", "#exampleModal1");
+        // setModelVieww(true);
       });
     } else {
+      setModelVieww(true);
       newArray.map((item) => {
         setFileUrls((prevArray) => [...prevArray, item.document_url]);
         return {};
       });
-
-      // data-toggle="modal"
-      // data-target="#exampleModal1"
-      document.getElementById("mailBox").setAttribute("data-toggle", "modal");
-      document
-        .getElementById("mailBox")
-        .setAttribute("data-target", "#exampleModal1");
     }
   };
 
@@ -389,6 +376,7 @@ const Gallary = () => {
     e.preventDefault();
 
     setEmailBtnLoader(true);
+    setSubmitLoader(true);
 
     const zip = new JSZip();
 
@@ -409,12 +397,12 @@ const Gallary = () => {
     // console.log("end");
 
     const response = await createZipAndUpload(
-      clientEmail,
+      senderEmail,
       content,
       clientNamee
     );
     setEmailBtnLoader(false);
-
+    setSubmitLoader(false);
     if (response.message === "email send successfully") {
       Swal.fire({
         title: "Success",
@@ -423,14 +411,14 @@ const Gallary = () => {
         confirmButtonText: "OK",
       }).then(function() {
         setModelclass(true);
-
+        setModelVieww(false);
         // setState(initialFormState);
         setapicall(true);
       });
     }
     setapicall(false);
     setModelclass(false);
-
+    setModelVieww(false);
     // // Save the zip file
     // console.log(" save start");
     // saveAs(content, `${clientNamee}_Document.zip`);
@@ -450,34 +438,36 @@ const Gallary = () => {
         <section className="content">
           <div className="container-fluid">
             {/* <!-- Image Gallery --> */}
-            <div className="block-header">
-              <div className="text-right" style={{ width: "100%" }}>
-                <button
-                  className="btn btn-success"
-                  // data-toggle="modal"
-                  // data-target="#exampleModal"
-                  onClick={() => onModelOpen()}
-                >
-                  ADD DOCUMENTS
-                </button>
-              </div>
-            </div>
 
+            <div className="header zip_downlode">
+              <h2>{clientNamee.toUpperCase()}'S DOCUMENTS</h2>
+              {getDocumentData.length === 0 ? null : (
+                <div className="download_emai_btn d-flex">
+                  <button className="btn btn-info" onClick={handleDownload}>
+                    <i class="material-icons">get_app</i>
+                  </button>
+                  <button
+                    id="mailBox"
+                    className="btn btn-primary text-end"
+                    onClick={handleOpenMailBox}
+                  >
+                    <i class="material-icons">email</i>
+                  </button>
+                </div>
+              )}
+            </div>
             <div className="row">
               <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="card document_card">
-                  <div className="header zip_downlode">
-                    <h2>{clientNamee.toUpperCase()}'S DOCUMENTS</h2>
-                    <div className="download_emai_btn d-flex">
-                      <button className="btn btn-info" onClick={handleDownload}>
-                        <i class="material-icons">get_app</i>
-                      </button>
+                  <div className="block-header">
+                    <div className="text-right" style={{ width: "100%" }}>
                       <button
-                        id="mailBox"
-                        className="btn btn-primary text-end"
-                        onClick={handleOpenMailBox}
+                        className="btn btn-success"
+                        // data-toggle="modal"
+                        // data-target="#exampleModal"
+                        onClick={() => onModelOpen()}
                       >
-                        <i class="material-icons">email</i>
+                        ADD DOCUMENTS
                       </button>
                     </div>
                   </div>
@@ -946,116 +936,120 @@ const Gallary = () => {
           </div>
         </div>
 
-        <div
-          ref={ref}
-          className={
-            Modelclassvalue === "modal fade"
-              ? "modal fade"
-              : modelClass === true
-              ? "modal fade"
-              : "modal fade in"
-          }
-          id="exampleModal1"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
+        <div className={modelVieww === true ? "show_modal" : ""}>
           <div className="back_drop"></div>
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLabel">
-                  {modelshow === true ? "Update Client" : " Send Document"}
-                </h5>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                  onClick={() => onCloseModel()}
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <div className="body">
-                  <form
-                    className="form-horizontal"
-                    onSubmit={(e) => {
-                      downloadFiles(e);
-                    }}
+          <div
+            ref={ref}
+            // className={
+            //   Modelclassvalue === "modal fade"
+            //     ? "modal fade"
+            //     : modelClass === true
+            //     ? "modal fade"
+            //     : "modal fade in"
+            // }
+            id="exampleModal1"
+            tabindex="-1"
+            role="dialog"
+            // aria-labelledby="exampleModalLabel"
+            // aria-hidden="true"
+            className={"modal"}
+          >
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="exampleModalLabel">
+                    {modelshow === true ? "Update Client" : " Send Document"}
+                  </h5>
+                  <button
+                    type="button"
+                    className="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                    onClick={() => onCloseModel()}
                   >
-                    <div className="row clearfix">
-                      <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
-                        <label htmlFor="name"> Email</label>
-                        <small className="text-danger">*</small>
-                      </div>
-                      <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                        <div className="form-group">
-                          <div className="form-line">
-                            <input
-                              type="email"
-                              id="email"
-                              name="email"
-                              value={clientEmail}
-                              disabled
-                              className="form-control"
-                              placeholder="Enter document name"
-                            />
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <div className="body">
+                    <form
+                      className="form-horizontal"
+                      onSubmit={(e) => {
+                        downloadFiles(e);
+                      }}
+                    >
+                      <div className="row clearfix">
+                        <div className="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-control-label">
+                          <label htmlFor="name"> Email</label>
+                          <small className="text-danger">*</small>
+                        </div>
+                        <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                          <div className="form-group">
+                            <div className="form-line">
+                              <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value={senderEmail}
+                                onChange={(e) => setSenderEmail(e.target.value)}
+                                // disabled
+                                className="form-control"
+                                placeholder="Enter document name"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="row clearfix">
-                      <div className="modal-footer">
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          data-dismiss="modal"
-                          id="closeButton1"
-                          disabled={
-                            emailBtnLoader === true
-                              ? true
-                              : emailBtnLoader === false
-                              ? false
-                              : false
-                          }
-                          onClick={() => onCloseModel()}
-                        >
-                          Close
-                        </button>
-                        <button
-                          type="submit"
-                          className="btn btn-primary email_send_btn"
-                        >
-                          <div className="loader_btn">
-                            <div class="preloader pl-size-xs">
-                              <div class="spinner-layer pl-red-grey">
-                                <div class="circle-clipper left">
-                                  <div class="circle"></div>
-                                </div>
-                                <div class="circle-clipper right">
-                                  <div class="circle"></div>
+                      <div className="row clearfix">
+                        <div className="modal-footer">
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            data-dismiss="modal"
+                            id="closeButton1"
+                            disabled={
+                              emailBtnLoader === true
+                                ? true
+                                : emailBtnLoader === false
+                                ? false
+                                : false
+                            }
+                            onClick={() => onCloseModel()}
+                          >
+                            Close
+                          </button>
+                          <button
+                            type="submit"
+                            className="btn btn-primary email_send_btn"
+                          >
+                            <div className="loader_btn">
+                              <div class="preloader pl-size-xs">
+                                <div class="spinner-layer pl-red-grey">
+                                  <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                  </div>
+                                  <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            <span
-                              className={
-                                emailBtnLoader === true
-                                  ? " show_loader"
-                                  : "none"
-                              }
-                            >
-                              Send Mail
-                            </span>
-                          </div>
-                        </button>
+                              <span
+                                className={
+                                  emailBtnLoader === true
+                                    ? " show_loader"
+                                    : "none"
+                                }
+                              >
+                                Send Mail
+                              </span>
+                            </div>
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </form>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

@@ -169,7 +169,7 @@ export const createZipAndUpload = async (email, content, clientNmae) => {
   const formData = new FormData();
   formData.append("email", email);
   formData.append("file", content, `${clientNmae}.zip`);
-
+  formData.append("client_name", clientNmae);
   const response = await axios.post(
     `${process.env.REACT_APP_BASEURL}/send_mail`,
     formData

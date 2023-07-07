@@ -22,51 +22,57 @@ const Home = () => {
               <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div className="info-box bg-pink hover-expand-effect">
                   <div className="icon">
-                    <i className="material-icons">playlist_add_check</i>
+                    <i className="material-icons">folder_shared</i>
                   </div>
                   <div className="content">
-                    <div className="text">NEW TASKS</div>
+                    <div className="text">CLIENTS</div>
                     <div
                       className="number count-to"
                       data-from="0"
                       data-to="125"
                       data-speed="15"
                       data-fresh-interval="20"
-                    ></div>
+                    >
+                      12
+                    </div>
                   </div>
                 </div>
               </div>
               <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div className="info-box bg-cyan hover-expand-effect">
                   <div className="icon">
-                    <i className="material-icons">help</i>
+                    <i className="material-icons">recent_actors</i>
                   </div>
                   <div className="content">
-                    <div className="text">NEW TICKETS</div>
+                    <div className="text">EMPLOYEE </div>
                     <div
                       className="number count-to"
                       data-from="0"
                       data-to="257"
                       data-speed="1000"
                       data-fresh-interval="20"
-                    ></div>
+                    >
+                      10
+                    </div>
                   </div>
                 </div>
               </div>
               <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div className="info-box bg-light-green hover-expand-effect">
                   <div className="icon">
-                    <i className="material-icons">forum</i>
+                    <i className="material-icons">folder</i>
                   </div>
                   <div className="content">
-                    <div className="text">NEW COMMENTS</div>
+                    <div className="text">DOCUMENTS</div>
                     <div
                       className="number count-to"
                       data-from="0"
                       data-to="243"
                       data-speed="1000"
                       data-fresh-interval="20"
-                    ></div>
+                    >
+                      34
+                    </div>
                   </div>
                 </div>
               </div>

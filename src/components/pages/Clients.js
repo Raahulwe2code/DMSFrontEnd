@@ -242,7 +242,7 @@ const Clients = () => {
   // function for clicking client and send id and name on gallary
   const onClientClick = (id, name, email) => {
     localStorage.setItem("client_name", name);
-    localStorage.setItem("client_email", email);
+
     navigate(`/gallary?client_id=${id}&&loading=${loadidng}`);
   };
 

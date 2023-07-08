@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { GetDashBoardDetails } from "../../api/api";
 import Header from "../comman/Header";
 
 import SideBar from "../comman/SideBar";
 
 const Home = () => {
+  const admin_id = localStorage.getItem("admin_id");
+  const user_type = localStorage.getItem("user_type");
+  const [getDashBoardData, setDashBoardData] = useState([]);
+
+  useEffect(() => {
+    getDashBorad_details(admin_id);
+  }, []);
+
+  const getDashBorad_details = async (admin_id) => {
+    const response = await GetDashBoardDetails(admin_id);
+    // console.log("data--" + JSON.stringify(response[0]));
+    setDashBoardData(response[0]);
+  };
+
   return (
     <>
       <div className="theme-red ">
@@ -33,30 +48,33 @@ const Home = () => {
                       data-speed="15"
                       data-fresh-interval="20"
                     >
-                      12
+                      {getDashBoardData.clients}
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <div className="info-box bg-cyan hover-expand-effect">
-                  <div className="icon">
-                    <i className="material-icons">recent_actors</i>
-                  </div>
-                  <div className="content">
-                    <div className="text">EMPLOYEE </div>
-                    <div
-                      className="number count-to"
-                      data-from="0"
-                      data-to="257"
-                      data-speed="1000"
-                      data-fresh-interval="20"
-                    >
-                      10
+              {user_type === "employee" ? null : (
+                <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                  <div className="info-box bg-cyan hover-expand-effect">
+                    <div className="icon">
+                      <i className="material-icons">recent_actors</i>
+                    </div>
+                    <div className="content">
+                      <div className="text">EMPLOYEE </div>
+                      <div
+                        className="number count-to"
+                        data-from="0"
+                        data-to="257"
+                        data-speed="1000"
+                        data-fresh-interval="20"
+                      >
+                        {getDashBoardData.employee}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
+
               <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div className="info-box bg-light-green hover-expand-effect">
                   <div className="icon">
@@ -71,12 +89,12 @@ const Home = () => {
                       data-speed="1000"
                       data-fresh-interval="20"
                     >
-                      34
+                      {getDashBoardData.document}
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+              {/* <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div className="info-box bg-orange hover-expand-effect">
                   <div className="icon">
                     <i className="material-icons">person_add</i>
@@ -92,7 +110,7 @@ const Home = () => {
                     ></div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
             {/* <!-- #END# Widgets --> */}
             {/* <!-- CPU Usage --> */}

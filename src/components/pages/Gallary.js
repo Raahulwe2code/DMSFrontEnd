@@ -13,7 +13,8 @@ import {
   getDocument,
 } from "../../api/api";
 import Swal from "sweetalert2";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import LightGallery from "lightgallery/react/Lightgallery.es5";
 import "lightgallery/css/lightgallery.css";
 
@@ -183,27 +184,31 @@ const Gallary = () => {
     if (documentName === "") {
       setcustomValidated("name is empty");
     } else if (DocumentUpload === null) {
-      console.log("in document");
       setcustomValidated("document is empty");
     } else {
       setSubmitLoader(true);
 
-      const response = await AddDocument(initialFormState);
+      // const response = await AddDocument(initialFormState);
       setSubmitLoader(false);
-      if (response.message === "Document upload successfully") {
-        Swal.fire({
-          title: "Success",
-          text: "Document upload succuessfully",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then(function() {
-          setModelView(false);
 
-          setModelclass(true);
-          setDocumentName("");
-          setDocumentUpload("");
-          setapicall(true);
+      const response = await toast.promise(AddDocument(initialFormState), {
+        pending: "Document upload  pending",
+        // success: "Upload compelete👌",
+      });
+
+      if (response.message === "Document upload successfully") {
+        toast.success("Document Upload Successfully", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
         });
+
+        getDocumentByid(clienttId);
+        setModelView(false);
+
+        setModelclass(true);
+        setDocumentName("");
+        setDocumentUpload("");
+        setapicall(true);
       }
       setSubmitLoader(false);
       setModelclass(false);
@@ -279,12 +284,17 @@ const Gallary = () => {
     });
     console.log(newArray);
     if (newArray.length === 0) {
-      Swal.fire({
-        title: "warning",
-        text: "Please select any one document for download",
-        icon: "warning",
-        confirmButtonText: "OK",
+      toast.warning("Please Select any one for download", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 1000,
       });
+
+      // Swal.fire({
+      //   title: "warning",
+      //   text: "Please select any one document for download",
+      //   icon: "warning",
+      //   confirmButtonText: "OK",
+      // });
     } else {
       newArray.map((item) => {
         checkboxUrl.push(item.document_url);
@@ -374,60 +384,66 @@ const Gallary = () => {
   //funtion for create zip and and send upload on server in certain folder------
   const downloadFiles = async (e) => {
     e.preventDefault();
+    if (senderEmail === "") {
+      setcustomValidated("email is empty");
+    } else {
+      setEmailBtnLoader(true);
+      setSubmitLoader(true);
 
-    setEmailBtnLoader(true);
-    setSubmitLoader(true);
+      const zip = new JSZip();
 
-    const zip = new JSZip();
+      // Fetch each file and add it to the zip
+      const promises = fileUrls.map(async (url) => {
+        const response = await fetch(url);
+        const data = await response.blob();
+        const fileName = getFileNameFromURL(url); // Implement this function to extract the file name from the URL
 
-    // Fetch each file and add it to the zip
-    const promises = fileUrls.map(async (url) => {
-      const response = await fetch(url);
-      const data = await response.blob();
-      const fileName = getFileNameFromURL(url); // Implement this function to extract the file name from the URL
-
-      zip.file(fileName, data);
-    });
-    // console.log("wait");
-    // Wait for all files to be added to the zip
-    await Promise.all(promises);
-    // console.log("start");
-    // Generate the zip file
-    const content = await zip.generateAsync({ type: "blob" });
-    // console.log("end");
-
-    const response = await createZipAndUpload(
-      senderEmail,
-      content,
-      clientNamee
-    );
-    setEmailBtnLoader(false);
-    setSubmitLoader(false);
-    if (response.message === "email send successfully") {
-      Swal.fire({
-        title: "Success",
-        text: "Email send successfully",
-        icon: "success",
-        confirmButtonText: "OK",
-      }).then(function() {
-        setModelclass(true);
-        setModelVieww(false);
-        // setState(initialFormState);
-        setapicall(true);
+        zip.file(fileName, data);
       });
+      // console.log("wait");
+      // Wait for all files to be added to the zip
+      await Promise.all(promises);
+      // console.log("start");
+      // Generate the zip file
+      const content = await zip.generateAsync({ type: "blob" });
+      // console.log("end");
+
+      const response = await createZipAndUpload(
+        senderEmail,
+        content,
+        clientNamee
+      );
+      setEmailBtnLoader(false);
+      setSubmitLoader(false);
+      if (response.message === "email send successfully") {
+        Swal.fire({
+          title: "Success",
+          text: "Email send successfully",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(function() {
+          setModelclass(true);
+          setModelVieww(false);
+          // setState(initialFormState);
+          setapicall(true);
+        });
+      }
+      setapicall(false);
+      setModelclass(false);
+      setModelVieww(false);
+      // // Save the zip file
+      // console.log(" save start");
+      // saveAs(content, `${clientNamee}_Document.zip`);
+      // console.log(" save end");
     }
-    setapicall(false);
-    setModelclass(false);
-    setModelVieww(false);
-    // // Save the zip file
-    // console.log(" save start");
-    // saveAs(content, `${clientNamee}_Document.zip`);
-    // console.log(" save end");
   };
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected + 1);
   };
-
+  const handleInputChange = (e) => {
+    setSenderEmail(e.target.value);
+    setcustomValidated("");
+  };
   return (
     <>
       <div className="theme-red ">
@@ -991,12 +1007,18 @@ const Gallary = () => {
                                 id="email"
                                 name="email"
                                 value={senderEmail}
-                                onChange={(e) => setSenderEmail(e.target.value)}
+                                onChange={handleInputChange}
                                 // disabled
                                 className="form-control"
                                 placeholder="Enter document name"
                               />
                             </div>
+                            {customvalidated === "email is empty" ? (
+                              <small className="text-danger">
+                                {" "}
+                                Email is Required!!
+                              </small>
+                            ) : null}
                           </div>
                         </div>
                       </div>
@@ -1055,6 +1077,7 @@ const Gallary = () => {
             </div>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </>
   );

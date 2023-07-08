@@ -11,6 +11,8 @@ import {
 import Header from "../comman/Header";
 // import SideBar from "../comman/SideBar";
 import Swal from "sweetalert2";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Loader from "../comman/loader";
 // const ref = useRef();
 import ReactPaginate from "react-paginate";
@@ -116,7 +118,12 @@ const Users = () => {
     e.preventDefault();
     if (validate()) {
       setSubmitLoader(true);
-      const response = await AddUsers(state);
+
+      const response = await toast.promise(AddUsers(state), {
+        pending: "Add Employee is processing",
+        // success: "Upload compelete👌",
+      });
+
       setSubmitLoader(false);
       if (
         response.response ===
@@ -125,17 +132,15 @@ const Users = () => {
         setEmailError(true);
       }
       if (response.message === "user added successfully") {
-        Swal.fire({
-          title: "Success",
-          text: "Added succuesfully",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then(function() {
-          setModelView(false);
-          setModelclass(true);
-          setState(initialFormState);
-          setapicall(true);
+        toast.success("User added successfully", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
         });
+        getClients();
+        setModelView(false);
+        setModelclass(true);
+        setState(initialFormState);
+        setapicall(true);
       }
       setapicall(false);
       // setState(initialFormState);
@@ -147,20 +152,23 @@ const Users = () => {
     e.preventDefault();
     if (validate()) {
       setSubmitLoader(true);
-      const response = await UpdateUser(state);
+
+      const response = await toast.promise(UpdateUser(state), {
+        pending: "Update Employee is processing",
+        // success: "Update Emplyoee compelete👌",
+      });
+
       setSubmitLoader(false);
       if (response.message === "updated user successfully") {
-        Swal.fire({
-          title: "Success",
-          text: "Update succuesfully",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then(function() {
-          setModelView(false);
-          setModelclass(true);
-          setState(initialFormState);
-          setapicall(true);
+        toast.success("User update successfully", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
         });
+        getClients();
+        setModelView(false);
+        setModelclass(true);
+        setState(initialFormState);
+        setapicall(true);
       }
       setapicall(false);
       // setState(initialFormState);
@@ -641,6 +649,7 @@ const Users = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

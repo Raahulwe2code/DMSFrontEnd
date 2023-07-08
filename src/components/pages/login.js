@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Admin_login_function } from "../../api/api";
-
+import Loader from "../comman/loader";
 const Login = () => {
   const navigate = useNavigate();
   const [emailerror, setemailerror] = useState(false);
   const [emailVal, setemailVal] = useState("");
   const [passval, setpassval] = useState("");
-
+  const [loadidng, setLoading] = useState(false);
   // onchange for email input field
   const onEmailChange = (e) => {
     setemailVal(e.target.value);
@@ -23,9 +23,11 @@ const Login = () => {
   // funtion for  login button submitted------
   async function sign_up_btn(event) {
     event.preventDefault();
+    setLoading(true);
     let result = await Admin_login_function(emailVal, passval);
     const { resCode } = result;
-    console.log("rescode---" + resCode);
+    setLoading(false);
+
     if (resCode === "103") {
       setemailerror("email not found");
     } else if (resCode === "102") {
@@ -42,6 +44,7 @@ const Login = () => {
         localStorage.setItem("admin_email", userDetail[0].email);
         localStorage.setItem("admin_token", token);
       } else {
+        localStorage.setItem("employee_id", userDetail[0].id);
         localStorage.setItem("admin_id", userDetail[0].admin_id);
         localStorage.setItem("user_type", userDetail[0].type);
         localStorage.setItem("admin_name", userDetail[0].name);
@@ -54,6 +57,7 @@ const Login = () => {
   }
   return (
     <>
+      {loadidng === true ? <Loader /> : null}
       <div class="login-page">
         <div class="login-box">
           <div class="logo">

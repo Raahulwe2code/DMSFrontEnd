@@ -195,3 +195,33 @@ export const ResetPasswordFunction = async (password, token) => {
   );
   return response.data;
 };
+
+export const GetDashBoardDetails = async (admin_id) => {
+  const response = await axios.post(
+    `${process.env.REACT_APP_BASEURL}/get_dashboard_details`,
+    { admin_id: admin_id }
+  );
+  return response.data;
+};
+
+export const ProfileUpdatefuntion = async (
+  id,
+  name,
+  phone_no,
+  email,
+  profile_picture,
+  profile_type
+) => {
+  const response = await axios.put(
+    `${process.env.REACT_APP_BASEURL}/user_profile_update`,
+    {
+      id: id,
+      name: name,
+      phone_no: phone_no,
+      email: email,
+      profile_picture: profile_picture,
+      profile_picture_type: profile_type,
+    }
+  );
+  return response.data;
+};

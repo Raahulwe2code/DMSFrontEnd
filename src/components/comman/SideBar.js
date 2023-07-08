@@ -11,7 +11,6 @@ const SideBar = (props) => {
   const adminLogged = localStorage.getItem("admin_token");
 
   const logout = () => {
-    console.log("admin toekn in sidebar----" + adminLogged);
     if (adminLogged !== null) {
       localStorage.removeItem("admin_token");
       localStorage.removeItem("user_type");
@@ -21,6 +20,7 @@ const SideBar = (props) => {
       localStorage.removeItem("admin_name");
       localStorage.removeItem("admin_email");
       localStorage.removeItem("client_email");
+      localStorage.removeItem("employee_id");
       setIsLoggedIn(false);
       navigate("/");
       const adminLoggedd = localStorage.getItem("admin_token");
@@ -72,13 +72,17 @@ const SideBar = (props) => {
                   keyboard_arrow_down
                 </i>
                 <ul className="dropdown-menu pull-right">
-                  <li>
-                    <Link to="">
+                  <li
+                    onClick={() => {
+                      AddBodyClassFunction();
+                    }}
+                  >
+                    <Link to="/profile">
                       <i className="material-icons">person</i>Profile
                     </Link>
                   </li>
-                  <li role="separator" className="divider"></li>
-                  <li>
+                  {/* <li role="separator" className="divider"></li> */}
+                  {/* <li>
                     <Link to="">
                       <i className="material-icons">group</i>Followers
                     </Link>
@@ -92,7 +96,7 @@ const SideBar = (props) => {
                     <Link to="">
                       <i className="material-icons">favorite</i>Likes
                     </Link>
-                  </li>
+                  </li> */}
                   <li role="separator" className="divider"></li>
                   <li>
                     <Link onClick={() => logout()}>
@@ -125,7 +129,7 @@ const SideBar = (props) => {
                 }}
               >
                 <Link to="/clients">
-                  <i className="material-icons">text_fields</i>
+                  <i className="material-icons">folder</i>
                   <span>Clients</span>
                 </Link>
               </li>
@@ -136,7 +140,7 @@ const SideBar = (props) => {
                   }}
                 >
                   <Link to="/users">
-                    <i className="material-icons">text_fields</i>
+                    <i className="material-icons">account_box</i>
                     <span>Employee</span>
                   </Link>
                 </li>

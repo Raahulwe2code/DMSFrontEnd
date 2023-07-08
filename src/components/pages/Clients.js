@@ -12,6 +12,8 @@ import Header from "../comman/Header";
 
 import Swal from "sweetalert2";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import Loader from "../comman/loader";
 import ReactPaginate from "react-paginate";
@@ -141,17 +143,15 @@ const Clients = () => {
       }
 
       if (response.message === "Client added successfully") {
-        Swal.fire({
-          title: "Success",
-          text: "Client added succuesfully",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then(function() {
-          setSubmitLoader(false);
-          setState(state);
-          setapicall(true);
-          setModelView(false);
+        toast.success("Client added successfully", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
         });
+
+        setSubmitLoader(false);
+        setState(state);
+        setapicall(true);
+        setModelView(false);
       }
     }
     setSubmitLoader(false);
@@ -167,17 +167,15 @@ const Clients = () => {
       const response = await UpdateClient(state);
 
       if (response.message === "updated Client successfully") {
-        Swal.fire({
-          title: "Success",
-          text: "Update succuesfully",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then(function() {
-          setModelView(false);
-          setSubmitLoader(false);
-          setState(state);
-          setapicall(true);
+        toast.success("Updated Client successfully", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
         });
+        getClients();
+        setapicall(true);
+        setModelView(false);
+        setSubmitLoader(false);
+        setState(state);
       }
     }
     setSubmitLoader(false);
@@ -423,7 +421,10 @@ const Clients = () => {
           </div>
         </section>
       </div>
-      <div className={modelView === true ? "show_modal" : ""}>
+      <div
+        className={modelView === true ? "show_modal" : ""}
+        style={modelView === true ? { opacity: "1" } : { opacity: "0" }}
+      >
         <div className="back_drop"></div>
         <div
           ref={ref}
@@ -713,6 +714,7 @@ const Clients = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

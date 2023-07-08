@@ -11,6 +11,7 @@ import Clients from "./components/pages/Clients";
 import Users from "./components/pages/Users";
 import AuthWrapper from "./components/comman/AuthWrapper";
 import ResetPassword from "./components/pages/ResetPassword";
+import Profile from "./components/pages/Profile";
 
 const Layout = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -49,6 +50,7 @@ const Layout = () => {
             <Route path={"/home"} element={<Home />} />
             <Route path={"/users"} element={<Users />} />
             <Route path={"/clients"} element={<Clients />} />
+            <Route path={"/profile"} element={<Profile />} />
             <Route path={"*"} element={<BlankPage />} />
             <Route path={"/gallary"} element={<Gallary />} />
           </Route>

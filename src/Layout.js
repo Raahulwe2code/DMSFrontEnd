@@ -45,6 +45,7 @@ const Layout = () => {
           <Route e path={"/signup"} element={<Register />} />
           <Route path={"/forgetepassword"} element={<ForgetPassword />} />
           <Route path={"/resetpassword"} element={<ResetPassword />} />
+          
           <Route exact element={<AuthWrapper />}>
             <Route path={"/home"} element={<Home />} />
             <Route path={"/users"} element={<Users />} />

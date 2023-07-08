@@ -140,14 +140,29 @@ const Profile = () => {
   const onUserUpdate = async (e) => {
     e.preventDefault();
     if (validate()) {
-      const response = await ProfileUpdatefuntion(
-        state.id,
-        state.name,
-        state.phone_no,
-        state.email,
-        ProfileUpload,
-        ProfileType
+      const response = await toast.promise(
+        ProfileUpdatefuntion(
+          state.id,
+          state.name,
+          state.phone_no,
+          state.email,
+          ProfileUpload,
+          ProfileType
+        ),
+        {
+          pending: "Profile is updating",
+          // success: "Upload compelete👌",
+        }
       );
+
+      // const response = await ProfileUpdatefuntion(
+      //   state.id,
+      //   state.name,
+      //   state.phone_no,
+      //   state.email,
+      //   ProfileUpload,
+      //   ProfileType
+      // );
       console.log(response.message);
       if (response.message === "Updated user profile successfully") {
         toast.success("Profile update successfully", {
@@ -177,6 +192,7 @@ const Profile = () => {
                       style={{ height: "150px", width: "150px" }}
                     /> */}
                     <img
+                      alt={getData.profile_picture}
                       src={
                         getData.profile_picture
                           ? getData.profile_picture

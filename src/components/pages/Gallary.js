@@ -108,8 +108,6 @@ const Gallary = () => {
     document_url: DocumentUpload,
   };
 
-  const [modelClass, setModelclass] = useState(false);
-
   // funtion for close model and reset document name and customvalidation and upload input field
   const onCloseModel = () => {
     setModelView(false);
@@ -205,13 +203,12 @@ const Gallary = () => {
         getDocumentByid(clienttId);
         setModelView(false);
 
-        setModelclass(true);
         setDocumentName("");
         setDocumentUpload("");
         setapicall(true);
       }
       setSubmitLoader(false);
-      setModelclass(false);
+
       setModelView(false);
       setapicall(false);
     }
@@ -333,13 +330,9 @@ const Gallary = () => {
     });
 
     if (newArray.length === 0) {
-      Swal.fire({
-        title: "warning",
-        text: "Please select any one document for mail",
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then(() => {
-        // setModelVieww(true);
+      toast.warning("Please Select any one for Mail", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 1000,
       });
     } else {
       setModelVieww(true);
@@ -388,7 +381,7 @@ const Gallary = () => {
       setcustomValidated("email is empty");
     } else {
       setEmailBtnLoader(true);
-      setSubmitLoader(true);
+      // setSubmitLoader(true);
 
       const zip = new JSZip();
 
@@ -408,28 +401,29 @@ const Gallary = () => {
       const content = await zip.generateAsync({ type: "blob" });
       // console.log("end");
 
-      const response = await createZipAndUpload(
-        senderEmail,
-        content,
-        clientNamee
+      const response = await toast.promise(
+        createZipAndUpload(senderEmail, content, clientNamee),
+        {
+          pending: "sending mail",
+          // success: "Upload compelete👌",
+        }
       );
+
       setEmailBtnLoader(false);
-      setSubmitLoader(false);
+      // setSubmitLoader(false);
       if (response.message === "email send successfully") {
-        Swal.fire({
-          title: "Success",
-          text: "Email send successfully",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then(function() {
-          setModelclass(true);
-          setModelVieww(false);
-          // setState(initialFormState);
-          setapicall(true);
+        toast.success("Email send  successfully", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
         });
+        getDocumentByid(clienttId);
+
+        setModelVieww(false);
+        // setState(initialFormState);
+        setapicall(true);
       }
       setapicall(false);
-      setModelclass(false);
+
       setModelVieww(false);
       // // Save the zip file
       // console.log(" save start");

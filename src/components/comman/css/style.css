@@ -39,18 +39,33 @@
   transition: 1s ease-in-out;
   -moz-transition: 1s ease-in-out;
   -webkit-transition: 1s ease-in-out;
-  animation-name: example;
-  animation-duration: .4s;
+  animation-name: show_modal;
+  animation-duration: .2s;
   animation-timing-function: ease-in-out;
 }
 
-@keyframes example {
+@keyframes show_modal {
 0% {top:-200%;}
 /* 25% {top: 96%;}
 50% {top: 48%;} */
 100% {top: 5%;}
 
 }
+.hide_modal .modal{
+  transition: 1s ease-in-out;
+  -moz-transition: 1s ease-in-out;
+  -webkit-transition: 1s ease-in-out;
+  animation-name: hide_modal;
+  animation-duration: .2s;
+  animation-timing-function: ease-in-out; 
+}
+@keyframes hide_modal {
+  0% {top:5%;}
+  /* 25% {top: 96%;}
+  50% {top: 48%;} */
+  100% {top: -200;}
+  
+  }
 .navbar .navbar-brand {
   white-space: nowrap;
   -ms-text-overflow: ellipsis;
@@ -2381,6 +2396,11 @@
   font-weight: bold;
   color: #777;
 }
+.block-header.add_documents_btn {
+  padding-top: 12px;
+  padding-right: 12px;
+  margin-bottom: 0;
+} 
 
 .bg-red {
   background-color: #f44336 !important;

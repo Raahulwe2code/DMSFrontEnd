@@ -475,7 +475,7 @@ const Gallary = () => {
             <div className="row">
               <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="card document_card">
-                  <div className="block-header">
+                  <div className="block-header add_documents_btn">
                     <div className="text-right" style={{ width: "100%" }}>
                       <button
                         className="btn btn-success"
@@ -821,7 +821,7 @@ const Gallary = () => {
             </div>
           </div>
         </section>
-        <div className={modelView === true ? "show_modal" : ""}>
+        <div className={modelView === true ? "show_modal" : "hide_modal"}>
           <div className="back_drop"></div>
           <div
             ref={ref}

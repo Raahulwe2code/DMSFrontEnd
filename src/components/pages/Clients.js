@@ -136,7 +136,10 @@ const Clients = () => {
     setSubmitLoader(true);
     e.preventDefault();
     if (validate()) {
-      const response = await AddClientByadmin(state);
+      const response = await toast.promise(AddClientByadmin(state), {
+        pending: "Add clinet is processing",
+        // success: "Upload compelete👌",
+      });
 
       if (response.message === "already added by this admin") {
         setEmailError(true);
@@ -164,7 +167,11 @@ const Clients = () => {
 
     if (validate()) {
       setSubmitLoader(true);
-      const response = await UpdateClient(state);
+
+      const response = await toast.promise(UpdateClient(state), {
+        pending: "Update clinet is processing",
+        // success: "Upload compelete👌",
+      });
 
       if (response.message === "updated Client successfully") {
         toast.success("Updated Client successfully", {
@@ -436,7 +443,7 @@ const Clients = () => {
           //     : "modal fade in"
           // }
           id="exampleModal"
-          tabindex="-1"
+          tabIndex="-1"
           role="dialog"
           // aria-labelledby="exampleModalLabel"
           // aria-hidden="true"

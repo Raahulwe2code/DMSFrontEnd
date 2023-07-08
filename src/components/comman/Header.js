@@ -1,17 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import SideBar from "./SideBar";
 
 const Header = () => {
   const [newClass, setNewClass] = useState(false);
-  function AddBodyClassFunction() {
-    alert("kkkk");
-    // document.body.classList.add('salmon');
-    // overlay-open ls-closed
-    document.body.classList.remove("overlay-open", "ls-closed");
-
-    document.body.classList.add("ls-closed");
-  }
 
   function AddBodyClassFunctionn() {
     // setNewClass(true);

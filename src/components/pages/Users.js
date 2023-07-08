@@ -45,7 +45,7 @@ const Users = () => {
   const [employeeName, setemployeeName] = useState("");
   const [modelshow, setModelshow] = useState(false);
   const [getUsersData, setGetUsersData] = useState([]);
-  const [modelClass, setModelclass] = useState(false);
+
   const [emailError, setEmailError] = useState(false);
 
   // funtion for validation employee input field
@@ -138,7 +138,7 @@ const Users = () => {
         });
         getClients();
         setModelView(false);
-        setModelclass(true);
+
         setState(initialFormState);
         setapicall(true);
       }
@@ -166,7 +166,7 @@ const Users = () => {
         });
         getClients();
         setModelView(false);
-        setModelclass(true);
+
         setState(initialFormState);
         setapicall(true);
       }
@@ -368,7 +368,7 @@ const Users = () => {
         </section>
       </div>
       <div className={modelView === true ? "show_modal" : "gourav"}>
-        <div className="back_drop" onClick={()=>onCloseModel()} ></div>
+        <div className="back_drop" onClick={() => onCloseModel()}></div>
         <div
           ref={ref}
           // className={
@@ -379,7 +379,7 @@ const Users = () => {
           //     : "modal fade in"
           // }
           id="exampleModal"
-          tabindex="-1"
+          tabIndex="-1"
           role="dialog"
           // aria-labelledby="exampleModalLabel"
           // aria-hidden="true"

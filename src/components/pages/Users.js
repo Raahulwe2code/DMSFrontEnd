@@ -367,8 +367,8 @@ const Users = () => {
           </div>
         </section>
       </div>
-      <div className={modelView === true ? "show_modal" : ""}>
-        <div className="back_drop"></div>
+      <div className={modelView === true ? "show_modal" : "gourav"}>
+        <div className="back_drop" onClick={()=>onCloseModel()} ></div>
         <div
           ref={ref}
           // className={

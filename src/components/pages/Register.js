@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AddUsers } from "../../api/api";
 import useValidation from "../comman/useValidation";
@@ -15,7 +15,6 @@ const Register = () => {
     password: "",
   };
 
-  const [emailError, setEmailError] = useState(false);
   const navigate = useNavigate();
 
   // funtion for validation comes form useValidation hook
@@ -54,10 +53,14 @@ const Register = () => {
   };
 
   //useVAlidation custom validation--- import
-  const { state, setState, onInputChange, errors, validate } = useValidation(
-    initialFormState,
-    validators
-  );
+  const {
+    state,
+    setState,
+    onInputChange,
+    errors,
+    setErrors,
+    validate,
+  } = useValidation(initialFormState, validators);
 
   // function for register admin ---
   const onUserAdd = async (e) => {
@@ -69,7 +72,7 @@ const Register = () => {
         response.response ===
         "email already exist, check your mail or try after sometime"
       ) {
-        setEmailError(true);
+        setErrors("already");
       }
       if (response.message === "user added successfully") {
         Swal.fire({
@@ -179,7 +182,7 @@ const Register = () => {
                           );
                         })
                       : null}
-                    {emailError === true ? (
+                    {errors === "already" ? (
                       <small className="text-danger">
                         Email Already Registered Please try another email
                       </small>

@@ -127,7 +127,7 @@ const Home = () => {
                           <span className="m-r-10 font-12">REAL TIME</span>
                           <label>
                             OFF
-                            <input type="checkbox" id="realtime" checked />
+                            {/* <input type="checkbox" id="realtime" checked /> */}
                             <span className="lever switch-col-cyan"></span>ON
                           </label>
                         </div>
@@ -177,18 +177,18 @@ const Home = () => {
                     <div
                       className="sparkline"
                       data-type="line"
-                      data-spot-Radius="4"
-                      data-highlight-Spot-Color="rgb(233, 30, 99)"
-                      data-highlight-Line-Color="#fff"
-                      data-min-Spot-Color="rgb(255,255,255)"
-                      data-max-Spot-Color="rgb(255,255,255)"
-                      data-spot-Color="rgb(255,255,255)"
+                      data-spot-radius="4"
+                      data-highlight-spot-color="rgb(233, 30, 99)"
+                      data-highlight-line-color="#fff"
+                      data-min-spot-color="rgb(255,255,255)"
+                      data-max-spot-color="rgb(255,255,255)"
+                      data-spot-color="rgb(255,255,255)"
                       data-offset="90"
                       data-width="100%"
                       data-height="92px"
-                      data-line-Width="2"
-                      data-line-Color="rgba(255,255,255,0.7)"
-                      data-fill-Color="rgba(0, 188, 212, 0)"
+                      data-line-width="2"
+                      data-line-color="rgba(255,255,255,0.7)"
+                      data-fill-color="rgba(0, 188, 212, 0)"
                     >
                       12,10,9,6,5,6,10,5,7,5,12,13,7,12,11
                     </div>

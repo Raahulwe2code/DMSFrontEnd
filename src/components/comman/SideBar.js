@@ -1,44 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import userImage from "../comman/images/user.png";
 const SideBar = (props) => {
   const navigate = useNavigate();
-  const usertype = localStorage.getItem("user_type");
-  const admin_name = localStorage.getItem("admin_name");
-  const admin_email = localStorage.getItem("admin_email");
-
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const adminLogged = localStorage.getItem("admin_token");
+  const usertype = localStorage.getItem("user_type") || "demo type";
+  const admin_name = localStorage.getItem("admin_name") || "no name";
+  const admin_email = localStorage.getItem("admin_email") || "demo@gmail.com";
 
   const logout = () => {
-    if (adminLogged !== null) {
-      localStorage.removeItem("admin_token");
-      localStorage.removeItem("user_type");
-      localStorage.removeItem("admin_id");
-      localStorage.removeItem("client_name");
-      localStorage.removeItem("client_id");
-      localStorage.removeItem("admin_name");
-      localStorage.removeItem("admin_email");
-      localStorage.removeItem("client_email");
-      localStorage.removeItem("employee_id");
-      setIsLoggedIn(false);
-      navigate("/");
-      const adminLoggedd = localStorage.getItem("admin_token");
-      console.log(" after-- logout admin toekn in  sidebar----" + adminLoggedd);
-    } else {
-      console.log("in else");
-    }
+    localStorage.clear();
+
+    navigate("/");
+
+    window.location.reload();
   };
-  useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/", { replace: true });
-    }
-  }, [isLoggedIn, navigate]);
 
   function AddBodyClassFunction() {
     // document.body.classList.add('salmon');
     document.body.classList.remove("overlay-open");
-    document.body.classList.add("ls-closed");
+    // document.body.classList.add("ls-closed");
   }
 
   return (
@@ -58,7 +38,7 @@ const SideBar = (props) => {
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                <h4>{admin_name.toUpperCase()}</h4>
+                <h4>{admin_name}</h4>
               </div>
               <div className="email">{admin_email}</div>
               <div className="email">Type- {usertype}</div>

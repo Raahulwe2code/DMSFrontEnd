@@ -1,6 +1,6 @@
 import axios from "axios";
 const admin_token = localStorage.getItem("admin_token");
-console.log("admin token in api" + admin_token);
+
 export const AddClientByadmin = async (props) => {
   const response = await axios.post(
     `${process.env.REACT_APP_BASEURL}/add_clients`,
@@ -49,7 +49,6 @@ export const getAllUserswithFilter = async (id, name, type, currentPage) => {
   return response.data;
 };
 export const Admin_login_function = async (email, password) => {
-  console.log("emmmmm--" + email);
   const response = await axios.post(
     `${process.env.REACT_APP_BASEURL}/admin_login`,
     {
@@ -65,9 +64,6 @@ export const getUserByID = async (id) => {
     `${process.env.REACT_APP_BASEURL}/getUserById`,
     {
       id: id,
-    },
-    {
-      headers: { admin_token: admin_token },
     }
   );
   return response.data;
@@ -116,7 +112,6 @@ export const getClientByID = async (id) => {
 };
 
 export const UpdateClient = async (props) => {
-  console.log("props--" + JSON.stringify(props));
   const response = await axios.put(
     `${process.env.REACT_APP_BASEURL}/update_client`,
     props

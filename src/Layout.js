@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Route, Navigate, Routes } from "react-router-dom";
+import React from "react";
+import { Route, Routes } from "react-router-dom";
 
 import Home from "./components/pages/Home";
 import BlankPage from "./components/pages/BlankPage";
@@ -15,39 +15,20 @@ import Profile from "./components/pages/Profile";
 import DoumentUpload from "./components/pages/DoumentUpload";
 
 const Layout = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const adminToken = localStorage.getItem("admin_token");
 
-  console.log("admin--" + isLoggedIn);
-  useEffect(() => {
-    if (adminToken) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-  }, [isLoggedIn]);
   return (
     <>
       <div className="theme-red ">
         <Routes>
           {/* <Route exact path="/" element={<Login />} /> */}
 
-          <Route
-            path="/"
-            element={
-              isLoggedIn ? (
-                <Login />
-              ) : isLoggedIn ? (
-                <Navigate to="/home" />
-              ) : (
-                <Login />
-              )
-            }
-          />
+          <Route path="/" element={adminToken ? <Home /> : <Login />} />
           <Route e path={"/signup"} element={<Register />} />
           <Route path={"/forgetepassword"} element={<ForgetPassword />} />
           <Route path={"/resetpassword"} element={<ResetPassword />} />
           <Route path={"/doumentUpload"} element={<DoumentUpload />} />
+
           <Route exact element={<AuthWrapper />}>
             <Route path={"/home"} element={<Home />} />
             <Route path={"/users"} element={<Users />} />

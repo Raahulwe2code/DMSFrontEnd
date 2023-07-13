@@ -42,33 +42,33 @@ const ForgetPassword = () => {
   };
   return (
     <>
-      <div class="fp-page">
-        <div class="fp-box">
-          <div class="logo">
+      <div className="fp-page">
+        <div className="fp-box">
+          <div className="logo">
             <Link to="">
               <b>DMS</b>
             </Link>
             <small>Document Management System</small>
           </div>
-          <div class="card">
-            <div class="body">
+          <div className="card">
+            <div className="body">
               <form
                 id="forgot_password"
                 onSubmit={(e) => onForgetPasswordSubmit(e)}
               >
-                <div class="msg">
+                <div className="msg">
                   Enter your email address that you used to register. We'll send
                   you an email with your username and a link to reset your
                   password.
                 </div>
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <i class="material-icons">email</i>
+                <div className="input-group">
+                  <span className="input-group-addon">
+                    <i className="material-icons">email</i>
                   </span>
-                  <div class="form-line">
+                  <div className="form-line">
                     <input
                       type="email"
-                      class="form-control"
+                      className="form-control"
                       name="email"
                       placeholder="Email"
                       maxLength={30}
@@ -94,7 +94,7 @@ const ForgetPassword = () => {
                 </div>
 
                 <button
-                  class="btn btn-block btn-lg bg-pink waves-effect"
+                  className="btn btn-block btn-lg bg-pink waves-effect"
                   type="submit"
                 >
                   <div
@@ -104,13 +104,13 @@ const ForgetPassword = () => {
                         : "loader_btn"
                     }
                   >
-                    <div class="preloader pl-size-xs">
-                      <div class="spinner-layer pl-red-grey">
-                        <div class="circle-clipper left">
-                          <div class="circle"></div>
+                    <div className="preloader pl-size-xs">
+                      <div className="spinner-layer pl-red-grey">
+                        <div className="circle-clipper left">
+                          <div className="circle"></div>
                         </div>
-                        <div class="circle-clipper right">
-                          <div class="circle"></div>
+                        <div className="circle-clipper right">
+                          <div className="circle"></div>
                         </div>
                       </div>
                     </div>
@@ -119,7 +119,7 @@ const ForgetPassword = () => {
                   </div>
                 </button>
 
-                <div class="row m-t-20 m-b--5 align-center">
+                <div className="row m-t-20 m-b--5 align-center">
                   <Link to="/">Sign In!</Link>
                 </div>
               </form>

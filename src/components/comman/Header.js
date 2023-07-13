@@ -8,13 +8,17 @@ const Header = () => {
   function AddBodyClassFunctionn() {
     // setNewClass(true);
     if (newClass === false) {
+      console.log("in false header");
       // document.body.classList.remove("ls-closed");
       document.body.classList.add("overlay-open");
       setNewClass(true);
     } else if (newClass === true) {
+      console.log("in true header");
       document.body.classList.remove("overlay-open");
 
-      document.body.classList.add("ls-closed");
+      // document.body.classList.add("ls-closed");
+      setNewClass(false);
+    } else {
       setNewClass(false);
     }
   }

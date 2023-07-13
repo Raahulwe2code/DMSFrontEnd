@@ -440,6 +440,7 @@ const Gallary = () => {
   };
   return (
     <>
+    
       <div className="theme-red ">
         <Header />
         {/* <SideBar /> */}
@@ -519,7 +520,7 @@ const Gallary = () => {
                           <option value="xlsx">Xlsx</option>
                         </select>
                       </div>
-                      <div className="col-sm-1 col-lg-1">
+                      <div className="col-sm-2">
                         <select
                           className="form-control "
                           value={limit}
@@ -536,7 +537,7 @@ const Gallary = () => {
                         </select>
                       </div>
                       {getDocumentData.length === 0 ? null : (
-                        <div className="col-sm-6">
+                        <div className="col-sm-4">
                           <label>
                             <input
                               type="checkbox"
@@ -815,7 +816,7 @@ const Gallary = () => {
             </div>
           </div>
         </section>
-        <div className={modelView === true ? "show_modal" : "hide_modal"}>
+        <div className={modelView === true ? "show_modal my_modal" : "hide_modal my_modal"}>
           <div className="back_drop"></div>
           <div
             ref={ref}
@@ -945,7 +946,6 @@ const Gallary = () => {
             </div>
           </div>
         </div>
-
         <div className={modelVieww === true ? "show_modal" : ""}>
           <div className="back_drop"></div>
           <div
@@ -1054,7 +1054,7 @@ const Gallary = () => {
                               <span
                                 className={
                                   emailBtnLoader === true
-                                    ? " show_loader"
+                                    ? "show_loader"
                                     : "none"
                                 }
                               >

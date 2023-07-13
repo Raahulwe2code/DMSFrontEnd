@@ -12,6 +12,7 @@ import Users from "./components/pages/Users";
 import AuthWrapper from "./components/comman/AuthWrapper";
 import ResetPassword from "./components/pages/ResetPassword";
 import Profile from "./components/pages/Profile";
+import DoumentUpload from "./components/pages/DoumentUpload";
 
 const Layout = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -46,7 +47,7 @@ const Layout = () => {
           <Route e path={"/signup"} element={<Register />} />
           <Route path={"/forgetepassword"} element={<ForgetPassword />} />
           <Route path={"/resetpassword"} element={<ResetPassword />} />
-          
+          <Route path={"/doumentUpload"} element={<DoumentUpload />} />
           <Route exact element={<AuthWrapper />}>
             <Route path={"/home"} element={<Home />} />
             <Route path={"/users"} element={<Users />} />

@@ -32,7 +32,6 @@
   display: none;
 }
 .show_modal .modal {
-  /* transition: opacity 0.15s linear; */
   opacity: 1;
   top: 5%;
   display: block;
@@ -40,32 +39,45 @@
   -moz-transition: 1s ease-in-out;
   -webkit-transition: 1s ease-in-out;
   animation-name: show_modal;
-  animation-duration: .2s;
+  animation-duration: 0.2s;
   animation-timing-function: ease-in-out;
+}
+.show_modal.my_modal {
+  opacity: 1;
+}
+.my_modal {
+  opacity: 0;
+  transition: opacity 0.15s linear;
 }
 
 @keyframes show_modal {
-0% {top:-200%;}
-/* 25% {top: 96%;}
+  0% {
+    top: -200%;
+  }
+  /* 25% {top: 96%;}
 50% {top: 48%;} */
-100% {top: 5%;}
-
+  100% {
+    top: 5%;
+  }
 }
-.hide_modal .modal{
+.hide_modal .modal {
   transition: 1s ease-in-out;
   -moz-transition: 1s ease-in-out;
   -webkit-transition: 1s ease-in-out;
   animation-name: hide_modal;
-  animation-duration: .2s;
-  animation-timing-function: ease-in-out; 
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
 }
 @keyframes hide_modal {
-  0% {top:5%;}
+  0% {
+    top: 5%;
+  }
   /* 25% {top: 96%;}
   50% {top: 48%;} */
-  100% {top: -200;}
-  
+  100% {
+    top: -200;
   }
+}
 .navbar .navbar-brand {
   white-space: nowrap;
   -ms-text-overflow: ellipsis;
@@ -2400,7 +2412,7 @@
   padding-top: 12px;
   padding-right: 12px;
   margin-bottom: 0;
-} 
+}
 
 .bg-red {
   background-color: #f44336 !important;
@@ -3031,9 +3043,134 @@
   text-align: center;
 }
 
+/* user upload form */
+.main_continer {
+  margin: auto;
+  float: inherit;
+  border: solid 3px #ddd;
+  padding: 12px 36px;
+  background: #fff;
+  margin-top: 32px;
+}
+.file_upload {
+  border: dotted 3px #03a9f4;
+  height: 210px;
+  position: relative;
+}
+.file_name_add{
+  text-align: center;
+  display: flex;
+  padding: 40px 10px;
+  justify-content: space-between;
+  align-items: center;
+
+  border-bottom: solid 1px #ddd;
+}
+.file_name_add label {
+  font-size: 22px;
+}
+.file_name_input{
+  display: flex;
+  align-items: center;
+    gap: 10px;
+}
+.file_name_input label{
+  margin: 0;
+}
+.file_name_add input{
+  text-align: center;
+  width: 323px;
+  margin: auto;
+  font-size: 18px;
+}
+.file_upload input {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 99;
+  position: relative;
+}
+.file_upload .logo_upload {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+  bottom: 0;
+  display: inline-table;
+  text-align: center;
+}
+.file_upload .logo_upload img{
+  width: 116px;
+}
+.dms_logo{
+  text-align: center;
+  margin-bottom: 18px;
+}
+.dms_logo img{
+  width: 210px;
+}
+
+.file_upload .logo_upload p{
+  font-size: 24px;
+  margin-top: 20px;
+}
+.uploaded_document h3{
+color: #7a7676;
+margin-bottom: 14px;
+}
+.uploaded_file{
+  border: solid 2px #b9b5b5;
+  padding: 15px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.sumbit_btn button{
+  font-size: 18px !important;
+  font-weight: 900 !important;
+}
+.file_name {
+  display: flex;
+ align-items: center;
+}
+.file_name img{
+  width: 36px;
+}
+.file_name span{
+  background: #03a9f4;
+    color: #fff;
+    font-size: 23px;
+    font-weight: 700;
+    padding: 4px 14px;
+    vertical-align: middle;
+    border-radius: 4px;
+}
+.file_name p {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  margin-left: 14px;
+
+}
 /* Materialize Css | Taken from www.materializecss.com */
 /* Media ======================================= */
 @media (max-width: 767px) {
+  .file_name_input,
+  .file_name_add{
+    flex-direction: column;
+    width: 100%;
+  
+  }
+  .file_name_add{
+    padding: 24px 10px
+  }
+  .file_name_add input{
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+
+
   .navbar > .container .navbar-brand,
   .navbar > .container-fluid .navbar-brand {
     margin-left: 35px;
@@ -6804,10 +6941,29 @@ section.content {
     margin: 0 40px;
     padding: 6px;
   }
+
+  .file_name{
+    flex-direction: column;
+  }
+
+.file_name p {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 0;
+    padding-top: 8px;
   /* .modal .modal-content {
     overflow: scroll;
     height: 94vh;
   } */
+}
+.file_name span {
+  font-size: 13px;
+  padding: 2px 11px
+}
+.sumbit_btn button{
+  font-size: 14px !important;
+}
 }
 .form-horizontal .form-group {
   margin-bottom: 0;

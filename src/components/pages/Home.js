@@ -31,8 +31,8 @@ const Home = () => {
             <div className="block-header">
               <h2>DASHBOARD</h2>
             </div>
-
-            {/* <!-- Widgets --> */}
+           
+                       {/* <!-- Widgets --> */}
             <div className="row clearfix">
               <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div className="info-box bg-pink hover-expand-effect">

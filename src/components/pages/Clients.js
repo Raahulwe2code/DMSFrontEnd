@@ -150,7 +150,7 @@ const Clients = () => {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
-
+        getClients();
         setSubmitLoader(false);
         setState(state);
         setapicall(true);
@@ -245,10 +245,12 @@ const Clients = () => {
   };
 
   // function for clicking client and send id and name on gallary
-  const onClientClick = (id, name, email) => {
+  const onClientClick = (id, name, token) => {
     localStorage.setItem("client_name", name);
 
-    navigate(`/gallary?client_id=${id}&&loading=${loadidng}`);
+    navigate(
+      `/gallary?client_id=${id}&&loading=${loadidng}&&client_token=${token}`
+    );
   };
 
   // funtion for open delete sweet alert
@@ -259,7 +261,7 @@ const Clients = () => {
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      cancelButtonColor: "#d33d33",
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -347,17 +349,17 @@ const Clients = () => {
                       ) : (
                         getClientsData.map((item) => {
                           return (
-                            <>
+                            <React.Fragment key={item.id}>
                               <div className="col-sm-3 col-md-2">
                                 <div className="card deshbord_user_card ">
                                   <div className="header">
                                     {item.type === "individual" ? (
-                                      <span class="badge btn btn-success type_icon">
-                                        <i class="material-icons">person</i>
+                                      <span className="badge btn btn-success type_icon">
+                                        <i className="material-icons">person</i>
                                       </span>
                                     ) : item.type === "company" ? (
-                                      <span class="badge btn btn-danger type_icon">
-                                        <i class="material-icons">
+                                      <span className="badge btn btn-danger type_icon">
+                                        <i className="material-icons">
                                           account_balance
                                         </i>
                                       </span>
@@ -371,7 +373,7 @@ const Clients = () => {
                                         onClientClick(
                                           item.id,
                                           item.name,
-                                          item.email
+                                          item.client_token
                                         )
                                       }
                                       style={{ cursor: "pointer" }}
@@ -379,7 +381,7 @@ const Clients = () => {
                                     <h2>{item.name}</h2>
                                     <div className="profile_edit_delete">
                                       <i
-                                        class="material-icons text-primary"
+                                        className="material-icons text-primary"
                                         // data-toggle="modal"
                                         // data-target="#exampleModal"
                                         onClick={() =>
@@ -389,7 +391,7 @@ const Clients = () => {
                                         edit
                                       </i>
                                       <i
-                                        class="material-icons text-danger"
+                                        className="material-icons text-danger"
                                         onClick={() =>
                                           onDeleteModelClick(item.name, item.id)
                                         }
@@ -403,7 +405,7 @@ const Clients = () => {
                                   </div>
                                 </div>
                               </div>
-                            </>
+                            </React.Fragment>
                           );
                         })
                       )}

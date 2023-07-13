@@ -2,15 +2,15 @@ import React from "react";
 
 const Loader = () => {
   return (
-    <div class="page-loader-wrapper">
-      <div class="loader">
-        <div class="preloader">
-          <div class="spinner-layer pl-red">
-            <div class="circle-clipper left">
-              <div class="circle"></div>
+    <div className="page-loader-wrapper">
+      <div className="loader">
+        <div className="preloader">
+          <div className="spinner-layer pl-red">
+            <div className="circle-clipper left">
+              <div className="circle"></div>
             </div>
-            <div class="circle-clipper right">
-              <div class="circle"></div>
+            <div className="circle-clipper right">
+              <div className="circle"></div>
             </div>
           </div>
         </div>

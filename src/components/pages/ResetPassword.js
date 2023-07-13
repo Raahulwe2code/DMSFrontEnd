@@ -66,25 +66,25 @@ const ResetPassword = () => {
 
   return (
     <>
-      <div class="fp-page">
-        <div class="fp-box">
-          <div class="logo">
+      <div className="fp-page">
+        <div className="fp-box">
+          <div className="logo">
             <Link to="">
               <b>DMS</b>
             </Link>
             <small>Document Management System</small>
           </div>
-          <div class="card">
-            <div class="body">
+          <div className="card">
+            <div className="body">
               <form id="forgot_password" onSubmit={handleSubmit}>
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <i class="material-icons">lock</i>
+                <div className="input-group">
+                  <span className="input-group-addon">
+                    <i className="material-icons">lock</i>
                   </span>
-                  <div class="form-line">
+                  <div className="form-line">
                     <input
                       type="password"
-                      class="form-control"
+                      className="form-control"
                       minLength={"4"}
                       maxLength={"20"}
                       name="password"
@@ -99,14 +99,14 @@ const ResetPassword = () => {
                     </small>
                   ) : null}
                 </div>
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <i class="material-icons">lock</i>
+                <div className="input-group">
+                  <span className="input-group-addon">
+                    <i className="material-icons">lock</i>
                   </span>
-                  <div class="form-line">
+                  <div className="form-line">
                     <input
                       type="password"
-                      class="form-control"
+                      className="form-control"
                       name="Confirm new password"
                       minLength={"4"}
                       maxLength={"20"}
@@ -127,7 +127,7 @@ const ResetPassword = () => {
                   ) : null}
                 </div>
                 <button
-                  class="btn btn-block btn-lg bg-pink waves-effect"
+                  className="btn btn-block btn-lg bg-pink waves-effect"
                   type="submit"
                 >
                   {" "}

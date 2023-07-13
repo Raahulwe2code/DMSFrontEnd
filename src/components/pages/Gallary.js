@@ -38,10 +38,11 @@ import ReactPaginate from "react-paginate";
 
 const Gallary = () => {
   const [searchparams] = useSearchParams();
-
+  const [clientToken, setClientToken] = useState("");
   let encoded;
 
   let checkboxUrl = [];
+  const [copyUrl, setCopyUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const [limit, setLimit] = useState(8);
@@ -81,10 +82,20 @@ const Gallary = () => {
       setClientID(searchparams.get("client_id"));
     }
 
+    if (
+      searchparams.get("client_token") === null ||
+      searchparams.get("client_token") === "" ||
+      searchparams.get("client_token") === undefined
+    ) {
+      setClientToken("");
+    } else {
+      setClientToken(searchparams.get("client_token"));
+    }
+
     if (searchparams.get("loading") === "false") {
       setLoading(true);
     }
-  }, [clienttId]);
+  }, [clienttId, clientToken]);
   // onchange for document name
   const OndocumentName = (e) => {
     setDocumentName(e.target.value);
@@ -218,6 +229,7 @@ const Gallary = () => {
   useEffect(() => {
     getDocumentByid(clienttId);
   }, [
+    clientToken,
     clienttId,
     apicall,
     searchDocumentName,
@@ -279,7 +291,7 @@ const Gallary = () => {
     let newArray = getDocumentData.filter(function(el) {
       return el.isChecked === true;
     });
-    console.log(newArray);
+
     if (newArray.length === 0) {
       toast.warning("Please Select any one for download", {
         position: toast.POSITION.TOP_RIGHT,
@@ -317,9 +329,9 @@ const Gallary = () => {
       // console.log("end");
 
       // Save the zip file
-      console.log(" save start");
+
       saveAs(content, `${clientNamee}_Document.zip`);
-      console.log(" save end");
+
       setSubmitLoader(false);
     }
   };
@@ -438,6 +450,54 @@ const Gallary = () => {
     setSenderEmail(e.target.value);
     setcustomValidated("");
   };
+  const url = window.location.origin;
+  useEffect(() => {
+    setCopyUrl(`${url}/resetpassword?client_token=${clientToken}`);
+  }, [copyUrl]);
+
+  const copyClipBoradFuntion = () => {
+    // Get the text field
+    var copyText = document.getElementById("myInputforCopy");
+
+    // // Select the text field
+    // copyText.select();
+    // copyText.setSelectionRange(0, 99999); // For mobile devices
+
+    // // Copy the text inside the text field
+    // navigator.clipboard.writeText(copyText.value);
+
+    try {
+      // Copy the text inside the text field
+      if (navigator.clipboard) {
+        navigator.clipboard
+          .writeText(copyText.value)
+          .then(() => {
+            console.log("Text copied to clipboard");
+          })
+          .catch((error) => {
+            console.error("Failed to copy text: ", error);
+          });
+      } else {
+        // Fallback for browsers without clipboard API support
+        var textArea = document.createElement("textarea");
+        textArea.value = copyText.value;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+        console.log("Text copied to clipboard");
+      }
+    } catch (error) {
+      console.error("Failed to copy text: ", error);
+    }
+
+    // Alert the copied text
+    toast.success("Copied to Clipborad", {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 1000,
+    });
+  };
+
   return (
     <>
       <div className="theme-red ">
@@ -454,14 +514,29 @@ const Gallary = () => {
               {getDocumentData.length === 0 ? null : (
                 <div className="download_emai_btn d-flex">
                   <button className="btn btn-info" onClick={handleDownload}>
-                    <i class="material-icons">get_app</i>
+                    <i className="material-icons">get_app</i>
                   </button>
                   <button
                     id="mailBox"
                     className="btn btn-primary text-end"
                     onClick={handleOpenMailBox}
                   >
-                    <i class="material-icons">email</i>
+                    <i className="material-icons">email</i>
+                  </button>
+
+                  <input
+                    type="text"
+                    value={copyUrl}
+                    id="myInputforCopy"
+                    style={{ display: "none" }}
+                  ></input>
+                  <button
+                    id="mailBox"
+                    className="btn  text-end"
+                    style={{ backgroundColor: "#bbbbbb" }}
+                    onClick={copyClipBoradFuntion}
+                  >
+                    <i className="material-icons">content_copy</i>
                   </button>
                 </div>
               )}
@@ -469,7 +544,7 @@ const Gallary = () => {
             <div className="row">
               <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="card document_card">
-                  <div className="block-header add_documents_btn">
+                  <div className="block-header">
                     <div className="text-right" style={{ width: "100%" }}>
                       <button
                         className="btn btn-success"
@@ -558,10 +633,10 @@ const Gallary = () => {
                       ) : (
                         getDocumentData.map((item) => {
                           return (
-                            <>
+                            <React.Fragment key={item.id}>
                               <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12 doucment_box">
                                 {item.document_type === "pdf" ? (
-                                  <>
+                                  <React.Fragment key={item.id}>
                                     <Link
                                       to={item.document_url}
                                       target="_blank"
@@ -597,7 +672,7 @@ const Gallary = () => {
                                         />
                                       </label>
                                       <i
-                                        class="material-icons text-danger"
+                                        className="material-icons text-danger"
                                         onClick={() =>
                                           onDeleteModelClick(
                                             item.document_title,
@@ -608,7 +683,7 @@ const Gallary = () => {
                                         delete
                                       </i>
                                     </div>
-                                  </>
+                                  </React.Fragment>
                                 ) : item.document_type === "doc" ||
                                   item.document_type === "docx" ? (
                                   <>
@@ -647,7 +722,7 @@ const Gallary = () => {
                                         />
                                       </label>
                                       <i
-                                        class="material-icons text-danger"
+                                        className="material-icons text-danger"
                                         onClick={() =>
                                           onDeleteModelClick(
                                             item.document_title,
@@ -699,7 +774,7 @@ const Gallary = () => {
                                       </label>
 
                                       <i
-                                        class="material-icons text-danger"
+                                        className="material-icons text-danger"
                                         onClick={() =>
                                           onDeleteModelClick(
                                             item.document_title,
@@ -780,7 +855,7 @@ const Gallary = () => {
                                       </label>
 
                                       <i
-                                        class="material-icons text-danger"
+                                        className="material-icons text-danger"
                                         onClick={() =>
                                           onDeleteModelClick(item.name, item.id)
                                         }
@@ -791,7 +866,7 @@ const Gallary = () => {
                                   </>
                                 )}
                               </div>
-                            </>
+                            </React.Fragment>
                           );
                         })
                       )}
@@ -815,7 +890,7 @@ const Gallary = () => {
             </div>
           </div>
         </section>
-        <div className={modelView === true ? "show_modal" : "hide_modal"}>
+        <div className={modelView === true ? "show_modal" : ""}>
           <div className="back_drop"></div>
           <div
             ref={ref}
@@ -827,7 +902,7 @@ const Gallary = () => {
             //     : "modal fade in"
             // }
             id="exampleModal"
-            tabindex="-1"
+            tabIndex="-1"
             role="dialog"
             // aria-labelledby="exampleModalLabel"
             // aria-hidden="true"
@@ -958,7 +1033,7 @@ const Gallary = () => {
             //     : "modal fade in"
             // }
             id="exampleModal1"
-            tabindex="-1"
+            tabIndex="-1"
             role="dialog"
             // aria-labelledby="exampleModalLabel"
             // aria-hidden="true"
@@ -1040,13 +1115,13 @@ const Gallary = () => {
                             className="btn btn-primary email_send_btn"
                           >
                             <div className="loader_btn">
-                              <div class="preloader pl-size-xs">
-                                <div class="spinner-layer pl-red-grey">
-                                  <div class="circle-clipper left">
-                                    <div class="circle"></div>
+                              <div className="preloader pl-size-xs">
+                                <div className="spinner-layer pl-red-grey">
+                                  <div className="circle-clipper left">
+                                    <div className="circle"></div>
                                   </div>
-                                  <div class="circle-clipper right">
-                                    <div class="circle"></div>
+                                  <div className="circle-clipper right">
+                                    <div className="circle"></div>
                                   </div>
                                 </div>
                               </div>

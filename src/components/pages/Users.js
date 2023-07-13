@@ -295,7 +295,7 @@ const Users = () => {
                       ) : (
                         getUsersData.map((item) => {
                           return (
-                            <>
+                            <React.Fragment key={item.id}>
                               <div className="col-sm-2">
                                 <div className="card deshbord_user_card">
                                   <div className="header">
@@ -307,7 +307,7 @@ const Users = () => {
                                     <h2>{item.name}</h2>
                                     <div className="profile_edit_delete">
                                       <i
-                                        class="material-icons text-primary"
+                                        className="material-icons text-primary"
                                         // data-toggle="modal"
                                         // data-target="#exampleModal"
                                         onClick={() =>
@@ -317,7 +317,7 @@ const Users = () => {
                                         edit
                                       </i>
                                       <i
-                                        class="material-icons text-danger"
+                                        className="material-icons text-danger"
                                         onClick={() =>
                                           onDeleteModelClick(item.name, item.id)
                                         }
@@ -327,7 +327,7 @@ const Users = () => {
                                     </div>
                                   </div>
                                   <div className="body profile_email">
-                                    <i class="material-icons">email</i>
+                                    <i className="material-icons">email</i>
                                     <span>{item.email}</span>
                                   </div>
                                   {/* <div className=" text-center">
@@ -342,7 +342,7 @@ const Users = () => {
                                 </div> */}
                                 </div>
                               </div>
-                            </>
+                            </React.Fragment>
                           );
                         })
                       )}
@@ -627,17 +627,17 @@ const Users = () => {
                     </div>
 
                     <div className="row clearfix">
-                      <div class="modal-footer">
+                      <div className="modal-footer">
                         <button
                           type="button"
-                          class="btn btn-secondary"
+                          className="btn btn-secondary"
                           data-dismiss="modal"
                           id="closeButton1"
                           onClick={() => onCloseModel()}
                         >
                           Close
                         </button>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" className="btn btn-primary">
                           {modelshow === true ? "Update" : " Add "}
                         </button>
                       </div>

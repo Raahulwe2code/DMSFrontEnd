@@ -42,7 +42,7 @@ const Profile = () => {
     // if (apicall === true) {
     //   setapicall(false);
     // }
-  }, [apicall]);
+  }, [apicall, id, admin_id]);
 
   const getUserDetails = async (id) => {
     const response = await getUserByID(id);
@@ -163,7 +163,7 @@ const Profile = () => {
       //   ProfileUpload,
       //   ProfileType
       // );
-      console.log(response.message);
+
       if (response.message === "Updated user profile successfully") {
         toast.success("Profile update successfully", {
           position: toast.POSITION.TOP_RIGHT,
@@ -171,6 +171,7 @@ const Profile = () => {
         });
         getUserDetails(id);
         setapicall(true);
+        window.location.reload();
       }
     }
   };
@@ -387,7 +388,7 @@ const Profile = () => {
                           <div className="form-group">
                             <div className="col-sm-offset-2 col-sm-10">
                               <button type="submit" className="btn btn-danger">
-                                SUBMIT
+                                Update profile
                               </button>
                             </div>
                           </div>

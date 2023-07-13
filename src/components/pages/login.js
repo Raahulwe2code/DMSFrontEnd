@@ -58,26 +58,26 @@ const Login = () => {
   return (
     <>
       {loadidng === true ? <Loader /> : null}
-      <div class="login-page">
-        <div class="login-box">
-          <div class="logo">
+      <div className="login-page">
+        <div className="login-box">
+          <div className="logo">
             <Link to="">
               <b>DMS</b>
             </Link>
             <small>Document Management System</small>
           </div>
-          <div class="card">
-            <div class="body">
+          <div className="card">
+            <div className="body">
               <form id="sign_in" onSubmit={sign_up_btn}>
-                <div class="msg">Sign in to start your session</div>
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <i class="material-icons">person</i>
+                <div className="msg">Sign in to start your session</div>
+                <div className="input-group">
+                  <span className="input-group-addon">
+                    <i className="material-icons">person</i>
                   </span>
-                  <div class="form-line">
+                  <div className="form-line">
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       name="email"
                       placeholder="email"
                       onChange={(e) => {
@@ -87,22 +87,22 @@ const Login = () => {
                     />
                   </div>
                 </div>
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <i class="material-icons">lock</i>
+                <div className="input-group">
+                  <span className="input-group-addon">
+                    <i className="material-icons">lock</i>
                   </span>
-                  <div class="form-line">
+                  <div className="form-line">
                     <input
                       type="password"
-                      class="form-control"
+                      className="form-control"
                       name="password"
                       onChange={(e) => onPasswordChange(e)}
                       placeholder="Password"
                     />
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-xs-8 p-t-5 text-danger">
+                <div className="row">
+                  <div className="col-xs-8 p-t-5 text-danger">
                     {emailerror === "email not found"
                       ? "Email not found"
                       : emailerror === "passsword not matched"
@@ -111,20 +111,20 @@ const Login = () => {
                       ? "please fill Credentials"
                       : null}
                   </div>
-                  <div class="col-xs-4">
+                  <div className="col-xs-4">
                     <button
-                      class="btn btn-block bg-pink waves-effect"
+                      className="btn btn-block bg-pink waves-effect"
                       type="submit"
                     >
                       SIGN IN
                     </button>
                   </div>
                 </div>
-                <div class="row m-t-15 m-b--20">
-                  <div class="col-xs-6 ">
+                <div className="row m-t-15 m-b--20">
+                  <div className="col-xs-6 ">
                     <Link to="/signup">Admin Registraion!</Link>
                   </div>
-                  <div class="col-xs-6 align-right">
+                  <div className="col-xs-6 align-right">
                     <Link to="/forgetepassword">Forgot Password?</Link>
                   </div>
                 </div>

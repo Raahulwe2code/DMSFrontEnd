@@ -3032,7 +3032,13 @@
   min-height: 214px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  border-radius: 4px;
+  transition: 0.1s;
+  /* justify-content: space-around; */
+}
+.card.deshbord_user_card:hover {
+  box-shadow: 0 2px 10px rgb(0 0 0 / 28%);
+  border: solid 1px #a94442;
 }
 .deshbord_user_card .header img {
   width: 100px;
@@ -3050,14 +3056,14 @@
   border: solid 3px #ddd;
   padding: 12px 36px;
   background: #fff;
-  margin-top: 32px;
+  margin: 20px;
 }
 .file_upload {
   border: dotted 3px #03a9f4;
   height: 210px;
   position: relative;
 }
-.file_name_add{
+.file_name_add {
   text-align: center;
   display: flex;
   padding: 40px 10px;
@@ -3069,15 +3075,15 @@
 .file_name_add label {
   font-size: 22px;
 }
-.file_name_input{
+.file_name_input {
   display: flex;
   align-items: center;
-    gap: 10px;
+  gap: 10px;
 }
-.file_name_input label{
+.file_name_input label {
   margin: 0;
 }
-.file_name_add input{
+.file_name_add input {
   text-align: center;
   width: 323px;
   margin: auto;
@@ -3097,79 +3103,88 @@
   left: 0;
   margin: auto;
   bottom: 0;
-  display: inline-table;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   text-align: center;
 }
-.file_upload .logo_upload img{
+.file_upload .logo_upload img {
   width: 116px;
+  margin: auto;
 }
-.dms_logo{
+.file_name_input small,
+.logo_upload small {
+  font-size: 14px;
+  font-weight: 600;
+}
+.dms_logo {
   text-align: center;
   margin-bottom: 18px;
 }
-.dms_logo img{
+.dms_logo img {
   width: 210px;
 }
 
-.file_upload .logo_upload p{
+.file_upload .logo_upload p {
   font-size: 24px;
   margin-top: 20px;
 }
-.uploaded_document h3{
-color: #7a7676;
-margin-bottom: 14px;
+.uploaded_document h3 {
+  color: #7a7676;
+  margin-bottom: 14px;
 }
-.uploaded_file{
+.uploaded_file {
   border: solid 2px #b9b5b5;
   padding: 15px 8px;
   border-radius: 4px;
   margin-bottom: 6px;
 }
-.sumbit_btn button{
+.sumbit_btn button {
   font-size: 18px !important;
   font-weight: 900 !important;
 }
 .file_name {
   display: flex;
- align-items: center;
+  align-items: center;
 }
-.file_name img{
+.file_name img {
   width: 36px;
 }
-.file_name span{
+.file_name span {
   background: #03a9f4;
-    color: #fff;
-    font-size: 23px;
-    font-weight: 700;
-    padding: 4px 14px;
-    vertical-align: middle;
-    border-radius: 4px;
+  color: #fff;
+  font-size: 23px;
+  font-weight: 700;
+  padding: 4px 14px;
+  vertical-align: middle;
+  border-radius: 4px;
 }
 .file_name p {
   margin: 0;
   font-size: 22px;
   font-weight: 700;
   margin-left: 14px;
-
 }
 /* Materialize Css | Taken from www.materializecss.com */
 /* Media ======================================= */
 @media (max-width: 767px) {
   .file_name_input,
-  .file_name_add{
+  .file_name_add {
     flex-direction: column;
     width: 100%;
-  
   }
-  .file_name_add{
-    padding: 24px 10px
+  .file_name_add {
+    padding: 24px 10px;
   }
-  .file_name_add input{
+  .file_name_add input {
     width: 100%;
-    margin-bottom: 12px;
+    /* margin-bottom: 12px; */
   }
-
-
+  .sumbit_btn {
+    margin-top: 12px;
+  }
+  .main_continer {
+  }
 
   .navbar > .container .navbar-brand,
   .navbar > .container-fluid .navbar-brand {
@@ -3920,7 +3935,7 @@ section.content {
 }
 .card .header {
   color: #555;
-  padding: 20px;
+  padding: 8px;
   position: relative;
   border-bottom: 1px solid rgba(204, 204, 204, 0.35);
 }
@@ -6917,10 +6932,17 @@ section.content {
 .modal .error_massage {
   padding-left: 12px;
 }
+.filter_name_ext {
+  display: flex;
+  padding: 0;
+}
 
 @media (max-width: 1167px) {
   .ls-closed .sidebar {
     margin-left: -300px;
+  }
+  .filter_name_ext {
+    margin-bottom: 0px !important;
   }
   .ls-closed section.content {
     margin-left: 15px;
@@ -6933,7 +6955,7 @@ section.content {
   }
   .document_card label {
     margin-bottom: 0 !important;
-    margin-top: 10px !important;
+    /* margin-top: 10px !important; */
   }
 }
 @media (max-width: 568px) {
@@ -6942,28 +6964,39 @@ section.content {
     padding: 6px;
   }
 
-  .file_name{
-    flex-direction: column;
+  .file_name {
+    /* flex-direction: column; */
+  }
+  .col-mo-6 {
+    width: 50%;
+  }
+  .document_card .block-header {
+    padding-bottom: 0px;
+  }
+  h2 {
+    font-size: 18px;
   }
 
-.file_name p {
+  .file_name p {
     margin: 0;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     margin-left: 0;
-    padding-top: 8px;
-  /* .modal .modal-content {
+    padding-left: 8px;
+    display: flex;
+    align-items: center;
+    /* .modal .modal-content {
     overflow: scroll;
     height: 94vh;
   } */
-}
-.file_name span {
-  font-size: 13px;
-  padding: 2px 11px
-}
-.sumbit_btn button{
-  font-size: 14px !important;
-}
+  }
+  .file_name span {
+    font-size: 14px;
+    padding: 3px 14px;
+  }
+  .sumbit_btn button {
+    font-size: 14px !important;
+  }
 }
 .form-horizontal .form-group {
   margin-bottom: 0;
@@ -10237,7 +10270,14 @@ fieldset[disabled] .form-control {
 }
 .doucment_box .profile_edit_delete {
   position: absolute;
-  right: 20px;
+  right: 15px;
+  top: 0;
+  left: inherit !important;
+  display: flex;
+  background: #ffffff94;
+  flex-direction: column;
+  box-shadow: -3px 3px 6px -2px #ddd;
+  border-radius: 4px;
 }
 .download_emai_btn {
   text-align: center;
@@ -10250,7 +10290,7 @@ fieldset[disabled] .form-control {
   top: 3px;
 }
 .doucment_box .profile_edit_delete i {
-  background: #fff;
+  /* background: #fff; */
   padding: 3px;
   border-radius: 5px;
 }
@@ -10271,8 +10311,8 @@ fieldset[disabled] .form-control {
   color: white;
 }
 .document_card label {
-  width: 100%;
-  text-align: end;
+  /* width: 100%; */
+  /* text-align: end; */
   /* padding-right: 9px; */
 }
 .document_card input {
@@ -10723,7 +10763,9 @@ fieldset[disabled] .form-control {
 .sparkline {
   text-align: center;
 }
-
+.document_card .block-header {
+  padding: 14px;
+}
 /* Searchbar =================================== */
 .search-bar {
   position: fixed;
@@ -10774,18 +10816,32 @@ fieldset[disabled] .form-control {
 }
 .profile_edit_delete {
   display: flex;
-  flex-direction: column;
-  position: absolute;
-  right: 2px;
+  justify-content: center;
+  /* position: absolute; */
+  right: 0;
+  left: 0;
+  grid-gap: 6px;
   gap: 6px;
-  top: 8px;
+  /* transform: translateY(42%);
+  opacity: 0;
+  transition: 2s ease-in-out; */
+}
+.deshbord_user_card .profile_edit_delete {
+  /* transform: translateY(0%);
+  opacity: 1; */
+  background: whitesmoke;
+  min-height: 100%;
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-evenly;
 }
 .profile_email {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
+  gap: 4px;
 }
 .profile_edit_delete .material-icons {
-  font-size: 20px;
+  font-size: 26px;
   cursor: pointer;
 }
 .profile_email i {

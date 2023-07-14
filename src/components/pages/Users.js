@@ -305,31 +305,32 @@ const Users = () => {
                                       height="100px"
                                     />
                                     <h2>{item.name}</h2>
-                                    <div className="profile_edit_delete">
-                                      <i
-                                        className="material-icons text-primary"
-                                        // data-toggle="modal"
-                                        // data-target="#exampleModal"
-                                        onClick={() =>
-                                          onUpdateModelClick(item.id)
-                                        }
-                                      >
-                                        edit
-                                      </i>
-                                      <i
-                                        className="material-icons text-danger"
-                                        onClick={() =>
-                                          onDeleteModelClick(item.name, item.id)
-                                        }
-                                      >
-                                        delete
-                                      </i>
+                                    <div className="body profile_email">
+                                      <i className="material-icons">email</i>
+                                      <span>{item.email}</span>
                                     </div>
                                   </div>
-                                  <div className="body profile_email">
-                                    <i className="material-icons">email</i>
-                                    <span>{item.email}</span>
+                                  <div className="profile_edit_delete">
+                                    <i
+                                      className="material-icons text-primary"
+                                      // data-toggle="modal"
+                                      // data-target="#exampleModal"
+                                      onClick={() =>
+                                        onUpdateModelClick(item.id)
+                                      }
+                                    >
+                                      edit
+                                    </i>
+                                    <i
+                                      className="material-icons text-danger"
+                                      onClick={() =>
+                                        onDeleteModelClick(item.name, item.id)
+                                      }
+                                    >
+                                      delete
+                                    </i>
                                   </div>
+
                                   {/* <div className=" text-center">
                                   <button
                                     className="btn btn-success"

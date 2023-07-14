@@ -239,9 +239,9 @@ const Gallary = () => {
   ]);
 
   //function for get document based on client id
-  const getDocumentByid = async (clientID) => {
+  const getDocumentByid = async (clienttId) => {
     const response = await getDocument(
-      clientID,
+      clienttId,
       searchDocumentName,
       searchDocumenttype,
       currentPage,
@@ -452,7 +452,7 @@ const Gallary = () => {
   };
   const url = window.location.origin;
   useEffect(() => {
-    setCopyUrl(`${url}/resetpassword?client_token=${clientToken}`);
+    setCopyUrl(`${url}/doumentUpload?client_token=${clientToken}`);
   }, [copyUrl]);
 
   const copyClipBoradFuntion = () => {
@@ -500,7 +500,6 @@ const Gallary = () => {
 
   return (
     <>
-    
       <div className="theme-red ">
         <Header />
         {/* <SideBar /> */}
@@ -573,46 +572,48 @@ const Gallary = () => {
                         </div>
                       </div>
 
-                      <div className="col-sm-3">
-                        <select
-                          className="form-control "
-                          value={searchDocumenttype}
-                          name="type"
-                          onChange={(e) => DocumentTypeOnChange(e)}
-                        >
-                          <option value="" className="text-center">
-                            -- Please select document type --
-                          </option>
-                          <option value="">All</option>
-                          <option value="jpg">Jpg</option>
-                          <option value="jpeg">Jpeg</option>
-                          <option value="png">Png</option>
-                          <option value="pdf">Pdf</option>
-                          <option value="csv">Csv</option>
-                          <option value="doc">Doc</option>
-                          <option value="docx">Docx</option>
-                          <option value="xls">Xls</option>
-                          <option value="xlsx">Xlsx</option>
-                        </select>
-                      </div>
-                      <div className="col-sm-2">
-                        <select
-                          className="form-control "
-                          value={limit}
-                          name="type"
-                          onChange={(e) => setLimit(e.target.value)}
-                        >
-                          <option value={""} disabled className="text-center">
-                            show
-                          </option>
-                          <option value={0}>All</option>
-                          <option value={4}>4</option>
-                          <option value={8}>{8}</option>
-                          <option value={12}>{12}</option>
-                        </select>
+                      <div className="col-sm-5 filter_name_ext">
+                        <div className="col-sm-6">
+                          <select
+                            className="form-control "
+                            value={searchDocumenttype}
+                            name="type"
+                            onChange={(e) => DocumentTypeOnChange(e)}
+                          >
+                            <option value="" className="text-center">
+                              -- Please select document type --
+                            </option>
+                            <option value="">All</option>
+                            <option value="jpg">Jpg</option>
+                            <option value="jpeg">Jpeg</option>
+                            <option value="png">Png</option>
+                            <option value="pdf">Pdf</option>
+                            <option value="csv">Csv</option>
+                            <option value="doc">Doc</option>
+                            <option value="docx">Docx</option>
+                            <option value="xls">Xls</option>
+                            <option value="xlsx">Xlsx</option>
+                          </select>
+                        </div>
+                        <div className="col-sm-6">
+                          <select
+                            className="form-control "
+                            value={limit}
+                            name="type"
+                            onChange={(e) => setLimit(e.target.value)}
+                          >
+                            <option value={""} disabled className="text-center">
+                              show
+                            </option>
+                            <option value={0}>All</option>
+                            <option value={4}>4</option>
+                            <option value={8}>{8}</option>
+                            <option value={12}>{12}</option>
+                          </select>
+                        </div>
                       </div>
                       {getDocumentData.length === 0 ? null : (
-                        <div className="col-sm-4">
+                        <div className="col-sm-4 text-right">
                           <label>
                             <input
                               type="checkbox"

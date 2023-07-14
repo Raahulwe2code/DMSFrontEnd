@@ -379,29 +379,30 @@ const Clients = () => {
                                       style={{ cursor: "pointer" }}
                                     />
                                     <h2>{item.name}</h2>
-                                    <div className="profile_edit_delete">
-                                      <i
-                                        className="material-icons text-primary"
-                                        // data-toggle="modal"
-                                        // data-target="#exampleModal"
-                                        onClick={() =>
-                                          onUpdateModelClick(item.id)
-                                        }
-                                      >
-                                        edit
-                                      </i>
-                                      <i
-                                        className="material-icons text-danger"
-                                        onClick={() =>
-                                          onDeleteModelClick(item.name, item.id)
-                                        }
-                                      >
-                                        delete
-                                      </i>
+                                    <div className="body">
+                                      Phone:- {item.phone_no}
                                     </div>
                                   </div>
-                                  <div className="body">
-                                    Phone:- {item.phone_no}
+
+                                  <div className="profile_edit_delete">
+                                    <i
+                                      className="material-icons text-primary"
+                                      // data-toggle="modal"
+                                      // data-target="#exampleModal"
+                                      onClick={() =>
+                                        onUpdateModelClick(item.id)
+                                      }
+                                    >
+                                      edit
+                                    </i>
+                                    <i
+                                      className="material-icons text-danger"
+                                      onClick={() =>
+                                        onDeleteModelClick(item.name, item.id)
+                                      }
+                                    >
+                                      delete
+                                    </i>
                                   </div>
                                 </div>
                               </div>

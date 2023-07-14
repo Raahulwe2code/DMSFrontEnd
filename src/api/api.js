@@ -220,3 +220,25 @@ export const ProfileUpdatefuntion = async (
   );
   return response.data;
 };
+
+export const AddDocumentAnotherUser = async (clientToken, props) => {
+  const response = await axios.post(
+    `${process.env.REACT_APP_BASEURL}/document_upload_another_user`,
+    props,
+    {
+      headers: { client_token: clientToken },
+    }
+  );
+  return response.data;
+};
+
+export const GetDocumentAnotherUser = async (clientToken) => {
+  console.log(" token in  get api another user--" + clientToken);
+  const response = await axios.get(
+    `${process.env.REACT_APP_BASEURL}/get_document__another_user`,
+    {
+      headers: { client_token: clientToken },
+    }
+  );
+  return response.data;
+};

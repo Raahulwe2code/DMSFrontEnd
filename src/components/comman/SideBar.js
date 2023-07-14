@@ -1,11 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getUserByID } from "../../api/api";
 import userImage from "../comman/images/user.png";
 const SideBar = (props) => {
   const navigate = useNavigate();
+  const [getData, setGetData] = useState([]);
   const usertype = localStorage.getItem("user_type") || "demo type";
-  const admin_name = localStorage.getItem("admin_name") || "no name";
-  const admin_email = localStorage.getItem("admin_email") || "demo@gmail.com";
+
+  const id = localStorage.getItem("admin_id");
+
+  useEffect(() => {
+    getUserDetails(id);
+  }, [id]);
+
+  const getUserDetails = async (id) => {
+    const response = await getUserByID(id);
+    setGetData(response[0]);
+  };
 
   const logout = () => {
     localStorage.clear();
@@ -29,7 +40,13 @@ const SideBar = (props) => {
           {/* <!-- User Info --> */}
           <div className="user-info">
             <div className="image">
-              <img src={userImage} width="48" height="48" alt="User" />
+              <img
+                alt={getData.profile_picture}
+                src={
+                  getData.profile_picture ? getData.profile_picture : userImage
+                }
+                style={{ height: "48px", width: "48px" }}
+              />
             </div>
             <div className="info-container">
               <div
@@ -38,9 +55,9 @@ const SideBar = (props) => {
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                <h4>{admin_name}</h4>
+                <h4>{getData.name}</h4>
               </div>
-              <div className="email">{admin_email}</div>
+              <div className="email">{getData.email}</div>
               <div className="email">Type- {usertype}</div>
               <div className="btn-group user-helper-dropdown">
                 <i

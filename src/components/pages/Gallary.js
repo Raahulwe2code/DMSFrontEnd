@@ -42,6 +42,7 @@ const Gallary = () => {
   let encoded;
 
   let checkboxUrl = [];
+  const [isEmptyDocument, setIsEmptyDocument] = useState(null);
   const [copyUrl, setCopyUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
@@ -70,7 +71,7 @@ const Gallary = () => {
   // const clientEmail = localStorage.getItem("client_email");
   const [modelView, setModelView] = useState(false);
   const [modelVieww, setModelVieww] = useState(false);
-
+  const id = searchparams.get("client_id");
   useEffect(() => {
     if (
       searchparams.get("client_id") === null ||
@@ -95,7 +96,7 @@ const Gallary = () => {
     if (searchparams.get("loading") === "false") {
       setLoading(true);
     }
-  }, [clienttId, clientToken]);
+  }, [id, clienttId, clientToken]);
   // onchange for document name
   const OndocumentName = (e) => {
     setDocumentName(e.target.value);
@@ -241,7 +242,7 @@ const Gallary = () => {
   //function for get document based on client id
   const getDocumentByid = async (clienttId) => {
     const response = await getDocument(
-      clienttId,
+      id,
       searchDocumentName,
       searchDocumenttype,
       currentPage,
@@ -249,6 +250,15 @@ const Gallary = () => {
     );
     setLoading(false);
     setGetDocmentData(response.data);
+
+    if (searchDocumentName === "" && searchDocumenttype === "") {
+      if (response.data.length > 0) {
+        setIsEmptyDocument(false);
+      } else {
+        setIsEmptyDocument(true);
+      }
+    }
+
     if (response.totalPages === null) {
       setPageCount(1);
     } else {
@@ -558,73 +568,79 @@ const Gallary = () => {
                   </div>
 
                   <div className="body">
-                    <div className="row ">
-                      <div className="col-sm-3">
-                        <div className="form-group">
-                          <div className="form-line">
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Search by document name"
-                              onChange={(e) => DocumentNameOnChange(e)}
-                            />
+                    {isEmptyDocument ? null : (
+                      <div className="row ">
+                        <div className="col-sm-3">
+                          <div className="form-group">
+                            <div className="form-line">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Search by document name"
+                                onChange={(e) => DocumentNameOnChange(e)}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="col-sm-5 filter_name_ext">
-                        <div className="col-sm-6">
-                          <select
-                            className="form-control "
-                            value={searchDocumenttype}
-                            name="type"
-                            onChange={(e) => DocumentTypeOnChange(e)}
-                          >
-                            <option value="" className="text-center">
-                              -- Please select document type --
-                            </option>
-                            <option value="">All</option>
-                            <option value="jpg">Jpg</option>
-                            <option value="jpeg">Jpeg</option>
-                            <option value="png">Png</option>
-                            <option value="pdf">Pdf</option>
-                            <option value="csv">Csv</option>
-                            <option value="doc">Doc</option>
-                            <option value="docx">Docx</option>
-                            <option value="xls">Xls</option>
-                            <option value="xlsx">Xlsx</option>
-                          </select>
+                        <div className="col-sm-5 filter_name_ext">
+                          <div className="col-sm-6">
+                            <select
+                              className="form-control "
+                              value={searchDocumenttype}
+                              name="type"
+                              onChange={(e) => DocumentTypeOnChange(e)}
+                            >
+                              <option value="" className="text-center">
+                                -- Please select document type --
+                              </option>
+                              <option value="">All</option>
+                              <option value="jpg">Jpg</option>
+                              <option value="jpeg">Jpeg</option>
+                              <option value="png">Png</option>
+                              <option value="pdf">Pdf</option>
+                              <option value="csv">Csv</option>
+                              <option value="doc">Doc</option>
+                              <option value="docx">Docx</option>
+                              <option value="xls">Xls</option>
+                              <option value="xlsx">Xlsx</option>
+                            </select>
+                          </div>
+                          <div className="col-sm-6">
+                            <select
+                              className="form-control "
+                              value={limit}
+                              name="type"
+                              onChange={(e) => setLimit(e.target.value)}
+                            >
+                              <option
+                                value={""}
+                                disabled
+                                className="text-center"
+                              >
+                                show
+                              </option>
+                              <option value={0}>All</option>
+                              <option value={4}>4</option>
+                              <option value={8}>{8}</option>
+                              <option value={12}>{12}</option>
+                            </select>
+                          </div>
                         </div>
-                        <div className="col-sm-6">
-                          <select
-                            className="form-control "
-                            value={limit}
-                            name="type"
-                            onChange={(e) => setLimit(e.target.value)}
-                          >
-                            <option value={""} disabled className="text-center">
-                              show
-                            </option>
-                            <option value={0}>All</option>
-                            <option value={4}>4</option>
-                            <option value={8}>{8}</option>
-                            <option value={12}>{12}</option>
-                          </select>
-                        </div>
+                        {getDocumentData.length === 0 ? null : (
+                          <div className="col-sm-4 text-right">
+                            <label>
+                              <input
+                                type="checkbox"
+                                // checked={selectAllChecked}
+                                onChange={handleSelectAllChange}
+                              />
+                              <span> Select All</span>
+                            </label>
+                          </div>
+                        )}
                       </div>
-                      {getDocumentData.length === 0 ? null : (
-                        <div className="col-sm-4 text-right">
-                          <label>
-                            <input
-                              type="checkbox"
-                              // checked={selectAllChecked}
-                              onChange={handleSelectAllChange}
-                            />
-                            <span> Select All</span>
-                          </label>
-                        </div>
-                      )}
-                    </div>
+                    )}
 
                     <div
                       id="aniimated-thumbnials"

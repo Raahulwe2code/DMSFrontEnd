@@ -200,7 +200,7 @@ function DoumentUpload() {
               </div>
               <div className="sumbit_btn">
                 <button class="btn bg-light-blue" type="submit">
-                  ADD
+                  UPLOAD
                 </button>
               </div>
             </div>

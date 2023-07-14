@@ -41,6 +41,7 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const [loadidng, setLoading] = useState(true);
+  const [isEmptyUser, setIsEmptyUser] = useState(null);
   const [submitLoader, setSubmitLoader] = useState(false);
   const [employeeName, setemployeeName] = useState("");
   const [modelshow, setModelshow] = useState(false);
@@ -189,6 +190,15 @@ const Users = () => {
     );
 
     setGetUsersData(response.data);
+
+    if (employeeName === "") {
+      if (response.data.length > 0) {
+        setIsEmptyUser(false);
+      } else {
+        setIsEmptyUser(true);
+      }
+    }
+
     setPageCount(response.totalPages);
     setLoading(false);
     setapicall(false);
@@ -274,21 +284,24 @@ const Users = () => {
               <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="card">
                   <div className="body">
-                    <div className="row clearfix">
-                      <div className="col-sm-3">
-                        <div className="form-group">
-                          <div className="form-line">
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="name"
-                              placeholder="Search by Employee Name"
-                              onChange={(e) => employeeNameOnChange(e)}
-                            />
+                    {isEmptyUser ? null : (
+                      <div className="row clearfix">
+                        <div className="col-sm-3">
+                          <div className="form-group">
+                            <div className="form-line">
+                              <input
+                                type="text"
+                                className="form-control"
+                                name="name"
+                                placeholder="Search by Employee Name"
+                                onChange={(e) => employeeNameOnChange(e)}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    )}
+
                     <div className="row clearfix">
                       {getUsersData.length === 0 ? (
                         <h1 className="text-center">No record Found</h1>

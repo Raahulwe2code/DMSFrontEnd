@@ -3056,7 +3056,8 @@
   border: solid 3px #ddd;
   padding: 12px 36px;
   background: #fff;
-  margin: 20px;
+  margin-bottom: 32px;
+  margin-top: 32px;
 }
 .file_upload {
   border: dotted 3px #03a9f4;
@@ -3184,6 +3185,11 @@
     margin-top: 12px;
   }
   .main_continer {
+    margin: 32px;
+    float: inherit;
+    border: solid 3px #ddd;
+    padding: 12px 36px;
+    background: #fff;
   }
 
   .navbar > .container .navbar-brand,
@@ -10270,14 +10276,13 @@ fieldset[disabled] .form-control {
 }
 .doucment_box .profile_edit_delete {
   position: absolute;
-  right: 15px;
+  right: 20px;
+  opacity: 1;
   top: 0;
-  left: inherit !important;
   display: flex;
-  background: #ffffff94;
   flex-direction: column;
-  box-shadow: -3px 3px 6px -2px #ddd;
-  border-radius: 4px;
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 .download_emai_btn {
   text-align: center;

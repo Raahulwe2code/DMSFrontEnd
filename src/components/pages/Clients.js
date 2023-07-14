@@ -23,6 +23,7 @@ const Clients = () => {
   const navigate = useNavigate();
   const admin_id = localStorage.getItem("admin_id");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isEmptyClient, setIsEmptyClient] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [modelshow, setModelshow] = useState(false);
   const [loadidng, setLoading] = useState(true);
@@ -204,6 +205,17 @@ const Clients = () => {
     );
 
     setGetClientsData(response.data);
+
+    if (clientName === "" && clienttype === "") {
+      //&& isEmptyClient === null
+      if (response.data.length > 0) {
+        setIsEmptyClient(false);
+      } else {
+        setIsEmptyClient(true);
+      }
+    }
+
+    console.log("data ---" + JSON.stringify(response.data));
     setPageCount(response.totalPages);
     setapicall(false);
     setLoading(false);
@@ -308,40 +320,42 @@ const Clients = () => {
               <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="card">
                   <div className="body">
-                    <div className="row clearfix">
-                      <div className="col-sm-3">
-                        <div className="form-group">
-                          <div className="form-line">
-                            <input
-                              type="text"
-                              name="name"
-                              className="form-control"
-                              onChange={(e) => clientNameOnChange(e)}
-                              placeholder="Search Client Name"
-                            />
+                    {isEmptyClient ? null : (
+                      <div className="row clearfix">
+                        <div className="col-sm-3">
+                          <div className="form-group">
+                            <div className="form-line">
+                              <input
+                                type="text"
+                                name="name"
+                                className="form-control"
+                                onChange={(e) => clientNameOnChange(e)}
+                                placeholder="Search Client Name"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div
-                        className="col-sm-3"
-                        style={{ marginBottom: "16px" }}
-                      >
-                        <select
-                          className="form-control "
-                          value={clienttype}
-                          name="type"
-                          onChange={(e) => clienttypeOnChange(e)}
+                        <div
+                          className="col-sm-3"
+                          style={{ marginBottom: "16px" }}
                         >
-                          <option value={""} className="text-center">
-                            -- Please select client type --
-                          </option>
-                          <option value="individual">Individual</option>
-                          <option value="company">Company</option>
-                          <option value="">all</option>
-                        </select>
+                          <select
+                            className="form-control "
+                            value={clienttype}
+                            name="type"
+                            onChange={(e) => clienttypeOnChange(e)}
+                          >
+                            <option value={""} className="text-center">
+                              -- Please select client type --
+                            </option>
+                            <option value="individual">Individual</option>
+                            <option value="company">Company</option>
+                            <option value="">all</option>
+                          </select>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     <div className="row clearfix">
                       {getClientsData.length === 0 ? (

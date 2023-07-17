@@ -1,32 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { GetDashBoardDetails } from "../../api/api";
-import Header from "../comman/Header";
+import { GeSuperAdmintDashBoardDetails } from "../../api/api";
 
-import SideBar from "../comman/SideBar";
+import SuperAdminHeader from "../comman/SuperAdminHeader";
 
-const Home = () => {
-  const admin_id = localStorage.getItem("admin_id");
-  const user_type = localStorage.getItem("user_type");
+const HomeSuperAdmin = () => {
   const [getDashBoardData, setDashBoardData] = useState([]);
 
-  // useEffect funton for call  get deshbord funtion by id--------------
+  //UseEffect for calling get deshboard funtion -------------------
   useEffect(() => {
-    getDashBorad_details(admin_id);
+    getDashBorad_details();
   }, []);
 
-  // funtion for get deshboard details by id and set the state-------------
-  const getDashBorad_details = async (admin_id) => {
-    const response = await GetDashBoardDetails(admin_id);
-    // console.log("data--" + JSON.stringify(response[0]));
+  // funtion for get deshboard details---------------
+  const getDashBorad_details = async () => {
+    const response = await GeSuperAdmintDashBoardDetails();
+
     setDashBoardData(response[0]);
   };
 
   return (
     <>
       <div className="theme-red ">
-        <Header />
-        <SideBar />
+        <SuperAdminHeader />
 
         <section className="content">
           <div className="container-fluid">
@@ -55,28 +51,46 @@ const Home = () => {
                   </div>
                 </div>
               </div>
-              {user_type === "employee" ? null : (
-                <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <div className="info-box bg-cyan hover-expand-effect">
-                    <div className="icon">
-                      <i className="material-icons">recent_actors</i>
-                    </div>
-                    <div className="content">
-                      <div className="text">EMPLOYEE </div>
-                      <div
-                        className="number count-to"
-                        data-from="0"
-                        data-to="257"
-                        data-speed="1000"
-                        data-fresh-interval="20"
-                      >
-                        {getDashBoardData.employee}
-                      </div>
+
+              <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div className="info-box bg-cyan hover-expand-effect">
+                  <div className="icon">
+                    <i className="material-icons">recent_actors</i>
+                  </div>
+                  <div className="content">
+                    <div className="text">EMPLOYEE </div>
+                    <div
+                      className="number count-to"
+                      data-from="0"
+                      data-to="257"
+                      data-speed="1000"
+                      data-fresh-interval="20"
+                    >
+                      {getDashBoardData.employee}
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
 
+              <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div className="info-box bg-orange  hover-expand-effect">
+                  <div className="icon">
+                    <i className="material-icons">recent_actors</i>
+                  </div>
+                  <div className="content">
+                    <div className="text">ADMIN </div>
+                    <div
+                      className="number count-to"
+                      data-from="0"
+                      data-to="257"
+                      data-speed="1000"
+                      data-fresh-interval="20"
+                    >
+                      {getDashBoardData.admin}
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div className="info-box bg-light-green hover-expand-effect">
                   <div className="icon">
@@ -505,4 +519,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeSuperAdmin;

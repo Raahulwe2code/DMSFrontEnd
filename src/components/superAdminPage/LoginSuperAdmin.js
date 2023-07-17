@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Admin_login_function } from "../../api/api";
+import { Super_Admin_login_function } from "../../api/api";
 import Loader from "../comman/loader";
-const Login = () => {
-  // clear funtion for clear the local storage when open login page
+const LoginSuperAdmin = () => {
+  //funtion for clear local storage---------
   localStorage.clear();
   const navigate = useNavigate();
   const [emailerror, setemailerror] = useState(false);
@@ -17,7 +17,7 @@ const Login = () => {
     setemailerror(false);
   };
 
-  //onchange for password input field and hide the email error massage-------
+  //onchange for password input field
   const onPasswordChange = (e) => {
     setpassval(e.target.value);
     setemailerror(false);
@@ -27,7 +27,7 @@ const Login = () => {
   async function sign_up_btn(event) {
     event.preventDefault();
     setLoading(true);
-    let result = await Admin_login_function(emailVal, passval);
+    let result = await Super_Admin_login_function(emailVal, passval);
     const { resCode } = result;
     setLoading(false);
 
@@ -37,25 +37,16 @@ const Login = () => {
       setemailerror("passsword not matched");
     } else if (resCode === "104") {
       setemailerror("please fill Credentials");
-    } else {
-      const { token, userDetail } = result;
+    } else if (resCode === "101") {
+      const { SuperAdmin_token, SuperAdmin_Details } = result;
 
-      if (userDetail[0].admin_id === 0) {
-        localStorage.setItem("admin_id", userDetail[0].id);
-        localStorage.setItem("user_type", userDetail[0].type);
-        localStorage.setItem("admin_name", userDetail[0].name);
-        localStorage.setItem("admin_email", userDetail[0].email);
-        localStorage.setItem("admin_token", token);
-      } else {
-        localStorage.setItem("employee_id", userDetail[0].id);
-        localStorage.setItem("admin_id", userDetail[0].admin_id);
-        localStorage.setItem("user_type", userDetail[0].type);
-        localStorage.setItem("admin_name", userDetail[0].name);
-        localStorage.setItem("admin_email", userDetail[0].email);
-        localStorage.setItem("admin_token", token);
-      }
+      localStorage.setItem("super_admin_id", SuperAdmin_Details[0].id);
 
-      navigate("/home");
+      localStorage.setItem("super_admin_name", SuperAdmin_Details[0].name);
+      localStorage.setItem("super_admin_email", SuperAdmin_Details[0].email);
+      localStorage.setItem("super_admin_token", SuperAdmin_token);
+
+      navigate("/superAdmin/Home");
     }
   }
   return (
@@ -68,6 +59,7 @@ const Login = () => {
               <b>DMS</b>
             </Link>
             <small>Document Management System</small>
+            <small>Login for Super Admin</small>
           </div>
           <div className="card">
             <div className="body">
@@ -123,14 +115,6 @@ const Login = () => {
                     </button>
                   </div>
                 </div>
-                <div className="row m-t-15 m-b--20">
-                  <div className="col-xs-6 ">
-                    <Link to="/signup">Admin Registraion!</Link>
-                  </div>
-                  <div className="col-xs-6 align-right">
-                    <Link to="/forgetepassword">Forgot Password?</Link>
-                  </div>
-                </div>
               </form>
             </div>
           </div>
@@ -156,4 +140,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginSuperAdmin;

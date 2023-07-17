@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useValidation from "../comman/useValidation";
 import folderImge from "../comman/images/folder1.jpg";
 import {
@@ -8,21 +8,21 @@ import {
   getClientByID,
   UpdateClient,
 } from "../../api/api";
-import Header from "../comman/Header";
 
 import Swal from "sweetalert2";
-
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Loader from "../comman/loader";
 import ReactPaginate from "react-paginate";
+import SuperAdminHeader from "../comman/SuperAdminHeader";
 
-const Clients = () => {
+const ClientsSuperAdmin = () => {
   const navigate = useNavigate();
-  const admin_id = localStorage.getItem("admin_id");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchparams] = useSearchParams();
   const [isEmptyClient, setIsEmptyClient] = useState(null);
+  const [AdminId, setAdminID] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const [modelshow, setModelshow] = useState(false);
   const [loadidng, setLoading] = useState(true);
@@ -32,11 +32,13 @@ const Clients = () => {
   const [modelView, setModelView] = useState(false);
 
   const [apicall, setapicall] = useState(false);
-  const ref = useRef();
+  const [showCompany, setShowCompany] = useState(false);
+  const [getClientsData, setGetClientsData] = useState([]);
+  const [emailError, setEmailError] = useState(false);
 
   // model input field input field intialstate---------
   const initialFormState = {
-    admin_id: admin_id,
+    admin_id: AdminId,
     type: "",
     name: "",
     email: "",
@@ -46,11 +48,25 @@ const Clients = () => {
     company_address: "",
   };
 
-  const [showCompany, setShowCompany] = useState(false);
+  const id = searchparams.get("admin_id");
 
-  const [getClientsData, setGetClientsData] = useState([]);
+  //useEffect funtion for get admin id from paramete and set admin id into state----------
+  useEffect(() => {
+    if (
+      searchparams.get("admin_id") === null ||
+      searchparams.get("admin_id") === "" ||
+      searchparams.get("admin_id") === undefined
+    ) {
+      setAdminID("");
+    } else {
+      setAdminID(searchparams.get("admin_id"));
+    }
 
-  const [emailError, setEmailError] = useState(false);
+    if (searchparams.get("loading") === "false") {
+      setLoading(true);
+    }
+  }, [id, AdminId]);
+
   // validation fuction come from use validation custom hook
   const validators = {
     type: [
@@ -190,39 +206,39 @@ const Clients = () => {
   // useEffcet use for get client  api fucntion call
   useEffect(() => {
     getClients();
-  }, [apicall, clientName, clienttype, currentPage]);
+  }, [AdminId, apicall, clientName, clienttype, currentPage]);
 
   // funtion for get list of client
   const getClients = async () => {
     const response = await getAllClientswithFilter(
-      admin_id,
+      id,
       clientName,
       clienttype,
       currentPage
     );
 
     setGetClientsData(response.data);
-    // logic for hide search bar and type when no data found---------------
+
     if (clientName === "" && clienttype === "") {
+      //&& isEmptyClient === null
       if (response.data.length > 0) {
         setIsEmptyClient(false);
       } else {
         setIsEmptyClient(true);
       }
     }
-
     setPageCount(response.totalPages);
     setapicall(false);
     setLoading(false);
   };
 
-  // onchange funtion for client name search -----------------
+  //onChange funtion for  client name search and call the api---------------
   const clientNameOnChange = (e) => {
     setClientName(e.target.value);
     setapicall(true);
   };
 
-  // onchange funtion for client type select -----------
+  // onchange funtion for search client type and call api-------------------
   const clienttypeOnChange = (e) => {
     setClientType(e.target.value);
     setapicall(true);
@@ -253,12 +269,12 @@ const Clients = () => {
     setEmailError(false);
   };
 
-  // function for clicking client and send id and name on gallary
+  // function for clicking client and send id and name on super admin gallary page
   const onClientClick = (id, name, token) => {
     localStorage.setItem("client_name", name);
 
     navigate(
-      `/gallary?client_id=${id}&&loading=${loadidng}&&client_token=${token}`
+      `/superAdmin/gallary?client_id=${id}&&loading=${loadidng}&&client_token=${token}`
     );
   };
 
@@ -287,14 +303,15 @@ const Clients = () => {
     setapicall(false);
   };
 
-  // onclick funtion for current page ---- selection -----------------
+  // onclick funtion for select the current page value--------------
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected + 1);
   };
   return (
     <>
       <div className="theme-red ">
-        <Header />
+        <SuperAdminHeader />
+
         {/* <Loader /> */}
         {loadidng ? <Loader /> : null}
         {submitLoader ? <Loader /> : null}
@@ -386,6 +403,7 @@ const Clients = () => {
                                         onClientClick(
                                           item.id,
                                           item.name,
+
                                           item.client_token
                                         )
                                       }
@@ -395,27 +413,26 @@ const Clients = () => {
                                     <div className="body">
                                       Phone:- {item.phone_no}
                                     </div>
-                                  </div>
-
-                                  <div className="profile_edit_delete">
-                                    <i
-                                      className="material-icons text-primary"
-                                      // data-toggle="modal"
-                                      // data-target="#exampleModal"
-                                      onClick={() =>
-                                        onUpdateModelClick(item.id)
-                                      }
-                                    >
-                                      edit
-                                    </i>
-                                    <i
-                                      className="material-icons text-danger"
-                                      onClick={() =>
-                                        onDeleteModelClick(item.name, item.id)
-                                      }
-                                    >
-                                      delete
-                                    </i>
+                                    <div className="profile_edit_delete">
+                                      <i
+                                        className="material-icons text-primary"
+                                        // data-toggle="modal"
+                                        // data-target="#exampleModal"
+                                        onClick={() =>
+                                          onUpdateModelClick(item.id)
+                                        }
+                                      >
+                                        edit
+                                      </i>
+                                      <i
+                                        className="material-icons text-danger"
+                                        onClick={() =>
+                                          onDeleteModelClick(item.name, item.id)
+                                        }
+                                      >
+                                        delete
+                                      </i>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -450,7 +467,6 @@ const Clients = () => {
       >
         <div className="back_drop"></div>
         <div
-          ref={ref}
           // className={
           //   Modelclassvalue === "modal fade"
           //     ? "modal fade"
@@ -742,4 +758,4 @@ const Clients = () => {
   );
 };
 
-export default Clients;
+export default ClientsSuperAdmin;

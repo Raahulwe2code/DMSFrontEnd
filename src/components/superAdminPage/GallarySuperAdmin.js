@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-
+// ../../images/image-gallery/thumb/thumb-1.jpg"
 import pdfLogo from "../comman/images/PDF.png";
 import msDoc from "../comman/images/msss.jpg";
 import msXls from "../comman/images/excel.png";
-import Header from "../comman/Header";
-
 import { Link, useSearchParams } from "react-router-dom";
 import {
   AddDocument,
@@ -23,7 +21,6 @@ import "lightgallery/css/lg-thumbnail.css";
 import "lightgallery/css/lg-autoplay.css";
 import "lightgallery/css/lg-share.css";
 import "lightgallery/css/lg-rotate.css";
-
 // import plugins if you need
 import lgThumbnail from "lightgallery/plugins/thumbnail";
 import lgZoom from "lightgallery/plugins/zoom";
@@ -36,13 +33,14 @@ import { saveAs } from "file-saver";
 import Loader from "../comman/loader";
 
 import ReactPaginate from "react-paginate";
+import SuperAdminHeader from "../comman/SuperAdminHeader";
 
-const Gallary = () => {
+const GallarySuperAdmin = () => {
+  let encoded;
+  let checkboxUrl = [];
+
   const [searchparams] = useSearchParams();
   const [clientToken, setClientToken] = useState("");
-  let encoded;
-
-  let checkboxUrl = [];
   const [isEmptyDocument, setIsEmptyDocument] = useState(null);
   const [copyUrl, setCopyUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,7 +48,7 @@ const Gallary = () => {
   const [limit, setLimit] = useState(8);
   const [loadidng, setLoading] = useState(false);
   const [submitLoader, setSubmitLoader] = useState(false);
-  const admin_id = localStorage.getItem("admin_id");
+  const admin_id = localStorage.getItem("super_admin_id");
   const [fileUrls, setFileUrls] = useState([]);
   const [searchDocumentName, setSearchDocumentName] = useState("");
   const [searchDocumenttype, setSearchDocumentType] = useState("");
@@ -60,20 +58,17 @@ const Gallary = () => {
   const [documentType, setDocumentType] = useState("");
   const [documentName, setDocumentName] = useState("");
   const [DocumentUpload, setDocumentUpload] = useState("");
-
   const [getDocumentData, setGetDocmentData] = useState([]);
   const [apicall, setapicall] = useState(false);
-
+  const [senderEmail, setSenderEmail] = useState("");
+  const [modelView, setModelView] = useState(false);
+  const [modelVieww, setModelVieww] = useState(false);
   const [clienttId, setClientID] = useState("");
 
   const clientNamee = localStorage.getItem("client_name");
-  const [senderEmail, setSenderEmail] = useState("");
-
-  const [modelView, setModelView] = useState(false);
-  const [modelVieww, setModelVieww] = useState(false);
   const id = searchparams.get("client_id");
 
-  // useEffect function for get client id from parameter-----------------
+  // UseEffect funtion for get client id and set into in state
   useEffect(() => {
     if (
       searchparams.get("client_id") === null ||
@@ -85,6 +80,10 @@ const Gallary = () => {
       setClientID(searchparams.get("client_id"));
     }
 
+    if (searchparams.get("loading") === "false") {
+      setLoading(true);
+    }
+
     if (
       searchparams.get("client_token") === null ||
       searchparams.get("client_token") === "" ||
@@ -94,19 +93,15 @@ const Gallary = () => {
     } else {
       setClientToken(searchparams.get("client_token"));
     }
-
-    if (searchparams.get("loading") === "false") {
-      setLoading(true);
-    }
   }, [id, clienttId, clientToken]);
 
-  // onchange for document name set and empty custom validation state----
+  // onchange for document name set into state--------
   const OndocumentName = (e) => {
     setDocumentName(e.target.value);
     setcustomValidated("");
   };
 
-  //intial state of model input field-- for upload documnet--------------------
+  //intial state of model input field-----
   const initialFormState = {
     admin_id: admin_id,
     client_id: clienttId,
@@ -134,7 +129,7 @@ const Gallary = () => {
     setDocumentUpload(null);
   };
 
-  // funtion for base 64 file reader for upload document -------------
+  // funtion for base 64 file reader
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -222,7 +217,7 @@ const Gallary = () => {
     }
   };
 
-  // useEffect get document based on client id----
+  // useEffect get document based on id----
   useEffect(() => {
     getDocumentByid(clienttId);
   }, [
@@ -264,19 +259,19 @@ const Gallary = () => {
     setapicall(false);
   };
 
-  // onchange funtion for search document and api call ------------
+  //onchange funtion for  set doument name search and call api-------------
   const DocumentNameOnChange = (e) => {
     setSearchDocumentName(e.target.value);
     setapicall(true);
   };
 
-  // onchange funtion for search document with type and api call-----------
+  // onchange funtion for set document type and call api-------------
   const DocumentTypeOnChange = (e) => {
     setSearchDocumentType(e.target.value);
     setapicall(true);
   };
 
-  // onchange funtion for get document data and add the isChecked attribute in get document JSON and  its value-----------------------
+  //onchange funtion for set isCheked attribute into getDocumentdata JSON-----------------
   const handleSelectAllChange = (v) => {
     setGetDocmentData((prevData) => {
       return prevData.map((item) => {
@@ -285,7 +280,7 @@ const Gallary = () => {
     });
   };
 
-  // onchange funtion for checkbox value get and add into JSON if checkbox value is true/checked....
+  //onchange for  set value if ischecked value is true
   const handleCheckboxChange = (event, id) => {
     setGetDocmentData((prevData) =>
       prevData.map((item) => {
@@ -297,7 +292,7 @@ const Gallary = () => {
     );
   };
 
-  // onclick funtion for download  document and if do'nt select any documet than warning message is show------
+  //onclick funtion for download document------
   const handleDownload = async () => {
     let newArray = getDocumentData.filter(function(el) {
       return el.isChecked === true;
@@ -347,7 +342,7 @@ const Gallary = () => {
     }
   };
 
-  // onclick funtion for open mail box and if not select any document then warning message is show--
+  //onclick funtion for open mail box -------------
   const handleOpenMailBox = async () => {
     let newArray = getDocumentData.filter(function(el) {
       return el.isChecked === true;
@@ -367,7 +362,7 @@ const Gallary = () => {
     }
   };
 
-  // funtion for delete document  and sweet alert------
+  // funtion for delete document sweet alert------
   const onDeleteModelClick = (name, id) => {
     Swal.fire({
       title: "Warning",
@@ -441,7 +436,7 @@ const Gallary = () => {
           autoClose: 1000,
         });
         getDocumentByid(clienttId);
-
+        setSenderEmail("");
         setModelVieww(false);
         // setState(initialFormState);
         setapicall(true);
@@ -456,26 +451,35 @@ const Gallary = () => {
     }
   };
 
-  // onclick funtion for select current page
+  //onclick funtion set current page value--------------------
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected + 1);
   };
 
-  //onchange funtion for get email value which is enter by the user ----------
+  //onchange funtion for set send mail value into state and hide the error-------------
   const handleInputChange = (e) => {
     setSenderEmail(e.target.value);
     setcustomValidated("");
   };
 
-  // useEffect funtion for set the copy url value  with token ---------------
+  // useEffect for set url value into url-----------------
   const url = window.location.origin;
+
   useEffect(() => {
     setCopyUrl(`${url}/doumentUpload?client_token=${clientToken}`);
   }, [copyUrl]);
 
-  // onclick function for copy clip board the path---------
+  // onclick funtion for clipboard value using getElementby Id------------------------
   const copyClipBoradFuntion = () => {
+    // Get the text field
     var copyText = document.getElementById("myInputforCopy");
+
+    // // Select the text field
+    // copyText.select();
+    // copyText.setSelectionRange(0, 99999); // For mobile devices
+
+    // // Copy the text inside the text field
+    // navigator.clipboard.writeText(copyText.value);
 
     try {
       // Copy the text inside the text field
@@ -512,7 +516,7 @@ const Gallary = () => {
   return (
     <>
       <div className="theme-red ">
-        <Header />
+        <SuperAdminHeader />
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
         {submitLoader === true ? <Loader /> : null}
@@ -534,7 +538,6 @@ const Gallary = () => {
                   >
                     <i className="material-icons">email</i>
                   </button>
-
                   <input
                     type="text"
                     value={copyUrl}
@@ -584,8 +587,8 @@ const Gallary = () => {
                             </div>
                           </div>
                         </div>
-
                         <div className="col-sm-5 filter_name_ext">
+                          {" "}
                           <div className="col-sm-6">
                             <select
                               className="form-control "
@@ -1039,6 +1042,7 @@ const Gallary = () => {
             </div>
           </div>
         </div>
+
         <div className={modelVieww === true ? "show_modal" : ""}>
           <div className="back_drop"></div>
           <div
@@ -1146,7 +1150,7 @@ const Gallary = () => {
                               <span
                                 className={
                                   emailBtnLoader === true
-                                    ? "show_loader"
+                                    ? " show_loader"
                                     : "none"
                                 }
                               >
@@ -1169,4 +1173,4 @@ const Gallary = () => {
   );
 };
 
-export default Gallary;
+export default GallarySuperAdmin;

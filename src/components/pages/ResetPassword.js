@@ -11,6 +11,8 @@ const ResetPassword = () => {
   const [confirmpassword, setConfirmPassword] = useState("");
   const [PasswordError, setPasswordError] = useState(false);
   const [getLinkLoader, setGetLinkLoader] = useState(false);
+
+  // useEffect for get email token value from perameter ------------------
   useEffect(() => {
     if (
       searchparams.get("token") === null ||
@@ -23,16 +25,18 @@ const ResetPassword = () => {
     }
   }, [emailToken]);
 
+  //onchange funtion for set password value and hide error----------
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
     setPasswordError(false);
   };
-
+  //onchange funtion for  set confirm password--value and hide error-----------
   const handleConfirmPasswordChange = (e) => {
     setConfirmPassword(e.target.value);
     setPasswordError(false);
   };
 
+  //onclick submit button for reset password----------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 

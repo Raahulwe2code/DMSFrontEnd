@@ -5,9 +5,13 @@ import useValidation from "../comman/useValidation";
 
 const ForgetPassword = () => {
   const [getLinkLoader, setGetLinkLoader] = useState(false);
+
+  // intial formstate for email value----------------------
   const initialFormState = {
     email: "",
   };
+
+  //validators funtion for validation--------------
   const validators = {
     email: [
       (value) =>
@@ -29,6 +33,7 @@ const ForgetPassword = () => {
     validate,
   } = useValidation(initialFormState, validators);
 
+  //onclick funtion for submit data---------------------
   const onForgetPasswordSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
@@ -40,6 +45,7 @@ const ForgetPassword = () => {
       }
     }
   };
+
   return (
     <>
       <div className="fp-page">

@@ -63,7 +63,7 @@ const Register = () => {
   } = useValidation(initialFormState, validators);
 
   // function for register admin ---
-  const onUserAdd = async (e) => {
+  const onAddAdmin = async (e) => {
     e.preventDefault();
     if (validate()) {
       const response = await AddUsers(state);
@@ -103,7 +103,7 @@ const Register = () => {
               <div className="body">
                 <form
                   onSubmit={(e) => {
-                    onUserAdd(e);
+                    onAddAdmin(e);
                   }}
                 >
                   <div className="msg">Registration for Admin</div>

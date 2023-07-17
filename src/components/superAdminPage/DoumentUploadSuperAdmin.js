@@ -6,7 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AddDocumentAnotherUser, GetDocumentAnotherUser } from "../../api/api";
-function DoumentUpload() {
+function DoumentUploadSuperAdmin() {
   let encoded;
 
   const [searchparams] = useSearchParams();
@@ -18,7 +18,7 @@ function DoumentUpload() {
   const [apicall, setapicall] = useState(false);
   const [getDocumentData, setGetDocmentData] = useState([]);
 
-  // intial form state for submit document data-----------------
+  //intial state for document upload submit
   const initialFormState = {
     document_title: documentName,
     document_type: documentType,
@@ -26,7 +26,7 @@ function DoumentUpload() {
     uploaded_by: "another_user",
   };
 
-  // useEffect for get parameter of client token --------------
+  // useEffect for set client token from parameter and set token in state----------------
   useEffect(() => {
     if (
       searchparams.get("client_token") === null ||
@@ -39,7 +39,7 @@ function DoumentUpload() {
     }
   }, [clientToken]);
 
-  //  onchange funtion for document name in form
+  // onchnage for set  document value and hide the value of error-------------
   const OndocumentName = (e) => {
     setDocumentName(e.target.value);
     setcustomValidated("");
@@ -125,12 +125,12 @@ function DoumentUpload() {
     }
   };
 
-  // useEffect get document based on token----
+  // useEffect get document based on id----
   useEffect(() => {
     getDocumentByid(clientToken);
   }, [clientToken, apicall]);
 
-  //function for get document based on client token
+  //function for get document based on client id
   const getDocumentByid = async (clientToken) => {
     const response = await GetDocumentAnotherUser(clientToken);
 
@@ -166,23 +166,21 @@ function DoumentUpload() {
               ></input>
               <div className="logo_upload">
                 <img src={Upload} alt={"img"} />
-                {customvalidated === "document is empty" ? (
-                  <small className="text-danger">
-                    {" "}
-                    please Select file first
-                  </small>
-                ) : null}
-                {customvalidated === "imgformat" ? (
-                  <small
-                    className="mt-2   text-center fs-6 text-danger"
-                    type="invalid"
-                  >
-                    Document Format should be in jpg, jpeg or png, doc, docx,
-                    xls, xlsx and pdf
-                  </small>
-                ) : null}
                 <p className="text-center">Click To Upload</p>
               </div>
+              {customvalidated === "document is empty" ? (
+                <small className="text-danger"> please Select file first</small>
+              ) : null}
+
+              {customvalidated === "imgformat" ? (
+                <span
+                  className="mt-2   text-center fs-6 text-danger"
+                  type="invalid"
+                >
+                  Document Format should be in jpg, jpeg or png, doc, docx, xls,
+                  xlsx and pdf
+                </span>
+              ) : null}
             </div>
             <div className="file_name_add">
               <div className="file_name_input">
@@ -203,7 +201,7 @@ function DoumentUpload() {
               </div>
               <div className="sumbit_btn">
                 <button class="btn bg-light-blue" type="submit">
-                  UPLOAD
+                  ADD
                 </button>
               </div>
             </div>
@@ -237,4 +235,4 @@ function DoumentUpload() {
   );
 }
 
-export default DoumentUpload;
+export default DoumentUploadSuperAdmin;

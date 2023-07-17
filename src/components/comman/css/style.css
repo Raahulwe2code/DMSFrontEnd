@@ -3969,7 +3969,7 @@ section.content {
   color: #000;
 }
 .card .header h2 {
-  margin: 0;
+  margin-top: 10px;
   font-size: 18px;
   font-weight: normal;
   color: #111;

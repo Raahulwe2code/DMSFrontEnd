@@ -13,7 +13,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const Profile = () => {
   let encoded;
-
   const [getData, setGetData] = useState([]);
   const [apicall, setapicall] = useState(false);
   const user_type = localStorage.getItem("user_type");
@@ -21,12 +20,15 @@ const Profile = () => {
   const [ProfileType, setProfileType] = useState("");
   const [customvalidated, setcustomValidated] = useState("");
   const [getDashBoardData, setDashBoardData] = useState([]);
+
   const id =
     user_type === "admin"
       ? localStorage.getItem("admin_id")
       : localStorage.getItem("employee_id");
+
   const admin_id = localStorage.getItem("admin_id");
 
+  //intial form state for profile data-------------
   const initialFormState = {
     id: "",
     name: "",
@@ -36,14 +38,13 @@ const Profile = () => {
     profile_picture_type: ProfileType,
   };
 
+  // UseEffect funtion for get user details and get deshboard details ----------------------
   useEffect(() => {
     getUserDetails(id);
     getDashBorad_details(admin_id);
-    // if (apicall === true) {
-    //   setapicall(false);
-    // }
   }, [apicall, id, admin_id]);
 
+  //funtion for get user details by id- and set the state---------------
   const getUserDetails = async (id) => {
     const response = await getUserByID(id);
     setGetData(response[0]);
@@ -51,12 +52,13 @@ const Profile = () => {
     setapicall(false);
   };
 
+  // funtion for get deshboard details by id----------------------
   const getDashBorad_details = async (admin_id) => {
     const response = await GetDashBoardDetails(admin_id);
-
     setDashBoardData(response[0]);
   };
 
+  // validators variable for validate the profile input feild--------------------
   const validators = {
     name: [
       (value) =>
@@ -137,6 +139,7 @@ const Profile = () => {
     // e.target.value = null;
   };
 
+  //funtion for update the profile of Employee and admin---------------------
   const onUserUpdate = async (e) => {
     e.preventDefault();
     if (validate()) {

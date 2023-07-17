@@ -4,11 +4,10 @@ import userlogo from "../comman/images/userLogo.jpg";
 import {
   AddUsers,
   deleteUserfunction,
-  getAllEmployeeswithFilter,
+  getAllAdminwithFilter,
   getUserByID,
-  UpdateUser,
+  UpdateAdmin,
 } from "../../api/api";
-import Header from "../comman/Header";
 
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from "react-toastify";
@@ -16,15 +15,19 @@ import "react-toastify/dist/ReactToastify.css";
 import Loader from "../comman/loader";
 
 import ReactPaginate from "react-paginate";
-const Users = () => {
-  const admin_id = localStorage.getItem("admin_id");
+import { useNavigate } from "react-router-dom";
+import SuperAdminHeader from "../comman/SuperAdminHeader";
+
+const AllAdminSuperAdmin = () => {
+  const navigate = useNavigate();
+  const [isEmptyAdmin, setIsEmptyAdmin] = useState(null);
   const [apicall, setapicall] = useState(false);
   const [modelView, setModelView] = useState(false);
 
   //intial state for add employeee
   const initialFormState = {
-    admin_id: admin_id,
-    type: "employee",
+    admin_id: "0",
+    type: "admin",
     name: "",
     phone_no: "",
     is_active: "",
@@ -34,11 +37,11 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const [loadidng, setLoading] = useState(true);
-  const [isEmptyUser, setIsEmptyUser] = useState(null);
   const [submitLoader, setSubmitLoader] = useState(false);
-  const [employeeName, setemployeeName] = useState("");
+  const [AdminName, setAdminName] = useState("");
   const [modelshow, setModelshow] = useState(false);
   const [getUsersData, setGetUsersData] = useState([]);
+
   const [emailError, setEmailError] = useState(false);
 
   // funtion for validation employee input field
@@ -117,11 +120,11 @@ const Users = () => {
         setEmailError(true);
       }
       if (response.message === "user added successfully") {
-        toast.success("User added successfully", {
+        toast.success("Admin  added successfully", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
-        getEmployee();
+        getAdmin();
         setModelView(false);
 
         setState(initialFormState);
@@ -138,18 +141,18 @@ const Users = () => {
     if (validate()) {
       setSubmitLoader(true);
 
-      const response = await toast.promise(UpdateUser(state), {
+      const response = await toast.promise(UpdateAdmin(state), {
         pending: "Update Employee is processing",
         // success: "Update Emplyoee compelete👌",
       });
 
       setSubmitLoader(false);
       if (response.message === "updated user successfully") {
-        toast.success("User update successfully", {
+        toast.success("Admin update successfully", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
-        getEmployee();
+        getAdmin();
         setModelView(false);
 
         setState(initialFormState);
@@ -162,24 +165,20 @@ const Users = () => {
 
   // useEffect for get All employee
   useEffect(() => {
-    getEmployee();
-  }, [apicall, employeeName, currentPage]);
+    getAdmin();
+  }, [apicall, AdminName, currentPage]);
 
   // funtion for get list of Employee
-  const getEmployee = async () => {
-    const response = await getAllEmployeeswithFilter(
-      admin_id,
-      employeeName,
-      currentPage
-    );
+  const getAdmin = async () => {
+    const response = await getAllAdminwithFilter(AdminName, currentPage);
 
     setGetUsersData(response.data);
 
-    if (employeeName === "") {
+    if (AdminName === "") {
       if (response.data.length > 0) {
-        setIsEmptyUser(false);
+        setIsEmptyAdmin(false);
       } else {
-        setIsEmptyUser(true);
+        setIsEmptyAdmin(true);
       }
     }
 
@@ -188,9 +187,9 @@ const Users = () => {
     setapicall(false);
   };
 
-  // onchange funtion for search employee and call the api------------------
-  const employeeNameOnChange = (e) => {
-    setemployeeName(e.target.value);
+  //onchange funtion for search admin  and call api----------------------
+  const AdminNameOnChange = (e) => {
+    setAdminName(e.target.value);
     setapicall(true);
   };
 
@@ -202,14 +201,15 @@ const Users = () => {
     setErrors({});
   };
 
-  // funtion for open model for add employee----------
+  // funtion for open model
   const onModelOpen = async () => {
     setModelView(true);
     setModelshow(false);
+
     setState(state);
   };
 
-  // function for update empolyee model open and get detail based on employee id
+  // function for update empolyee model and get detail based on employee id---------
   const onUpdateModelClick = async (id) => {
     setModelView(true);
     setModelshow(true);
@@ -217,7 +217,7 @@ const Users = () => {
     setState(response[0]);
   };
 
-  // funtion for open delete sweet alert
+  // funtion for open delete sweet alert------------------------
   const onDeleteModelClick = (name, id) => {
     Swal.fire({
       title: "Warning",
@@ -239,21 +239,31 @@ const Users = () => {
     setapicall(false);
   };
 
-  // onclick funtion set current page in pagination-----------------------
+  // onclick funtion for set current page value------------------
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected + 1);
   };
+
+  const onAdminClick = (id) => {
+    navigate(`/superAdmin/Employee?admin_id=${id}&&loading=${loadidng}`);
+  };
+
+  //onclick funtion for click any admin box and navigate super admin client page------------------
+  const onClientClick = (id) => {
+    navigate(`/superAdmin/clients?admin_id=${id}&&loading=${loadidng}`);
+  };
+
   return (
     <>
       <div className="theme-red ">
-        <Header />
+        <SuperAdminHeader />
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
         {submitLoader ? <Loader /> : null}
         <section className="content">
           <div className="container-fluid">
             <div className="block-header">
-              <h2>Users Details</h2>
+              <h2>Admin Details</h2>
               <div className=" text-right">
                 <button
                   className="btn btn-success"
@@ -261,7 +271,7 @@ const Users = () => {
                   // data-target="#exampleModal"
                   onClick={() => onModelOpen()}
                 >
-                  ADD EMPLOYEE
+                  ADD ADMIN
                 </button>
               </div>
             </div>
@@ -270,7 +280,7 @@ const Users = () => {
               <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="card">
                   <div className="body">
-                    {isEmptyUser ? null : (
+                    {isEmptyAdmin ? null : (
                       <div className="row clearfix">
                         <div className="col-sm-3">
                           <div className="form-group">
@@ -279,8 +289,8 @@ const Users = () => {
                                 type="text"
                                 className="form-control"
                                 name="name"
-                                placeholder="Search by Employee Name"
-                                onChange={(e) => employeeNameOnChange(e)}
+                                placeholder="Search by Admin Name"
+                                onChange={(e) => AdminNameOnChange(e)}
                               />
                             </div>
                           </div>
@@ -311,7 +321,7 @@ const Users = () => {
                                   </div>
                                   <div className="profile_edit_delete">
                                     <i
-                                      className="material-icons text-primary"
+                                      className="material-icons text-danger"
                                       // data-toggle="modal"
                                       // data-target="#exampleModal"
                                       onClick={() =>
@@ -327,6 +337,19 @@ const Users = () => {
                                       }
                                     >
                                       delete
+                                    </i>
+                                    <i
+                                      className="material-icons text-danger"
+                                      onClick={() => onAdminClick(item.id)}
+                                    >
+                                      account_circle
+                                    </i>
+
+                                    <i
+                                      className="material-icons text-danger"
+                                      onClick={() => onClientClick(item.id)}
+                                    >
+                                      folder
                                     </i>
                                   </div>
 
@@ -369,16 +392,32 @@ const Users = () => {
       </div>
       <div className={modelView === true ? "show_modal" : "gourav"}>
         <div className="back_drop" onClick={() => onCloseModel()}></div>
-        <div id="exampleModal" tabIndex="-1" role="dialog" className={"modal"}>
+        <div
+          // className={
+          //   Modelclassvalue === "modal fade"
+          //     ? "modal fade"
+          //     : modelClass === true
+          //     ? "modal fade"
+          //     : "modal fade in"
+          // }
+          id="exampleModal"
+          tabIndex="-1"
+          role="dialog"
+          // aria-labelledby="exampleModalLabel"
+          // aria-hidden="true"
+          className={"modal"}
+        >
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalLabel">
-                  {modelshow === true ? "Update Employee" : " Add Employee"}
+                  {modelshow === true ? "Update Admin" : " Add Admin"}
                 </h5>
                 <button
                   type="button"
                   className="close"
+                  // data-dismiss="modal"
+                  // aria-label="Close"
                   onClick={() => onCloseModel()}
                 >
                   <span aria-hidden="true">&times;</span>
@@ -637,4 +676,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default AllAdminSuperAdmin;

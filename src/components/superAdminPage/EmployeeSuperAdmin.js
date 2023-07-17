@@ -1,36 +1,28 @@
 import React, { useEffect, useState } from "react";
 import useValidation from "../comman/useValidation";
-import userlogo from "../comman/images/userLogo.jpg";
+import userlogo from "../comman/images/employee.png";
 import {
-  AddUsers,
+  AddEmployee,
   deleteUserfunction,
-  getAllEmployeeswithFilter,
+  getAllEmployeeswithsuperAdmin,
   getUserByID,
-  UpdateUser,
+  UpdateEmployee,
 } from "../../api/api";
-import Header from "../comman/Header";
 
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../comman/loader";
-
+// const ref = useRef();
 import ReactPaginate from "react-paginate";
-const Users = () => {
-  const admin_id = localStorage.getItem("admin_id");
+import { useSearchParams } from "react-router-dom";
+import SuperAdminHeader from "../comman/SuperAdminHeader";
+
+const EmployeeSuperAdmin = () => {
+  const [searchparams] = useSearchParams();
+  const [AdminId, setAdminID] = useState("");
   const [apicall, setapicall] = useState(false);
   const [modelView, setModelView] = useState(false);
-
-  //intial state for add employeee
-  const initialFormState = {
-    admin_id: admin_id,
-    type: "employee",
-    name: "",
-    phone_no: "",
-    is_active: "",
-    email: "",
-    password: "",
-  };
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const [loadidng, setLoading] = useState(true);
@@ -39,7 +31,35 @@ const Users = () => {
   const [employeeName, setemployeeName] = useState("");
   const [modelshow, setModelshow] = useState(false);
   const [getUsersData, setGetUsersData] = useState([]);
-  const [emailError, setEmailError] = useState(false);
+
+  //intial state for add employeee
+  const initialFormState = {
+    admin_id: AdminId,
+    type: "employee",
+    name: "",
+    phone_no: "",
+    is_active: "",
+    email: "",
+    password: "",
+  };
+
+  const id = searchparams.get("admin_id");
+  // useEffect funtion for get admin from perameter and set admin id into state----------------------
+  useEffect(() => {
+    if (
+      searchparams.get("admin_id") === null ||
+      searchparams.get("admin_id") === "" ||
+      searchparams.get("admin_id") === undefined
+    ) {
+      setAdminID("");
+    } else {
+      setAdminID(searchparams.get("admin_id"));
+    }
+
+    if (searchparams.get("loading") === "false") {
+      setLoading(true);
+    }
+  }, [id, AdminId]);
 
   // funtion for validation employee input field
   const validators = {
@@ -104,7 +124,7 @@ const Users = () => {
     if (validate()) {
       setSubmitLoader(true);
 
-      const response = await toast.promise(AddUsers(state), {
+      const response = await toast.promise(AddEmployee(AdminId, state), {
         pending: "Add Employee is processing",
         // success: "Upload compelete👌",
       });
@@ -114,14 +134,15 @@ const Users = () => {
         response.response ===
         "email already exist, check your mail or try after sometime"
       ) {
-        setEmailError(true);
+        setErrors("already");
       }
       if (response.message === "user added successfully") {
-        toast.success("User added successfully", {
+        toast.success("Employee added successfully", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
-        getEmployee();
+        getAdmin(AdminId);
+
         setModelView(false);
 
         setState(initialFormState);
@@ -138,18 +159,18 @@ const Users = () => {
     if (validate()) {
       setSubmitLoader(true);
 
-      const response = await toast.promise(UpdateUser(state), {
+      const response = await toast.promise(UpdateEmployee(AdminId, state), {
         pending: "Update Employee is processing",
         // success: "Update Emplyoee compelete👌",
       });
 
       setSubmitLoader(false);
       if (response.message === "updated user successfully") {
-        toast.success("User update successfully", {
+        toast.success("Employee update successfully", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
-        getEmployee();
+        getAdmin(AdminId);
         setModelView(false);
 
         setState(initialFormState);
@@ -162,19 +183,18 @@ const Users = () => {
 
   // useEffect for get All employee
   useEffect(() => {
-    getEmployee();
-  }, [apicall, employeeName, currentPage]);
+    getAdmin(AdminId);
+  }, [AdminId, apicall, employeeName, currentPage]);
 
   // funtion for get list of Employee
-  const getEmployee = async () => {
-    const response = await getAllEmployeeswithFilter(
-      admin_id,
+  const getAdmin = async (AdminId) => {
+    const response = await getAllEmployeeswithsuperAdmin(
+      id,
       employeeName,
       currentPage
     );
 
     setGetUsersData(response.data);
-
     if (employeeName === "") {
       if (response.data.length > 0) {
         setIsEmptyUser(false);
@@ -188,7 +208,7 @@ const Users = () => {
     setapicall(false);
   };
 
-  // onchange funtion for search employee and call the api------------------
+  // onchange funtion for search employee and call api--------------------
   const employeeNameOnChange = (e) => {
     setemployeeName(e.target.value);
     setapicall(true);
@@ -198,18 +218,19 @@ const Users = () => {
   const onCloseModel = () => {
     setModelView(false);
     setState(initialFormState);
-    setEmailError(false);
+
     setErrors({});
   };
 
-  // funtion for open model for add employee----------
+  // funtion for open model
   const onModelOpen = async () => {
     setModelView(true);
     setModelshow(false);
+
     setState(state);
   };
 
-  // function for update empolyee model open and get detail based on employee id
+  // function for update empolyee model and get detail based on employee id
   const onUpdateModelClick = async (id) => {
     setModelView(true);
     setModelshow(true);
@@ -239,21 +260,22 @@ const Users = () => {
     setapicall(false);
   };
 
-  // onclick funtion set current page in pagination-----------------------
+  //onclick funtion for set current page in state-----------------
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected + 1);
   };
+
   return (
     <>
       <div className="theme-red ">
-        <Header />
-        {/* <SideBar /> */}
+        <SuperAdminHeader />
+
         {loadidng ? <Loader /> : null}
         {submitLoader ? <Loader /> : null}
         <section className="content">
           <div className="container-fluid">
             <div className="block-header">
-              <h2>Users Details</h2>
+              <h2>Employee Details</h2>
               <div className=" text-right">
                 <button
                   className="btn btn-success"
@@ -369,7 +391,21 @@ const Users = () => {
       </div>
       <div className={modelView === true ? "show_modal" : "gourav"}>
         <div className="back_drop" onClick={() => onCloseModel()}></div>
-        <div id="exampleModal" tabIndex="-1" role="dialog" className={"modal"}>
+        <div
+          // className={
+          //   Modelclassvalue === "modal fade"
+          //     ? "modal fade"
+          //     : modelClass === true
+          //     ? "modal fade"
+          //     : "modal fade in"
+          // }
+          id="exampleModal"
+          tabIndex="-1"
+          role="dialog"
+          // aria-labelledby="exampleModalLabel"
+          // aria-hidden="true"
+          className={"modal"}
+        >
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
@@ -379,6 +415,8 @@ const Users = () => {
                 <button
                   type="button"
                   className="close"
+                  // data-dismiss="modal"
+                  // aria-label="Close"
                   onClick={() => onCloseModel()}
                 >
                   <span aria-hidden="true">&times;</span>
@@ -561,7 +599,7 @@ const Users = () => {
                               })
                             : null}
 
-                          {emailError === true ? (
+                          {errors === "already" ? (
                             <small className="text-danger">
                               Email Already Registered Please try another email
                             </small>
@@ -637,4 +675,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default EmployeeSuperAdmin;

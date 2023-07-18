@@ -142,13 +142,13 @@ const ResetPassword = () => {
                         : "loader_btn"
                     }
                   >
-                    <div class="preloader pl-size-xs">
-                      <div class="spinner-layer pl-red-grey">
-                        <div class="circle-clipper left">
-                          <div class="circle"></div>
+                    <div className="preloader pl-size-xs">
+                      <div className="spinner-layer pl-red-grey">
+                        <div className="circle-clipper left">
+                          <div className="circle"></div>
                         </div>
-                        <div class="circle-clipper right">
-                          <div class="circle"></div>
+                        <div className="circle-clipper right">
+                          <div className="circle"></div>
                         </div>
                       </div>
                     </div>
@@ -157,7 +157,7 @@ const ResetPassword = () => {
                   </div>
                 </button>
 
-                <div class="row m-t-20 m-b--5 align-center">
+                <div className="row m-t-20 m-b--5 align-center">
                   <Link to="/">Sign In!</Link>
                 </div>
               </form>

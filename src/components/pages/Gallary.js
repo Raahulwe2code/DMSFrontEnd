@@ -405,7 +405,6 @@ const Gallary = () => {
       setcustomValidated("email is empty");
     } else {
       setEmailBtnLoader(true);
-      // setSubmitLoader(true);
 
       const zip = new JSZip();
 
@@ -417,42 +416,58 @@ const Gallary = () => {
 
         zip.file(fileName, data);
       });
-      // console.log("wait");
+
       // Wait for all files to be added to the zip
       await Promise.all(promises);
-      // console.log("start");
+
       // Generate the zip file
       const content = await zip.generateAsync({ type: "blob" });
-      // console.log("end");
 
-      const response = await toast.promise(
+      // Set a flag to track email sending status
+      let emailSent = false;
+
+      // Send the email and handle the response with a timeout
+      const response = await Promise.race([
         createZipAndUpload(senderEmail, content, clientNamee),
-        {
-          pending: "sending mail",
-          // success: "Upload compelete👌",
-        }
-      );
+        new Promise(
+          (resolve) =>
+            setTimeout(() => {
+              resolve({
+                message: "email took more than 3 minutes to send",
+              });
+            }, 180000) // 2 minutes timeout
+        ),
+      ]);
 
       setEmailBtnLoader(false);
-      // setSubmitLoader(false);
+
       if (response.message === "email send successfully") {
-        toast.success("Email send  successfully", {
+        // Email sent successfully
+        emailSent = true;
+        toast.success("Email send successfully", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
-        getDocumentByid(clienttId);
-
-        setModelVieww(false);
-        // setState(initialFormState);
-        setapicall(true);
       }
-      setapicall(false);
 
+      if (!emailSent) {
+        // Email took more than 3 minutes to send
+        toast.warning(
+          "File size exceed, Server takes time  please wait for some time ",
+          {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 2000,
+          }
+        );
+      }
+
+      // Other logic for handling email sending and resetting state as needed
+      getDocumentByid(clienttId);
+      setSenderEmail("");
       setModelVieww(false);
-      // // Save the zip file
-      // console.log(" save start");
-      // saveAs(content, `${clientNamee}_Document.zip`);
-      // console.log(" save end");
+      setapicall(true);
+      setapicall(false);
+      setModelVieww(false);
     }
   };
 
@@ -668,7 +683,8 @@ const Gallary = () => {
                                       />
                                       <h4 style={{ textAlign: "center" }}>
                                         {" "}
-                                        {item.document_title}
+                                        {item.document_title}.
+                                        {item.document_type}
                                       </h4>
                                     </Link>
                                     <div className="profile_edit_delete">
@@ -718,7 +734,8 @@ const Gallary = () => {
                                       />
                                       <h4 style={{ textAlign: "center" }}>
                                         {" "}
-                                        {item.document_title}
+                                        {item.document_title}.
+                                        {item.document_type}
                                       </h4>
                                     </Link>
                                     <div className="profile_edit_delete">
@@ -769,7 +786,8 @@ const Gallary = () => {
                                       />
                                       <h4 style={{ textAlign: "center" }}>
                                         {" "}
-                                        {item.document_title}
+                                        {item.document_title}.
+                                        {item.document_type}
                                       </h4>
                                     </Link>
                                     <div className="profile_edit_delete">
@@ -848,7 +866,8 @@ const Gallary = () => {
 
                                         <h4 style={{ textAlign: "center" }}>
                                           {" "}
-                                          {item.document_title}
+                                          {item.document_title}.
+                                          {item.document_type}
                                         </h4>
                                       </Link>
                                     </LightGallery>
@@ -1131,7 +1150,13 @@ const Gallary = () => {
                             type="submit"
                             className="btn btn-primary email_send_btn"
                           >
-                            <div className="loader_btn">
+                            <div
+                              className={
+                                emailBtnLoader === true
+                                  ? "show_loader loader_btn"
+                                  : "none loader_btn"
+                              }
+                            >
                               <div className="preloader pl-size-xs">
                                 <div className="spinner-layer pl-red-grey">
                                   <div className="circle-clipper left">
@@ -1143,15 +1168,7 @@ const Gallary = () => {
                                 </div>
                               </div>
 
-                              <span
-                                className={
-                                  emailBtnLoader === true
-                                    ? "show_loader"
-                                    : "none"
-                                }
-                              >
-                                Send Mail
-                              </span>
+                              <span>Send Mail</span>
                             </div>
                           </button>
                         </div>

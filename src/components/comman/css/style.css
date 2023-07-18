@@ -4547,12 +4547,15 @@ section.content {
   border-color: #fff;
 }
 
-.show_loader {
+.show_loader span {
   display: none;
 }
 
 .loader_btn .preloader {
   display: none;
+}
+.show_loader .preloader {
+  display: block;
 }
 .get_link_spinner .get_link_btn {
   display: none;

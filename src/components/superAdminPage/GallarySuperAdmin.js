@@ -38,10 +38,11 @@ import SuperAdminHeader from "../comman/SuperAdminHeader";
 
 const GallarySuperAdmin = () => {
   let encoded;
-  let checkboxUrl = [];
+  // let checkboxUrl = [];
 
   const [searchparams] = useSearchParams();
   const [clientToken, setClientToken] = useState("");
+  const [downlaodLoader, setDownloadLoader] = useState(false);
   const [isEmptyDocument, setIsEmptyDocument] = useState(null);
   const [isSelectboxChecked, setIsSelectBoxChecked] = useState(false);
   const [copyUrl, setCopyUrl] = useState("");
@@ -311,43 +312,65 @@ const GallarySuperAdmin = () => {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
       });
-
-      // Swal.fire({
-      //   title: "warning",
-      //   text: "Please select any one document for download",
-      //   icon: "warning",
-      //   confirmButtonText: "OK",
-      // });
     } else {
-      newArray.map((item) => {
-        checkboxUrl.push(item.document_url);
-        return {};
-      });
+      setDownloadLoader(true);
+      const checkboxUrl = newArray.map((item) => item.document_url);
+
       const zip = new JSZip();
 
-      // Fetch each file and add it to the zip
-      const promises = checkboxUrl.map(async (url) => {
-        const response = await fetch(url);
-        const data = await response.blob();
-        const fileName = getFileNameFromURL(url); // Implement this function to extract the file name from the URL
+      try {
+        // Fetch each file and add it to the zip
+        const promises = checkboxUrl.map(async (url) => {
+          try {
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error("Failed to fetch file");
+            }
+            const data = await response.blob();
+            const fileName = getFileNameFromURL(url); // Implement this function to extract the file name from the URL
 
-        zip.file(fileName, data);
-      });
-      // console.log("wait");
-      // Wait for all files to be added to the zip
-      await Promise.all(promises);
-      // console.log("start");
-      // Generate the zip file
-      setSubmitLoader(true);
-      const content = await zip.generateAsync({ type: "blob" });
-      // console.log("end");
+            zip.file(fileName, data);
+          } catch (error) {
+            setDownloadLoader(false);
+            unSelectAllChange();
+            setIsSelectBoxChecked(false);
+            console.error("Error fetching file:", error);
+            // Handle errors, e.g., show an error toast for the failed file fetch
+            toast.error("Failed to fetch a file. Please try again.", {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 2000,
+            });
+            throw error; // Rethrow the error to be caught in the Promise.all block
+          }
+        });
 
-      // Save the zip file
+        await Promise.all(promises);
 
-      saveAs(content, `${clientNamee}_Document.zip`);
-      setIsSelectBoxChecked(false);
-      unSelectAllChange();
-      setSubmitLoader(false);
+        // Generate the zip file
+        const content = await zip.generateAsync({ type: "blob" });
+
+        const startTime = Date.now(); // Record the start time
+
+        const endTime = Date.now(); // Record the end time
+        const elapsed = endTime - startTime; // Calculate the elapsed time in milliseconds
+
+        if (elapsed > 300000) {
+          // More than 5 minutes
+          toast.error("File size exceeded", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 5000, // Close the toast after 5 seconds
+          });
+        }
+
+        saveAs(content, `${clientNamee}_Document.zip`);
+
+        setDownloadLoader(false);
+        unSelectAllChange();
+        setIsSelectBoxChecked(false);
+      } catch (error) {
+        console.error("Error generating the zip file:", error);
+        // Handle other errors if necessary
+      }
     }
   };
 
@@ -543,7 +566,7 @@ const GallarySuperAdmin = () => {
         <SuperAdminHeader />
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
-
+        {downlaodLoader ? <Loader /> : null}
         <section className="content">
           <div className="container-fluid">
             {/* <!-- Image Gallery --> */}
@@ -590,20 +613,22 @@ const GallarySuperAdmin = () => {
               <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="card document_card">
                   <div className="block-header">
-                    <div className="show_rows">
-                      <label>Show:</label>
-                      <select
-                        className="form-control "
-                        value={limit}
-                        name="type"
-                        onChange={(e) => setLimit(e.target.value)}
-                      >
-                        <option value={0}>All</option>
-                        <option value={4}>4</option>
-                        <option value={8}>{8}</option>
-                        <option value={12}>{12}</option>
-                      </select>
-                    </div>
+                    {getDocumentData.length === 0 ? null : (
+                      <div className="show_rows">
+                        <label>Show:</label>
+                        <select
+                          className="form-control "
+                          value={limit}
+                          name="type"
+                          onChange={(e) => setLimit(e.target.value)}
+                        >
+                          <option value={0}>All</option>
+                          <option value={4}>4</option>
+                          <option value={8}>{8}</option>
+                          <option value={12}>{12}</option>
+                        </select>
+                      </div>
+                    )}
                     <div className="text-right" style={{ width: "100%" }}>
                       <button
                         className="btn btn-success"

@@ -43,6 +43,10 @@ const ForgetPassword = () => {
         setErrors("email send successfully");
         setGetLinkLoader(false);
       }
+      if (response.message === "invalid_mail") {
+        setErrors("please fill valid email");
+        setGetLinkLoader(false);
+      }
     }
   };
 
@@ -73,14 +77,14 @@ const ForgetPassword = () => {
                   </span>
                   <div className="form-line">
                     <input
-                      type="email"
+                      type="text"
                       className="form-control"
                       name="email"
                       placeholder="Email"
                       maxLength={30}
                       value={state.email}
                       onChange={onInputChange}
-                      // required
+                      autoFocus
                     />
                   </div>
                   {errors.email
@@ -95,6 +99,11 @@ const ForgetPassword = () => {
                   {errors === "email send successfully" ? (
                     <small className="text-danger">
                       Reset Link send your email
+                    </small>
+                  ) : null}
+                  {errors === "please fill valid email" ? (
+                    <small className="text-danger">
+                      Please fill valid email !!!
                     </small>
                   ) : null}
                 </div>

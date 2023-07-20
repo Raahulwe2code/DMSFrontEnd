@@ -38,7 +38,7 @@ export const getAllUsers = async (id) => {
 };
 
 export const getAllClientswithFilter = async (id, name, type, currentPage) => {
-  var limit = 3;
+  var limit = 8;
   const response = await axios.post(
     `${process.env.REACT_APP_BASEURL}/search_clients?admin_id=${id}&page=${currentPage}&limit=${limit}`,
     {
@@ -102,7 +102,7 @@ export const deleteUserfunction = async (id) => {
 };
 
 export const getAllEmployeeswithFilter = async (id, name, currentPage) => {
-  var limit = 2;
+  var limit = 8;
   const response = await axios.post(
     `${process.env.REACT_APP_BASEURL}/search_user?admin_id=${id}&page=${currentPage}&limit=${limit}`,
     {
@@ -113,8 +113,8 @@ export const getAllEmployeeswithFilter = async (id, name, currentPage) => {
 };
 
 export const getAllEmployeeswithsuperAdmin = async (id, name, currentPage) => {
-  var limit = 5;
-  currentPage = 1;
+  var limit = 8;
+
   const response = await axios.post(
     `${process.env.REACT_APP_BASEURL}/get_all_employee?admin_id=${id}&page=${currentPage}&limit=${limit}`,
     {
@@ -125,7 +125,7 @@ export const getAllEmployeeswithsuperAdmin = async (id, name, currentPage) => {
 };
 
 export const getAllAdminwithFilter = async (name, currentPage) => {
-  var limit = 5;
+  var limit = 8;
   // currentPage = 1;
   const response = await axios.post(
     `${process.env.REACT_APP_BASEURL}/get_all_admin?page=${currentPage}&limit=${limit}`,

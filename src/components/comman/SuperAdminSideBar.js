@@ -13,7 +13,7 @@ const SuperAdminSideBar = (props) => {
 
     navigate("/superAdmin/Login");
 
-    window.location.reload();
+    // window.location.reload();
   };
 
   function AddBodyClassFunction() {

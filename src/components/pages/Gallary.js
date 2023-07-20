@@ -44,6 +44,8 @@ const Gallary = () => {
 
   let checkboxUrl = [];
   const [isEmptyDocument, setIsEmptyDocument] = useState(null);
+
+  const [isSelectboxChecked, setIsSelectBoxChecked] = useState(false);
   const [copyUrl, setCopyUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
@@ -59,7 +61,7 @@ const Gallary = () => {
   const [emailBtnLoader, setEmailBtnLoader] = useState(false);
   const [documentType, setDocumentType] = useState("");
   const [documentName, setDocumentName] = useState("");
-  const [DocumentUpload, setDocumentUpload] = useState("");
+  const [DocumentUpload, setDocumentUpload] = useState(null);
 
   const [getDocumentData, setGetDocmentData] = useState([]);
   const [apicall, setapicall] = useState(false);
@@ -67,7 +69,8 @@ const Gallary = () => {
   const [clienttId, setClientID] = useState("");
 
   const clientNamee = localStorage.getItem("client_name");
-  const [senderEmail, setSenderEmail] = useState("");
+  const clientEmail = localStorage.getItem("client_email");
+  const [senderEmail, setSenderEmail] = useState(clientEmail);
 
   const [modelView, setModelView] = useState(false);
   const [modelVieww, setModelVieww] = useState(false);
@@ -143,6 +146,7 @@ const Gallary = () => {
       fileReader.addEventListener("load", () => {
         resolve({ name: name, base64: fileReader.result });
       });
+
       fileReader.readAsDataURL(file);
       fileReader.onerror = (error) => {
         reject(error);
@@ -194,9 +198,6 @@ const Gallary = () => {
     } else {
       setSubmitLoader(true);
 
-      // const response = await AddDocument(initialFormState);
-      setSubmitLoader(false);
-
       const response = await toast.promise(AddDocument(initialFormState), {
         pending: "Document upload  pending",
         // success: "Upload compelete👌",
@@ -212,7 +213,7 @@ const Gallary = () => {
         setModelView(false);
 
         setDocumentName("");
-        setDocumentUpload("");
+        setDocumentUpload(null);
         setapicall(true);
       }
       setSubmitLoader(false);
@@ -225,15 +226,7 @@ const Gallary = () => {
   // useEffect get document based on client id----
   useEffect(() => {
     getDocumentByid(clienttId);
-  }, [
-    clientToken,
-    clienttId,
-    apicall,
-    searchDocumentName,
-    searchDocumenttype,
-    currentPage,
-    limit,
-  ]);
+  }, [apicall, searchDocumentName, searchDocumenttype, currentPage, limit]);
 
   //function for get document based on client id
   const getDocumentByid = async (clienttId) => {
@@ -278,9 +271,18 @@ const Gallary = () => {
 
   // onchange funtion for get document data and add the isChecked attribute in get document JSON and  its value-----------------------
   const handleSelectAllChange = (v) => {
+    setIsSelectBoxChecked(v.target.checked);
     setGetDocmentData((prevData) => {
       return prevData.map((item) => {
         return { ...item, isChecked: v.target.checked };
+      });
+    });
+  };
+
+  const unSelectAllChange = () => {
+    setGetDocmentData((prevData) => {
+      return prevData.map((item) => {
+        return { ...item, isChecked: false };
       });
     });
   };
@@ -304,9 +306,9 @@ const Gallary = () => {
     });
 
     if (newArray.length === 0) {
-      toast.warning("Please Select any one for download", {
+      toast.error("Please Select any one for download", {
         position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
+        autoClose: 2000,
       });
 
       // Swal.fire({
@@ -344,6 +346,8 @@ const Gallary = () => {
       saveAs(content, `${clientNamee}_Document.zip`);
 
       setSubmitLoader(false);
+      unSelectAllChange();
+      setIsSelectBoxChecked(false);
     }
   };
 
@@ -354,9 +358,9 @@ const Gallary = () => {
     });
 
     if (newArray.length === 0) {
-      toast.warning("Please Select any one for Mail", {
+      toast.error("Please Select any one for Mail", {
         position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
+        autoClose: 2000,
       });
     } else {
       setModelVieww(true);
@@ -440,7 +444,7 @@ const Gallary = () => {
       ]);
 
       setEmailBtnLoader(false);
-
+      setIsSelectBoxChecked(false);
       if (response.message === "email send successfully") {
         // Email sent successfully
         emailSent = true;
@@ -530,7 +534,7 @@ const Gallary = () => {
         <Header />
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
-        {submitLoader === true ? <Loader /> : null}
+
         <section className="content">
           <div className="container-fluid">
             {/* <!-- Image Gallery --> */}
@@ -539,13 +543,20 @@ const Gallary = () => {
               <h2>{clientNamee.toUpperCase()}'S DOCUMENTS</h2>
               {getDocumentData.length === 0 ? null : (
                 <div className="download_emai_btn d-flex">
-                  <button className="btn btn-info" onClick={handleDownload}>
+                  <button
+                    className="btn btn-info"
+                    onClick={handleDownload}
+                    title="Download"
+                  >
                     <i className="material-icons">get_app</i>
                   </button>
                   <button
                     id="mailBox"
                     className="btn btn-primary text-end"
                     onClick={handleOpenMailBox}
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Email"
                   >
                     <i className="material-icons">email</i>
                   </button>
@@ -560,6 +571,9 @@ const Gallary = () => {
                   <button
                     id="mailBox"
                     className="btn  text-end"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Copy"
                     style={{ backgroundColor: "#bbbbbb" }}
                     onClick={copyClipBoradFuntion}
                   >
@@ -572,6 +586,21 @@ const Gallary = () => {
               <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="card document_card">
                   <div className="block-header">
+                    <div className="show_rows">
+                      <label>Show:</label>
+                      <select
+                        className="form-control "
+                        value={limit}
+                        name="type"
+                        onChange={(e) => setLimit(e.target.value)}
+                      >
+                        <option value={0}>All</option>
+                        <option value={4}>4</option>
+                        <option value={8}>{8}</option>
+                        <option value={12}>{12}</option>
+                      </select>
+                    </div>
+
                     <div className="text-right" style={{ width: "100%" }}>
                       <button
                         className="btn btn-success"
@@ -606,6 +635,7 @@ const Gallary = () => {
                               className="form-control "
                               value={searchDocumenttype}
                               name="type"
+                              style={{ display: "none" }}
                               onChange={(e) => DocumentTypeOnChange(e)}
                             >
                               <option value="" className="text-center">
@@ -623,33 +653,13 @@ const Gallary = () => {
                               <option value="xlsx">Xlsx</option>
                             </select>
                           </div>
-                          <div className="col-sm-6">
-                            <select
-                              className="form-control "
-                              value={limit}
-                              name="type"
-                              onChange={(e) => setLimit(e.target.value)}
-                            >
-                              <option
-                                value={""}
-                                disabled
-                                className="text-center"
-                              >
-                                show
-                              </option>
-                              <option value={0}>All</option>
-                              <option value={4}>4</option>
-                              <option value={8}>{8}</option>
-                              <option value={12}>{12}</option>
-                            </select>
-                          </div>
                         </div>
                         {getDocumentData.length === 0 ? null : (
                           <div className="col-sm-4 text-right">
                             <label>
                               <input
                                 type="checkbox"
-                                // checked={selectAllChecked}
+                                checked={isSelectboxChecked}
                                 onChange={handleSelectAllChange}
                               />
                               <span> Select All</span>
@@ -896,7 +906,10 @@ const Gallary = () => {
                                       <i
                                         className="material-icons text-danger"
                                         onClick={() =>
-                                          onDeleteModelClick(item.name, item.id)
+                                          onDeleteModelClick(
+                                            item.document_title,
+                                            item.id
+                                          )
                                         }
                                       >
                                         delete
@@ -957,6 +970,13 @@ const Gallary = () => {
                     className="close"
                     data-dismiss="modal"
                     aria-label="Close"
+                    disabled={
+                      submitLoader === true
+                        ? true
+                        : submitLoader === false
+                        ? false
+                        : false
+                    }
                     onClick={() => onCloseModel()}
                   >
                     <span aria-hidden="true">&times;</span>
@@ -1011,7 +1031,7 @@ const Gallary = () => {
                                 type="file"
                                 id="img_64"
                                 name={"img_64"}
-                                // value={state.name}
+                                // value={DocumentUpload}
                                 onChange={(e) => imguploadchange(e)}
                                 className="form-control"
                               />
@@ -1042,12 +1062,48 @@ const Gallary = () => {
                             className="btn btn-secondary"
                             data-dismiss="modal"
                             id="closeButton1"
+                            disabled={
+                              submitLoader === true
+                                ? true
+                                : submitLoader === false
+                                ? false
+                                : false
+                            }
                             onClick={() => onCloseModel()}
                           >
                             Close
                           </button>
-                          <button type="submit" className="btn btn-primary">
-                            Add
+                          <button
+                            type="submit"
+                            className="btn btn-primary email_send_btn"
+                            disabled={
+                              submitLoader === true
+                                ? true
+                                : submitLoader === false
+                                ? false
+                                : false
+                            }
+                          >
+                            <div
+                              className={
+                                submitLoader === true
+                                  ? "show_loader loader_btn"
+                                  : "none loader_btn"
+                              }
+                            >
+                              <div className="preloader pl-size-xs">
+                                <div className="spinner-layer pl-red-grey">
+                                  <div className="circle-clipper left">
+                                    <div className="circle"></div>
+                                  </div>
+                                  <div className="circle-clipper right">
+                                    <div className="circle"></div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <span>Add</span>
+                            </div>
                           </button>
                         </div>
                       </div>
@@ -1079,13 +1135,20 @@ const Gallary = () => {
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title" id="exampleModalLabel">
-                    {modelshow === true ? "Update Client" : " Send Document"}
+                    Send Document
                   </h5>
                   <button
                     type="button"
                     className="close"
                     data-dismiss="modal"
                     aria-label="Close"
+                    disabled={
+                      emailBtnLoader === true
+                        ? true
+                        : emailBtnLoader === false
+                        ? false
+                        : false
+                    }
                     onClick={() => onCloseModel()}
                   >
                     <span aria-hidden="true">&times;</span>
@@ -1108,12 +1171,11 @@ const Gallary = () => {
                           <div className="form-group">
                             <div className="form-line">
                               <input
-                                type="email"
+                                type="text"
                                 id="email"
                                 name="email"
                                 value={senderEmail}
                                 onChange={handleInputChange}
-                                // disabled
                                 className="form-control"
                                 placeholder="Enter document name"
                               />
@@ -1149,6 +1211,13 @@ const Gallary = () => {
                           <button
                             type="submit"
                             className="btn btn-primary email_send_btn"
+                            disabled={
+                              emailBtnLoader === true
+                                ? true
+                                : emailBtnLoader === false
+                                ? false
+                                : false
+                            }
                           >
                             <div
                               className={

@@ -77,7 +77,7 @@ const Register = () => {
       if (response.message === "user added successfully") {
         Swal.fire({
           title: "Success",
-          text: "Registered succuesfully",
+          text: "You registered as a admin",
           icon: "success",
           confirmButtonText: "OK",
         }).then(function() {
@@ -141,10 +141,14 @@ const Register = () => {
                       <input
                         type="number"
                         className="form-control"
-                        // max="10"
+                        maxLength="10"
                         value={state.phone_no}
                         name="phone_no"
-                        onChange={onInputChange}
+                        onChange={(v) => {
+                          if (v.target.value.length <= 10) {
+                            onInputChange(v);
+                          }
+                        }}
                         placeholder="Mobile"
                       />
                     </div>
@@ -164,7 +168,7 @@ const Register = () => {
                     </span>
                     <div className="form-line">
                       <input
-                        type="email"
+                        type="text"
                         className="form-control"
                         value={state.email}
                         maxLength={30}

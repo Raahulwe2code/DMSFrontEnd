@@ -7,7 +7,10 @@ const SideBar = (props) => {
   const [getData, setGetData] = useState([]);
   const usertype = localStorage.getItem("user_type") || "demo type";
 
-  const id = localStorage.getItem("admin_id");
+  const id =
+    usertype === "admin"
+      ? localStorage.getItem("admin_id")
+      : localStorage.getItem("employee_id");
 
   useEffect(() => {
     getUserDetails(id);

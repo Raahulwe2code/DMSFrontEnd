@@ -42,6 +42,7 @@ const GallarySuperAdmin = () => {
   const [searchparams] = useSearchParams();
   const [clientToken, setClientToken] = useState("");
   const [isEmptyDocument, setIsEmptyDocument] = useState(null);
+  const [isSelectboxChecked, setIsSelectBoxChecked] = useState(false);
   const [copyUrl, setCopyUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
@@ -60,14 +61,15 @@ const GallarySuperAdmin = () => {
   const [DocumentUpload, setDocumentUpload] = useState("");
   const [getDocumentData, setGetDocmentData] = useState([]);
   const [apicall, setapicall] = useState(false);
-  const [senderEmail, setSenderEmail] = useState("");
+
   const [modelView, setModelView] = useState(false);
   const [modelVieww, setModelVieww] = useState(false);
   const [clienttId, setClientID] = useState("");
 
   const clientNamee = localStorage.getItem("client_name");
+  const clientEmail = localStorage.getItem("client_email");
   const id = searchparams.get("client_id");
-
+  const [senderEmail, setSenderEmail] = useState(clientEmail);
   // UseEffect funtion for get client id and set into in state
   useEffect(() => {
     if (
@@ -189,9 +191,6 @@ const GallarySuperAdmin = () => {
     } else {
       setSubmitLoader(true);
 
-      // const response = await AddDocument(initialFormState);
-      setSubmitLoader(false);
-
       const response = await toast.promise(AddDocument(initialFormState), {
         pending: "Document upload  pending",
         // success: "Upload compelete👌",
@@ -200,7 +199,7 @@ const GallarySuperAdmin = () => {
       if (response.message === "Document upload successfully") {
         toast.success("Document Upload Successfully", {
           position: toast.POSITION.TOP_RIGHT,
-          autoClose: 1000,
+          autoClose: 2000,
         });
 
         getDocumentByid(clienttId);
@@ -221,8 +220,8 @@ const GallarySuperAdmin = () => {
   useEffect(() => {
     getDocumentByid(clienttId);
   }, [
-    clientToken,
-    clienttId,
+    // clientToken,
+    // clienttId,
     apicall,
     searchDocumentName,
     searchDocumenttype,
@@ -273,6 +272,7 @@ const GallarySuperAdmin = () => {
 
   //onchange funtion for set isCheked attribute into getDocumentdata JSON-----------------
   const handleSelectAllChange = (v) => {
+    setIsSelectBoxChecked(v.target.checked);
     setGetDocmentData((prevData) => {
       return prevData.map((item) => {
         return { ...item, isChecked: v.target.checked };
@@ -280,6 +280,13 @@ const GallarySuperAdmin = () => {
     });
   };
 
+  const unSelectAllChange = () => {
+    setGetDocmentData((prevData) => {
+      return prevData.map((item) => {
+        return { ...item, isChecked: false };
+      });
+    });
+  };
   //onchange for  set value if ischecked value is true
   const handleCheckboxChange = (event, id) => {
     setGetDocmentData((prevData) =>
@@ -299,9 +306,9 @@ const GallarySuperAdmin = () => {
     });
 
     if (newArray.length === 0) {
-      toast.warning("Please Select any one for download", {
+      toast.error("Please Select any one for download", {
         position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
+        autoClose: 2000,
       });
 
       // Swal.fire({
@@ -337,7 +344,8 @@ const GallarySuperAdmin = () => {
       // Save the zip file
 
       saveAs(content, `${clientNamee}_Document.zip`);
-
+      setIsSelectBoxChecked(false);
+      unSelectAllChange();
       setSubmitLoader(false);
     }
   };
@@ -349,9 +357,9 @@ const GallarySuperAdmin = () => {
     });
 
     if (newArray.length === 0) {
-      toast.warning("Please Select any one for Mail", {
+      toast.error("Please Select any one for Mail", {
         position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
+        autoClose: 2000,
       });
     } else {
       setModelVieww(true);
@@ -440,7 +448,7 @@ const GallarySuperAdmin = () => {
             }, 180000) // 2 minutes timeout
         ),
       ]);
-
+      setIsSelectBoxChecked(false);
       setEmailBtnLoader(false);
 
       if (response.message === "email send successfully") {
@@ -448,13 +456,13 @@ const GallarySuperAdmin = () => {
         emailSent = true;
         toast.success("Email send successfully", {
           position: toast.POSITION.TOP_RIGHT,
-          autoClose: 1000,
+          autoClose: 2000,
         });
       }
 
       if (!emailSent) {
         // Email took more than 3 minutes to send
-        toast.warning(
+        toast.error(
           "File size exceed, Server takes time  please wait for some time ",
           {
             position: toast.POSITION.TOP_RIGHT,
@@ -496,13 +504,6 @@ const GallarySuperAdmin = () => {
     // Get the text field
     var copyText = document.getElementById("myInputforCopy");
 
-    // // Select the text field
-    // copyText.select();
-    // copyText.setSelectionRange(0, 99999); // For mobile devices
-
-    // // Copy the text inside the text field
-    // navigator.clipboard.writeText(copyText.value);
-
     try {
       // Copy the text inside the text field
       if (navigator.clipboard) {
@@ -531,7 +532,7 @@ const GallarySuperAdmin = () => {
     // Alert the copied text
     toast.success("Copied to Clipborad", {
       position: toast.POSITION.TOP_RIGHT,
-      autoClose: 1000,
+      autoClose: 2000,
     });
   };
 
@@ -541,7 +542,7 @@ const GallarySuperAdmin = () => {
         <SuperAdminHeader />
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
-        {submitLoader === true ? <Loader /> : null}
+
         <section className="content">
           <div className="container-fluid">
             {/* <!-- Image Gallery --> */}
@@ -550,13 +551,18 @@ const GallarySuperAdmin = () => {
               <h2>{clientNamee.toUpperCase()}'S DOCUMENTS</h2>
               {getDocumentData.length === 0 ? null : (
                 <div className="download_emai_btn d-flex">
-                  <button className="btn btn-info" onClick={handleDownload}>
+                  <button
+                    className="btn btn-info"
+                    onClick={handleDownload}
+                    title="Download"
+                  >
                     <i className="material-icons">get_app</i>
                   </button>
                   <button
                     id="mailBox"
                     className="btn btn-primary text-end"
                     onClick={handleOpenMailBox}
+                    title="Email"
                   >
                     <i className="material-icons">email</i>
                   </button>
@@ -572,6 +578,7 @@ const GallarySuperAdmin = () => {
                     className="btn  text-end"
                     style={{ backgroundColor: "#bbbbbb" }}
                     onClick={copyClipBoradFuntion}
+                    title="Copy"
                   >
                     <i className="material-icons">content_copy</i>
                   </button>
@@ -582,6 +589,20 @@ const GallarySuperAdmin = () => {
               <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="card document_card">
                   <div className="block-header">
+                    <div className="show_rows">
+                      <label>Show:</label>
+                      <select
+                        className="form-control "
+                        value={limit}
+                        name="type"
+                        onChange={(e) => setLimit(e.target.value)}
+                      >
+                        <option value={0}>All</option>
+                        <option value={4}>4</option>
+                        <option value={8}>{8}</option>
+                        <option value={12}>{12}</option>
+                      </select>
+                    </div>
                     <div className="text-right" style={{ width: "100%" }}>
                       <button
                         className="btn btn-success"
@@ -617,6 +638,7 @@ const GallarySuperAdmin = () => {
                               value={searchDocumenttype}
                               name="type"
                               onChange={(e) => DocumentTypeOnChange(e)}
+                              style={{ display: "none" }}
                             >
                               <option value="" className="text-center">
                                 -- Please select document type --
@@ -633,33 +655,13 @@ const GallarySuperAdmin = () => {
                               <option value="xlsx">Xlsx</option>
                             </select>
                           </div>
-                          <div className="col-sm-6">
-                            <select
-                              className="form-control "
-                              value={limit}
-                              name="type"
-                              onChange={(e) => setLimit(e.target.value)}
-                            >
-                              <option
-                                value={""}
-                                disabled
-                                className="text-center"
-                              >
-                                show
-                              </option>
-                              <option value={0}>All</option>
-                              <option value={4}>4</option>
-                              <option value={8}>{8}</option>
-                              <option value={12}>{12}</option>
-                            </select>
-                          </div>
                         </div>
                         {getDocumentData.length === 0 ? null : (
                           <div className="col-sm-4 text-right">
                             <label>
                               <input
                                 type="checkbox"
-                                // checked={selectAllChecked}
+                                checked={isSelectboxChecked}
                                 onChange={handleSelectAllChange}
                               />
                               <span> Select All</span>
@@ -906,7 +908,10 @@ const GallarySuperAdmin = () => {
                                       <i
                                         className="material-icons text-danger"
                                         onClick={() =>
-                                          onDeleteModelClick(item.name, item.id)
+                                          onDeleteModelClick(
+                                            item.document_title,
+                                            item.id
+                                          )
                                         }
                                       >
                                         delete
@@ -967,6 +972,13 @@ const GallarySuperAdmin = () => {
                     className="close"
                     data-dismiss="modal"
                     aria-label="Close"
+                    disabled={
+                      submitLoader === true
+                        ? true
+                        : submitLoader === false
+                        ? false
+                        : false
+                    }
                     onClick={() => onCloseModel()}
                   >
                     <span aria-hidden="true">&times;</span>
@@ -1052,12 +1064,48 @@ const GallarySuperAdmin = () => {
                             className="btn btn-secondary"
                             data-dismiss="modal"
                             id="closeButton1"
+                            disabled={
+                              submitLoader === true
+                                ? true
+                                : submitLoader === false
+                                ? false
+                                : false
+                            }
                             onClick={() => onCloseModel()}
                           >
                             Close
                           </button>
-                          <button type="submit" className="btn btn-primary">
-                            Add
+                          <button
+                            type="submit"
+                            className="btn btn-primary email_send_btn"
+                            disabled={
+                              submitLoader === true
+                                ? true
+                                : submitLoader === false
+                                ? false
+                                : false
+                            }
+                          >
+                            <div
+                              className={
+                                submitLoader === true
+                                  ? "show_loader loader_btn"
+                                  : "none loader_btn"
+                              }
+                            >
+                              <div className="preloader pl-size-xs">
+                                <div className="spinner-layer pl-red-grey">
+                                  <div className="circle-clipper left">
+                                    <div className="circle"></div>
+                                  </div>
+                                  <div className="circle-clipper right">
+                                    <div className="circle"></div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <span>Add</span>
+                            </div>
                           </button>
                         </div>
                       </div>
@@ -1090,13 +1138,20 @@ const GallarySuperAdmin = () => {
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title" id="exampleModalLabel">
-                    {modelshow === true ? "Update Client" : " Send Document"}
+                    Send Document
                   </h5>
                   <button
                     type="button"
                     className="close"
                     data-dismiss="modal"
                     aria-label="Close"
+                    disabled={
+                      emailBtnLoader === true
+                        ? true
+                        : emailBtnLoader === false
+                        ? false
+                        : false
+                    }
                     onClick={() => onCloseModel()}
                   >
                     <span aria-hidden="true">&times;</span>
@@ -1119,7 +1174,7 @@ const GallarySuperAdmin = () => {
                           <div className="form-group">
                             <div className="form-line">
                               <input
-                                type="email"
+                                type="text"
                                 id="email"
                                 name="email"
                                 value={senderEmail}
@@ -1160,6 +1215,13 @@ const GallarySuperAdmin = () => {
                           <button
                             type="submit"
                             className="btn btn-primary email_send_btn"
+                            disabled={
+                              emailBtnLoader === true
+                                ? true
+                                : emailBtnLoader === false
+                                ? false
+                                : false
+                            }
                           >
                             <div
                               className={

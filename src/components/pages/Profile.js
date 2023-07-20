@@ -365,7 +365,7 @@ const Profile = () => {
                             <div className="col-sm-10">
                               <div className="form-line">
                                 <input
-                                  type="email"
+                                  type="text"
                                   className="form-control"
                                   name="email"
                                   value={state.email}

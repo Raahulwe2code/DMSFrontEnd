@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AddDocumentAnotherUser, GetDocumentAnotherUser } from "../../api/api";
 function DoumentUpload() {
+  // handleSelectAllChange({ v: { target: { checked: false } } });
   let encoded;
 
   const [searchparams] = useSearchParams();
@@ -100,6 +101,8 @@ function DoumentUpload() {
 
     if (documentName === "") {
       setcustomValidated("name is empty");
+    } else if (/[^A-Za-z 0-9]/g.test(documentName)) {
+      setcustomValidated("specialcharacter in name");
     } else if (DocumentUpload === "") {
       setcustomValidated("document is empty");
     } else {
@@ -181,6 +184,7 @@ function DoumentUpload() {
                     xls, xlsx and pdf
                   </small>
                 ) : null}
+
                 <p className="text-center">Click To Upload</p>
               </div>
             </div>
@@ -199,6 +203,12 @@ function DoumentUpload() {
 
                 {customvalidated === "name is empty" ? (
                   <small className="text-danger"> Document name is empty</small>
+                ) : null}
+                {customvalidated === "specialcharacter in name" ? (
+                  <small className="text-danger">
+                    {" "}
+                    Special Character not allowed
+                  </small>
                 ) : null}
               </div>
               <div className="sumbit_btn">

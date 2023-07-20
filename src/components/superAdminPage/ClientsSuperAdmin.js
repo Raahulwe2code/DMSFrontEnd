@@ -206,7 +206,7 @@ const ClientsSuperAdmin = () => {
   // useEffcet use for get client  api fucntion call
   useEffect(() => {
     getClients();
-  }, [AdminId, apicall, clientName, clienttype, currentPage]);
+  }, [apicall, clientName, clienttype, currentPage]);
 
   // funtion for get list of client
   const getClients = async () => {
@@ -270,8 +270,9 @@ const ClientsSuperAdmin = () => {
   };
 
   // function for clicking client and send id and name on super admin gallary page
-  const onClientClick = (id, name, token) => {
+  const onClientClick = (id, name, token, email) => {
     localStorage.setItem("client_name", name);
+    localStorage.setItem("client_email", email);
 
     navigate(
       `/superAdmin/gallary?client_id=${id}&&loading=${loadidng}&&client_token=${token}`
@@ -404,7 +405,8 @@ const ClientsSuperAdmin = () => {
                                           item.id,
                                           item.name,
 
-                                          item.client_token
+                                          item.client_token,
+                                          item.email
                                         )
                                       }
                                       style={{ cursor: "pointer" }}
@@ -413,26 +415,26 @@ const ClientsSuperAdmin = () => {
                                     <div className="body">
                                       Phone:- {item.phone_no}
                                     </div>
-                                    <div className="profile_edit_delete">
-                                      <i
-                                        className="material-icons text-primary"
-                                        // data-toggle="modal"
-                                        // data-target="#exampleModal"
-                                        onClick={() =>
-                                          onUpdateModelClick(item.id)
-                                        }
-                                      >
-                                        edit
-                                      </i>
-                                      <i
-                                        className="material-icons text-danger"
-                                        onClick={() =>
-                                          onDeleteModelClick(item.name, item.id)
-                                        }
-                                      >
-                                        delete
-                                      </i>
-                                    </div>
+                                  </div>
+                                  <div className="profile_edit_delete">
+                                    <i
+                                      className="material-icons text-primary"
+                                      // data-toggle="modal"
+                                      // data-target="#exampleModal"
+                                      onClick={() =>
+                                        onUpdateModelClick(item.id)
+                                      }
+                                    >
+                                      edit
+                                    </i>
+                                    <i
+                                      className="material-icons text-danger"
+                                      onClick={() =>
+                                        onDeleteModelClick(item.name, item.id)
+                                      }
+                                    >
+                                      delete
+                                    </i>
                                   </div>
                                 </div>
                               </div>
@@ -588,7 +590,7 @@ const ClientsSuperAdmin = () => {
                         <div className="form-group">
                           <div className="form-line">
                             <input
-                              type="email"
+                              type="text"
                               name="email"
                               id="email"
                               value={state.email}
@@ -632,7 +634,11 @@ const ClientsSuperAdmin = () => {
                               name="phone_no"
                               maxLength={10}
                               value={state.phone_no}
-                              onChange={onInputChange}
+                              onChange={(v) => {
+                                if (v.target.value.length <= 10) {
+                                  onInputChange(v);
+                                }
+                              }}
                               className="form-control"
                               placeholder="Enter your phone no"
                             />

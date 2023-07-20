@@ -254,8 +254,9 @@ const Clients = () => {
   };
 
   // function for clicking client and send id and name on gallary
-  const onClientClick = (id, name, token) => {
+  const onClientClick = (id, name, token, email) => {
     localStorage.setItem("client_name", name);
+    localStorage.setItem("client_email", email);
 
     navigate(
       `/gallary?client_id=${id}&&loading=${loadidng}&&client_token=${token}`
@@ -386,7 +387,8 @@ const Clients = () => {
                                         onClientClick(
                                           item.id,
                                           item.name,
-                                          item.client_token
+                                          item.client_token,
+                                          item.email
                                         )
                                       }
                                       style={{ cursor: "pointer" }}
@@ -572,7 +574,7 @@ const Clients = () => {
                         <div className="form-group">
                           <div className="form-line">
                             <input
-                              type="email"
+                              type="text"
                               name="email"
                               id="email"
                               value={state.email}
@@ -616,7 +618,11 @@ const Clients = () => {
                               name="phone_no"
                               maxLength={10}
                               value={state.phone_no}
-                              onChange={onInputChange}
+                              onChange={(v) => {
+                                if (v.target.value.length <= 10) {
+                                  onInputChange(v);
+                                }
+                              }}
                               className="form-control"
                               placeholder="Enter your phone no"
                             />

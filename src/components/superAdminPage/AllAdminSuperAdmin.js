@@ -512,7 +512,11 @@ const AllAdminSuperAdmin = () => {
                               maxLength={10}
                               name="phone_no"
                               value={state.phone_no}
-                              onChange={onInputChange}
+                              onChange={(v) => {
+                                if (v.target.value.length <= 10) {
+                                  onInputChange(v);
+                                }
+                              }}
                               className="form-control"
                               placeholder="Enter your phone no"
                             />
@@ -578,7 +582,7 @@ const AllAdminSuperAdmin = () => {
                         <div className="form-group">
                           <div className="form-line">
                             <input
-                              type="email"
+                              type="text"
                               name="email"
                               id="email"
                               value={state.email}

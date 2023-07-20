@@ -27,7 +27,6 @@ const Layout = () => {
   let path = window.location.pathname;
 
   const superAdmin = path.includes("/superAdmin");
-  const adminToken = localStorage.getItem("admin_token");
 
   return (
     <>
@@ -65,7 +64,7 @@ const Layout = () => {
           </Routes>
         ) : (
           <Routes>
-            <Route path="/" element={adminToken ? <Home /> : <Login />} />
+            <Route path="/" element={<Login />} />
             <Route e path={"/signup"} element={<Register />} />
             <Route path={"/forgetepassword"} element={<ForgetPassword />} />
             <Route path={"/resetpassword"} element={<ResetPassword />} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import $ from "jquery";
 import pdfLogo from "../comman/images/PDF.png";
 import msDoc from "../comman/images/msss.jpg";
 import msXls from "../comman/images/excel.png";
@@ -217,7 +217,7 @@ const Gallary = () => {
         setapicall(true);
       }
       setSubmitLoader(false);
-
+      $("#img_64").val("");
       setModelView(false);
       setapicall(false);
     }

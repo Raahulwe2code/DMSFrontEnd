@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 // ../../images/image-gallery/thumb/thumb-1.jpg"
 import pdfLogo from "../comman/images/PDF.png";
+import $ from "jquery";
 import msDoc from "../comman/images/msss.jpg";
 import msXls from "../comman/images/excel.png";
 import { Link, useSearchParams } from "react-router-dom";
@@ -204,7 +205,7 @@ const GallarySuperAdmin = () => {
 
         getDocumentByid(clienttId);
         setModelView(false);
-
+        $("#img_64").val("");
         setDocumentName("");
         setDocumentUpload("");
         setapicall(true);

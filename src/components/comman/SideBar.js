@@ -26,7 +26,7 @@ const SideBar = (props) => {
 
     navigate("/");
 
-    window.location.reload();
+    // window.location.reload();
   };
 
   function AddBodyClassFunction() {

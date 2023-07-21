@@ -147,9 +147,9 @@ const ClientsSuperAdmin = () => {
 
   // function add client when submit button click
   const onClientAdd = async (e) => {
-    setSubmitLoader(true);
     e.preventDefault();
     if (validate()) {
+      setSubmitLoader(true);
       const response = await toast.promise(AddClientByadmin(state), {
         pending: "Add clinet is processing",
         // success: "Upload compelete👌",
@@ -291,16 +291,16 @@ const ClientsSuperAdmin = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        setSubmitLoader(true);
+        setLoading(true);
         const response = await deleteClientfunction(id);
         if (response.message === "delete clients successfully") {
           Swal.fire("Deleted!", "Your file has been deleted.", "success");
           setapicall(true);
-          setSubmitLoader(false);
+          setLoading(false);
         }
       }
     });
-    setSubmitLoader(false);
+    setLoading(false);
     setapicall(false);
   };
 
@@ -315,7 +315,7 @@ const ClientsSuperAdmin = () => {
 
         {/* <Loader /> */}
         {loadidng ? <Loader /> : null}
-        {submitLoader ? <Loader /> : null}
+
         {/* <SideBar /> */}
         <section className="content">
           <div className="container-fluid">
@@ -494,6 +494,13 @@ const ClientsSuperAdmin = () => {
                   className="close"
                   // data-dismiss="modal"
                   // aria-label="Close"
+                  disabled={
+                    submitLoader === true
+                      ? true
+                      : submitLoader === false
+                      ? false
+                      : false
+                  }
                   onClick={() => onCloseModel()}
                 >
                   <span aria-hidden="true">&times;</span>
@@ -556,7 +563,6 @@ const ClientsSuperAdmin = () => {
                               type="text"
                               id="name"
                               name="name"
-                              maxLength={30}
                               value={state.name}
                               onChange={onInputChange}
                               className="form-control"
@@ -704,7 +710,6 @@ const ClientsSuperAdmin = () => {
                                 <input
                                   type="text"
                                   id="company_name"
-                                  maxLength={30}
                                   name="company_name"
                                   value={state.company_name}
                                   onChange={onInputChange}
@@ -742,13 +747,45 @@ const ClientsSuperAdmin = () => {
                           type="button"
                           className="btn btn-secondary"
                           // data-dismiss="modal"
-                          // id="closeButton1"
+                          disabled={
+                            submitLoader === true
+                              ? true
+                              : submitLoader === false
+                              ? false
+                              : false
+                          }
                           onClick={() => onCloseModel()}
                         >
                           Close
                         </button>
-                        <button type="submit" className="btn btn-primary">
-                          {modelshow === true ? "Update" : " Add "}
+                        <button
+                          className="btn btn-primary waves-effect"
+                          type="submit"
+                        >
+                          {" "}
+                          <div
+                            className={
+                              submitLoader === true
+                                ? "get_link_spinner loader_btn"
+                                : "loader_btn"
+                            }
+                          >
+                            <div className="preloader pl-size-xs">
+                              <div className="spinner-layer pl-red-grey">
+                                <div className="circle-clipper left">
+                                  <div className="circle"></div>
+                                </div>
+                                <div className="circle-clipper right">
+                                  <div className="circle"></div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <span className="get_link_btn">
+                              {" "}
+                              {modelshow === true ? "Update" : " Add "}
+                            </span>
+                          </div>
                         </button>
                       </div>
                     </div>

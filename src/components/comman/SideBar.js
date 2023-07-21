@@ -12,6 +12,8 @@ const SideBar = (props) => {
       ? localStorage.getItem("admin_id")
       : localStorage.getItem("employee_id");
 
+  const AdminName = "No Admin";
+  const AdminEmail = "NoAdmin@gmail.com";
   useEffect(() => {
     getUserDetails(id);
   }, [id]);
@@ -58,9 +60,11 @@ const SideBar = (props) => {
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                <h4>{getData.name}</h4>
+                <h4>{getData.name ? getData.name : AdminName}</h4>
               </div>
-              <div className="email">{getData.email}</div>
+              <div className="email">
+                {getData.email ? getData.email : AdminEmail}
+              </div>
               <div className="email">Type- {usertype}</div>
               <div className="btn-group user-helper-dropdown">
                 <i
@@ -152,9 +156,6 @@ const SideBar = (props) => {
           <div className="legal">
             <div className="copyright">
               &copy; 2023 <Link to="">Document management system</Link>.
-            </div>
-            <div className="version">
-              <b>Version: </b> 1.0.5
             </div>
           </div>
           {/* <!-- #Footer --> */}

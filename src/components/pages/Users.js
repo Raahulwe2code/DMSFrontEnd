@@ -229,7 +229,9 @@ const Users = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        setLoading(true);
         const response = await deleteUserfunction(id);
+        setLoading(false);
         if (response.message === "delete user successfully") {
           Swal.fire("Deleted!", "Your file has been deleted.", "success");
           setapicall(true);
@@ -249,7 +251,7 @@ const Users = () => {
         <Header />
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
-        {submitLoader ? <Loader /> : null}
+
         <section className="content">
           <div className="container-fluid">
             <div className="block-header">
@@ -379,6 +381,13 @@ const Users = () => {
                 <button
                   type="button"
                   className="close"
+                  disabled={
+                    submitLoader === true
+                      ? true
+                      : submitLoader === false
+                      ? false
+                      : false
+                  }
                   onClick={() => onCloseModel()}
                 >
                   <span aria-hidden="true">&times;</span>
@@ -436,7 +445,6 @@ const Users = () => {
                             <input
                               type="text"
                               id="name"
-                              maxLength={30}
                               name="name"
                               value={state.name}
                               onChange={onInputChange}
@@ -620,12 +628,45 @@ const Users = () => {
                           className="btn btn-secondary"
                           data-dismiss="modal"
                           id="closeButton1"
+                          disabled={
+                            submitLoader === true
+                              ? true
+                              : submitLoader === false
+                              ? false
+                              : false
+                          }
                           onClick={() => onCloseModel()}
                         >
                           Close
                         </button>
-                        <button type="submit" className="btn btn-primary">
-                          {modelshow === true ? "Update" : " Add "}
+                        <button
+                          className="btn btn-primary waves-effect"
+                          type="submit"
+                        >
+                          {" "}
+                          <div
+                            className={
+                              submitLoader === true
+                                ? "get_link_spinner loader_btn"
+                                : "loader_btn"
+                            }
+                          >
+                            <div className="preloader pl-size-xs">
+                              <div className="spinner-layer pl-red-grey">
+                                <div className="circle-clipper left">
+                                  <div className="circle"></div>
+                                </div>
+                                <div className="circle-clipper right">
+                                  <div className="circle"></div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <span className="get_link_btn">
+                              {" "}
+                              {modelshow === true ? "Update" : " Add "}
+                            </span>
+                          </div>
                         </button>
                       </div>
                     </div>

@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { GetDashBoardDetails } from "../../api/api";
 import Header from "../comman/Header";
+import Loader from "../comman/loader";
 
 // import SideBar from "../comman/SideBar";
 
 const Home = () => {
+  const [loadidng, setLoading] = useState(false);
   const admin_id = localStorage.getItem("admin_id");
   const user_type = localStorage.getItem("user_type");
   const [getDashBoardData, setDashBoardData] = useState([]);
@@ -17,7 +19,9 @@ const Home = () => {
 
   // funtion for get deshboard details by id and set the state-------------
   const getDashBorad_details = async (admin_id) => {
+    setLoading(true);
     const response = await GetDashBoardDetails(admin_id);
+    setLoading(false);
     // console.log("data--" + JSON.stringify(response[0]));
     setDashBoardData(response[0]);
   };
@@ -25,6 +29,7 @@ const Home = () => {
   return (
     <>
       <div className="theme-red ">
+        {loadidng ? <Loader /> : null}
         <Header />
         {/* <SideBar /> */}
 

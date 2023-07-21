@@ -81,7 +81,6 @@ const ForgetPassword = () => {
                       className="form-control"
                       name="email"
                       placeholder="Email"
-                      maxLength={30}
                       value={state.email}
                       onChange={onInputChange}
                       autoFocus

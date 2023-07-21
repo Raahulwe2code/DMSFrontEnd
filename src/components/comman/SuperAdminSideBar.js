@@ -113,9 +113,6 @@ const SuperAdminSideBar = (props) => {
             <div className="copyright">
               &copy; 2023 <Link to="">Document management system</Link>.
             </div>
-            <div className="version">
-              <b>Version: </b> 1.0.5
-            </div>
           </div>
           {/* <!-- #Footer --> */}
         </aside>

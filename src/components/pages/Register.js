@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AddUsers } from "../../api/api";
 import useValidation from "../comman/useValidation";
 import Swal from "sweetalert2";
+// import Loader from "../comman/loader";
 const Register = () => {
+  const [loadidng, setLoading] = useState(false);
   // intial state for register input form feild--------
   const initialFormState = {
     admin_id: "0",
@@ -66,8 +68,9 @@ const Register = () => {
   const onAddAdmin = async (e) => {
     e.preventDefault();
     if (validate()) {
+      setLoading(true);
       const response = await AddUsers(state);
-
+      setLoading(false);
       if (
         response.response ===
         "email already exist, check your mail or try after sometime"
@@ -90,6 +93,7 @@ const Register = () => {
 
   return (
     <>
+      {/* {loadidng === true ? <Loader /> : null} */}
       <div className="theme-red ">
         <div className="signup-page">
           <div className="signup-box">
@@ -118,7 +122,6 @@ const Register = () => {
                         placeholder="Enter your name"
                         value={state.name}
                         name="name"
-                        maxLength={30}
                         onChange={onInputChange}
                         autoFocus
                       />
@@ -171,7 +174,6 @@ const Register = () => {
                         type="text"
                         className="form-control"
                         value={state.email}
-                        maxLength={30}
                         name="email"
                         onChange={onInputChange}
                         placeholder="Email Address"
@@ -224,7 +226,27 @@ const Register = () => {
                     className="btn btn-block btn-lg bg-pink waves-effect"
                     type="submit"
                   >
-                    SIGN UP
+                    {" "}
+                    <div
+                      className={
+                        loadidng === true
+                          ? "get_link_spinner loader_btn"
+                          : "loader_btn"
+                      }
+                    >
+                      <div className="preloader pl-size-xs">
+                        <div className="spinner-layer pl-red-grey">
+                          <div className="circle-clipper left">
+                            <div className="circle"></div>
+                          </div>
+                          <div className="circle-clipper right">
+                            <div className="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <span className="get_link_btn">SIGN UP</span>
+                    </div>
                   </button>
 
                   <div className="m-t-25 m-b--5 align-center">

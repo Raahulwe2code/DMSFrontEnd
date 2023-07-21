@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Admin_login_function } from "../../api/api";
-import Loader from "../comman/loader";
+// import Loader from "../comman/loader";
 const Login = () => {
   // clear funtion for clear the local storage when open login page
   localStorage.clear();
@@ -60,7 +60,7 @@ const Login = () => {
   }
   return (
     <>
-      {loadidng === true ? <Loader /> : null}
+      {/* {loadidng === true ? <Loader /> : null} */}
       <div className="login-page">
         <div className="login-box">
           <div className="logo">
@@ -116,10 +116,30 @@ const Login = () => {
                   </div>
                   <div className="col-xs-4">
                     <button
-                      className="btn btn-block bg-pink waves-effect"
+                      className="btn btn-block btn-lg bg-pink waves-effect"
                       type="submit"
                     >
-                      SIGN IN
+                      {" "}
+                      <div
+                        className={
+                          loadidng === true
+                            ? "get_link_spinner loader_btn"
+                            : "loader_btn"
+                        }
+                      >
+                        <div className="preloader pl-size-xs">
+                          <div className="spinner-layer pl-red-grey">
+                            <div className="circle-clipper left">
+                              <div className="circle"></div>
+                            </div>
+                            <div className="circle-clipper right">
+                              <div className="circle"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <span className="get_link_btn">SIGN IN</span>
+                      </div>
                     </button>
                   </div>
                 </div>

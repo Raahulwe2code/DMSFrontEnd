@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { GeSuperAdmintDashBoardDetails } from "../../api/api";
+import Loader from "../comman/loader";
 
 import SuperAdminHeader from "../comman/SuperAdminHeader";
 
 const HomeSuperAdmin = () => {
   const [getDashBoardData, setDashBoardData] = useState([]);
-
+  const [loadidng, setLoading] = useState(false);
   //UseEffect for calling get deshboard funtion -------------------
   useEffect(() => {
     getDashBorad_details();
@@ -14,14 +15,16 @@ const HomeSuperAdmin = () => {
 
   // funtion for get deshboard details---------------
   const getDashBorad_details = async () => {
+    setLoading(true);
     const response = await GeSuperAdmintDashBoardDetails();
-
+    setLoading(false);
     setDashBoardData(response[0]);
   };
 
   return (
     <>
       <div className="theme-red ">
+        {loadidng ? <Loader /> : null}
         <SuperAdminHeader />
 
         <section className="content">

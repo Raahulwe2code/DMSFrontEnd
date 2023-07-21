@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Super_Admin_login_function } from "../../api/api";
-import Loader from "../comman/loader";
+
 const LoginSuperAdmin = () => {
   //funtion for clear local storage---------
   localStorage.clear();
@@ -51,7 +51,6 @@ const LoginSuperAdmin = () => {
   }
   return (
     <>
-      {loadidng === true ? <Loader /> : null}
       <div className="login-page">
         <div className="login-box">
           <div className="logo">
@@ -108,10 +107,30 @@ const LoginSuperAdmin = () => {
                   </div>
                   <div className="col-xs-4">
                     <button
-                      className="btn btn-block bg-pink waves-effect"
+                      className="btn btn-block btn-lg bg-pink waves-effect"
                       type="submit"
                     >
-                      SIGN IN
+                      {" "}
+                      <div
+                        className={
+                          loadidng === true
+                            ? "get_link_spinner loader_btn"
+                            : "loader_btn"
+                        }
+                      >
+                        <div className="preloader pl-size-xs">
+                          <div className="spinner-layer pl-red-grey">
+                            <div className="circle-clipper left">
+                              <div className="circle"></div>
+                            </div>
+                            <div className="circle-clipper right">
+                              <div className="circle"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <span className="get_link_btn">SIGN IN</span>
+                      </div>
                     </button>
                   </div>
                 </div>

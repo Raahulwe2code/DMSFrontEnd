@@ -63,22 +63,24 @@ const Layout = () => {
             </Route>
           </Routes>
         ) : (
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route e path={"/signup"} element={<Register />} />
-            <Route path={"/forgetepassword"} element={<ForgetPassword />} />
-            <Route path={"/resetpassword"} element={<ResetPassword />} />
-            <Route path={"/doumentUpload"} element={<DoumentUpload />} />
+          <>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route e path={"/signup"} element={<Register />} />
+              <Route path={"/forgetepassword"} element={<ForgetPassword />} />
+              <Route path={"/resetpassword"} element={<ResetPassword />} />
+              <Route path={"/doumentUpload"} element={<DoumentUpload />} />
 
-            <Route exact element={<AuthWrapper />}>
-              <Route path={"/home"} element={<Home />} />
-              <Route path={"/users"} element={<Users />} />
-              <Route path={"/clients"} element={<Clients />} />
-              <Route path={"/profile"} element={<Profile />} />
-              <Route path={"*"} element={<BlankPage />} />
-              <Route path={"/gallary"} element={<Gallary />} />
-            </Route>
-          </Routes>
+              <Route exact element={<AuthWrapper />}>
+                <Route path={"/home"} element={<Home />} />
+                <Route path={"/users"} element={<Users />} />
+                <Route path={"/clients"} element={<Clients />} />
+                <Route path={"/profile"} element={<Profile />} />
+                <Route path={"*"} element={<BlankPage />} />
+                <Route path={"/gallary"} element={<Gallary />} />
+              </Route>
+            </Routes>
+          </>
         )}
       </div>
     </>

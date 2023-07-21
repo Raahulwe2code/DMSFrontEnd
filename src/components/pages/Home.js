@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { GetDashBoardDetails } from "../../api/api";
 import Header from "../comman/Header";
 
-import SideBar from "../comman/SideBar";
+// import SideBar from "../comman/SideBar";
 
 const Home = () => {
   const admin_id = localStorage.getItem("admin_id");
@@ -26,7 +26,7 @@ const Home = () => {
     <>
       <div className="theme-red ">
         <Header />
-        <SideBar />
+        {/* <SideBar /> */}
 
         <section className="content">
           <div className="container-fluid">

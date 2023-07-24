@@ -25,7 +25,7 @@ import SuperAdminAuthWrapper from "./components/comman/SuperAdminAuthWrapper";
 
 const Layout = () => {
   let path = window.location.pathname;
-
+  // fdfdssd
   const superAdmin = path.includes("/superAdmin");
 
   return (

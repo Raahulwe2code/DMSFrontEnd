@@ -27,7 +27,7 @@ const Layout = () => {
   let path = window.location.pathname;
 
   const superAdmin = path.includes("/superAdmin");
-
+  console.log("");
   return (
     <>
       <div className="theme-red ">

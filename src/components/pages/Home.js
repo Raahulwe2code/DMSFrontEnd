@@ -30,7 +30,7 @@ const Home = () => {
     <>
       <div className="theme-red ">
         {loadidng ? <Loader /> : null}
-        <Header />
+        <Header getstateLoader={loadidng} />
         {/* <SideBar /> */}
 
         <section className="content">

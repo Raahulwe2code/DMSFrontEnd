@@ -14,6 +14,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const Profile = () => {
   let encoded;
+  const [getStateLoader, setGetStateLoader] = useState(false);
   const [getData, setGetData] = useState([]);
   const [apicall, setapicall] = useState(false);
   const user_type = localStorage.getItem("user_type");
@@ -51,7 +52,9 @@ const Profile = () => {
 
   //funtion for get user details by id- and set the state---------------
   const getUserDetails = async (id) => {
+    setGetStateLoader(true);
     const response = await getUserByID(id);
+    setGetStateLoader(false);
     setGetData(response[0]);
     setState(response[0]);
     setapicall(false);
@@ -202,22 +205,29 @@ const Profile = () => {
   };
 
   //onclick submit button for reset password----------------
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{5,}$/;
   const OnPasswordChange = async (e) => {
     e.preventDefault();
 
     // Perform validation
     if (oldpassword === "") {
       setPasswordError("oldpassword is blank");
-    } else if (oldpassword.length <= 4) {
-      setPasswordError("Aleaset 5 character");
+    } else if (!passwordRegex.test(oldpassword)) {
+      setPasswordError(
+        "Old Password must contain at least 5 characters, one letter, one number, and one special character (@$!%*#?&)"
+      );
     } else if (password === "") {
       setPasswordError("password is blank");
-    } else if (password.length <= 4) {
-      setPasswordError("password Aleaset 5 character");
+    } else if (!passwordRegex.test(password)) {
+      setPasswordError(
+        "Password must contain at least 5 characters, one letter, one number, and one special character (@$!%*#?&)"
+      );
     } else if (confirmpassword === "") {
       setPasswordError("confirmpassword is blank");
-    } else if (confirmpassword.length <= 4) {
-      setPasswordError("Cpassword Aleaset 5 character");
+    } else if (!passwordRegex.test(confirmpassword)) {
+      setPasswordError(
+        "Confirm Password must contain at least 5 characters, one letter, one number, and one special character (@$!%*#?&)"
+      );
     } else if (password !== confirmpassword) {
       setPasswordError("Passwords do not match");
       return;
@@ -262,7 +272,8 @@ const Profile = () => {
   };
   return (
     <>
-      <Header />
+      <Header getstateLoader={getStateLoader} />
+
       <section className="content">
         <div className="container-fluid">
           <div className="row clearfix">
@@ -310,9 +321,6 @@ const Profile = () => {
                       <span>{getDashBoardData.document}</span>
                     </li>
                   </ul>
-                  <button className="btn btn-primary btn-lg waves-effect btn-block">
-                    Back
-                  </button>
                 </div>
               </div>
             </div>
@@ -553,9 +561,12 @@ const Profile = () => {
                                 />
                               </div>
 
-                              {PasswordError === "Aleaset 5 character" ? (
+                              {PasswordError ===
+                              "Old Password must contain at least 5 characters, one letter, one number, and one special character (@$!%*#?&)" ? (
                                 <small className="text-danger">
-                                  Old password should be atleast 5 chracter
+                                  Old Password must contain at least 5
+                                  characters, one letter, one number, and one
+                                  special character (@$!%*#?&)
                                 </small>
                               ) : null}
                               {PasswordError === "oldpassword is blank" ? (
@@ -591,9 +602,11 @@ const Profile = () => {
                                 />
                               </div>
                               {PasswordError ===
-                              "password Aleaset 5 character" ? (
+                              "Password must contain at least 5 characters, one letter, one number, and one special character (@$!%*#?&)" ? (
                                 <small className="text-danger">
-                                  Password should be atleast 5 chracter
+                                  Password must contain at least 5 characters,
+                                  one letter, one number, and one special
+                                  character (@$!%*#?&)
                                 </small>
                               ) : null}
                               {PasswordError === "password is blank" ? (
@@ -624,9 +637,11 @@ const Profile = () => {
                                 />
                               </div>
                               {PasswordError ===
-                              "Cpassword Aleaset 5 character" ? (
+                              "Confirm Password must contain at least 5 characters, one letter, one number, and one special character (@$!%*#?&)" ? (
                                 <small className="text-danger">
-                                  Confirm password should be atleast 5 chracter
+                                  Confirm Password must contain at least 5
+                                  characters, one letter, one number, and one
+                                  special character (@$!%*#?&)
                                 </small>
                               ) : null}
                               {PasswordError === "confirmpassword is blank" ? (

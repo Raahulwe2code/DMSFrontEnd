@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import SideBar from "./SideBar";
 
-const Header = () => {
+const Header = ({ getstateLoader }) => {
   const [newClass, setNewClass] = useState(false);
 
   function AddBodyClassFunctionn() {
@@ -36,9 +36,22 @@ const Header = () => {
         </div>
       </div> */}
       {/* <!-- #END# Search Bar --> */}
-
       {/* <!-- Top Bar --> */}
-      <nav className="navbar">
+
+      <nav
+        // className={
+        //   getstateLoader === false
+        //     ? "navbar main_navbar header_loader_hide"
+        //     : getstateLoader === true
+        //     ? "navbar main_navbar header_loader"
+        //     : "navbar main_navbar"
+        // }
+        className={
+          getstateLoader === false
+            ? "navbar main_navbar "
+            : "navbar main_navbar header_loader"
+        }
+      >
         <div className="container-fluid">
           <div className="navbar-header">
             <Link
@@ -65,9 +78,7 @@ const Header = () => {
         </div>
       </nav>
       {/* <!-- #Top Bar --> */}
-
       {/* // sidebar0------------ */}
-
       <SideBar newClass={newClass} />
     </>
   );

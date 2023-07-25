@@ -20,6 +20,8 @@ import ReactPaginate from "react-paginate";
 
 const Clients = () => {
   const navigate = useNavigate();
+  const [getStateLoader, setGetStateLoader] = useState(false);
+
   const admin_id = localStorage.getItem("admin_id");
   const [currentPage, setCurrentPage] = useState(1);
   const [isEmptyClient, setIsEmptyClient] = useState(null);
@@ -50,7 +52,6 @@ const Clients = () => {
 
   const [getClientsData, setGetClientsData] = useState([]);
 
-  const [emailError, setEmailError] = useState(false);
   // validation fuction come from use validation custom hook
   const validators = {
     type: [
@@ -67,6 +68,8 @@ const Clients = () => {
           ? "Name is required"
           : /[^A-Za-z 0-9]/g.test(value)
           ? "Cannot use special character "
+          : value.length <= 2
+          ? "Name should be atleaset 3 charcter"
           : null,
     ],
     email: [
@@ -89,7 +92,11 @@ const Clients = () => {
     ],
     address: [
       (value) =>
-        value === null || value === "" ? "Address is required" : null,
+        value === null || value === ""
+          ? "Address is required"
+          : value.length <= 4
+          ? "Address should be atleaset 5 charcter"
+          : null,
     ],
 
     // company_name: [
@@ -140,7 +147,7 @@ const Clients = () => {
       });
 
       if (response.message === "already added by this admin") {
-        setEmailError(true);
+        setErrors("already added by this admin");
       }
 
       if (response.message === "Client added successfully") {
@@ -194,13 +201,14 @@ const Clients = () => {
 
   // funtion for get list of client
   const getClients = async () => {
+    setGetStateLoader(true);
     const response = await getAllClientswithFilter(
       admin_id,
       clientName,
       clienttype,
       currentPage
     );
-
+    setGetStateLoader(false);
     setGetClientsData(response.data);
     // logic for hide search bar and type when no data found---------------
     if (clientName === "" && clienttype === "") {
@@ -242,7 +250,6 @@ const Clients = () => {
     setModelView(false);
     setState(initialFormState);
     setErrors({});
-    setEmailError(false);
   };
 
   // funtion for open  model and reset input feild
@@ -250,7 +257,6 @@ const Clients = () => {
     setModelView(true);
     setModelshow(false);
     setState(initialFormState);
-    setEmailError(false);
   };
 
   // function for clicking client and send id and name on gallary
@@ -295,7 +301,7 @@ const Clients = () => {
   return (
     <>
       <div className="theme-red ">
-        <Header />
+        <Header getstateLoader={getStateLoader} />
 
         {loadidng ? <Loader /> : null}
 
@@ -601,7 +607,7 @@ const Clients = () => {
                                 );
                               })
                             : null}
-                          {emailError === true ? (
+                          {errors === "already added by this admin" ? (
                             <small className="text-danger error_massage">
                               Client already registerd by this admin
                             </small>

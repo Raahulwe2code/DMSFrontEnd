@@ -37,14 +37,23 @@ const ResetPassword = () => {
   };
 
   //onclick submit button for reset password----------------
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{5,}$/;
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Perform validation
     if (password === "") {
       setPasswordError("password is black");
+    } else if (!passwordRegex.test(password)) {
+      setPasswordError(
+        "Password must contain at least 8 characters, one letter, one number, and one special character (@$!%*#?&)"
+      );
     } else if (confirmpassword === "") {
       setPasswordError("confirmpassword is black");
+    } else if (!passwordRegex.test(confirmpassword)) {
+      setPasswordError(
+        "Confirm Password must contain at least 8 characters, one letter, one number, and one special character (@$!%*#?&)"
+      );
     } else if (password !== confirmpassword) {
       setPasswordError("Passwords do not match");
       return;
@@ -89,7 +98,6 @@ const ResetPassword = () => {
                     <input
                       type="password"
                       className="form-control"
-                      minLength={"4"}
                       maxLength={"20"}
                       name="password"
                       placeholder="New password"
@@ -102,6 +110,13 @@ const ResetPassword = () => {
                       Password is required!!!
                     </small>
                   ) : null}
+                  {PasswordError ===
+                  "Password must contain at least 8 characters, one letter, one number, and one special character (@$!%*#?&)" ? (
+                    <small className="text-danger">
+                      Password must contain at least 5 characters, one letter,
+                      one number, and one special character (@$!%*#?&)!!!
+                    </small>
+                  ) : null}
                 </div>
                 <div className="input-group">
                   <span className="input-group-addon">
@@ -112,7 +127,6 @@ const ResetPassword = () => {
                       type="password"
                       className="form-control"
                       name="Confirm new password"
-                      minLength={"4"}
                       maxLength={"20"}
                       placeholder="Confirm new password"
                       onChange={handleConfirmPasswordChange}
@@ -122,6 +136,13 @@ const ResetPassword = () => {
                   {PasswordError === "confirmpassword is black" ? (
                     <small className="text-danger">
                       Confirm Password is required!!!
+                    </small>
+                  ) : null}
+                  {PasswordError ===
+                  "Confirm Password must contain at least 8 characters, one letter, one number, and one special character (@$!%*#?&)" ? (
+                    <small className="text-danger">
+                      Confirm Password must contain at least 5 characters, one
+                      letter, one number, and one special character (@$!%*#?&)
                     </small>
                   ) : null}
                   {PasswordError === "Passwords do not match" ? (

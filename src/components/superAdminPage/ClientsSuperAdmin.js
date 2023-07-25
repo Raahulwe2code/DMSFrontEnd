@@ -34,7 +34,6 @@ const ClientsSuperAdmin = () => {
   const [apicall, setapicall] = useState(false);
   const [showCompany, setShowCompany] = useState(false);
   const [getClientsData, setGetClientsData] = useState([]);
-  const [emailError, setEmailError] = useState(false);
 
   // model input field input field intialstate---------
   const initialFormState = {
@@ -83,6 +82,8 @@ const ClientsSuperAdmin = () => {
           ? "Name is required"
           : /[^A-Za-z 0-9]/g.test(value)
           ? "Cannot use special character "
+          : value.length <= 2
+          ? "Name should be atleaset 3 charcter"
           : null,
     ],
     email: [
@@ -105,7 +106,11 @@ const ClientsSuperAdmin = () => {
     ],
     address: [
       (value) =>
-        value === null || value === "" ? "Address is required" : null,
+        value === null || value === ""
+          ? "Address is required"
+          : value.length <= 4
+          ? "Address should be atleaset 5 charcter"
+          : null,
     ],
 
     // company_name: [
@@ -156,7 +161,7 @@ const ClientsSuperAdmin = () => {
       });
 
       if (response.message === "already added by this admin") {
-        setEmailError(true);
+        setErrors("already added by this admin");
       }
 
       if (response.message === "Client added successfully") {
@@ -258,7 +263,6 @@ const ClientsSuperAdmin = () => {
     setModelView(false);
     setState(initialFormState);
     setErrors({});
-    setEmailError(false);
   };
 
   // funtion for open  model and reset input feild
@@ -266,7 +270,6 @@ const ClientsSuperAdmin = () => {
     setModelView(true);
     setModelshow(false);
     setState(initialFormState);
-    setEmailError(false);
   };
 
   // function for clicking client and send id and name on super admin gallary page
@@ -615,7 +618,7 @@ const ClientsSuperAdmin = () => {
                                 );
                               })
                             : null}
-                          {emailError === true ? (
+                          {errors === "already added by this admin" ? (
                             <small className="text-danger error_massage">
                               Client already registerd by this admin
                             </small>

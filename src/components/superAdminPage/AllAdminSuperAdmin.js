@@ -45,6 +45,7 @@ const AllAdminSuperAdmin = () => {
   const [emailError, setEmailError] = useState(false);
 
   // funtion for validation employee input field
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{5,}$/;
   const validators = {
     name: [
       (value) =>
@@ -52,6 +53,8 @@ const AllAdminSuperAdmin = () => {
           ? "Name is required"
           : /[^A-Za-z 0-9]/g.test(value)
           ? "Cannot use special character "
+          : value.length <= 2
+          ? "Name should be atleaset 3 charcter"
           : null,
     ],
     phone_no: [
@@ -85,8 +88,10 @@ const AllAdminSuperAdmin = () => {
       (value) =>
         value === null || value === ""
           ? "Password is required"
-          : /[^A-Za-z 0-9]/g.test(value)
-          ? "Cannot use special character "
+          : !passwordRegex.test(value)
+          ? "Password must contain at least 5 characters, one letter, one number, and one special character (@$!%*#?&)"
+          : value.length <= 4
+          ? "Password should be atleaset 5 charcter"
           : null,
     ],
   };
@@ -636,7 +641,6 @@ const AllAdminSuperAdmin = () => {
                               type="password"
                               name="password"
                               id="password"
-                              minLength={4}
                               maxLength={15}
                               value={state.password}
                               onChange={onInputChange}

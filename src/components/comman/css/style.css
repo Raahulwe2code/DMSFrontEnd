@@ -17,6 +17,23 @@
   z-index: 12;
   width: 100%;
 }
+.main_navbar.navbar:before {
+  content: "";
+  background: #ffffff;
+  position: absolute;
+  width: 0%;
+  height: 3%;
+  transition: 2s all ease-out;
+  z-index: 0;
+  box-shadow: 1px 1px 7px 0px;
+  bottom: 0px;
+  display: none;
+}
+
+.main_navbar.header_loader:before {
+  width: 100%;
+  display: block;
+}
 .show_modal .back_drop {
   position: fixed;
   background-color: #000000ab;

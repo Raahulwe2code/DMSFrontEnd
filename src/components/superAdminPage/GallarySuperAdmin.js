@@ -433,66 +433,77 @@ const GallarySuperAdmin = () => {
   //   }
   // );
   //funtion for create zip and and send upload on server in certain folder------
-  const downloadFiles = async (e) => {
+  const sendFiles = async (e) => {
     e.preventDefault();
     if (senderEmail === "") {
       setcustomValidated("email is empty");
     } else {
       setEmailBtnLoader(true);
-
       const zip = new JSZip();
 
-      // Fetch each file and add it to the zip
-      const promises = fileUrls.map(async (url) => {
-        const response = await fetch(url);
-        const data = await response.blob();
-        const fileName = getFileNameFromURL(url); // Implement this function to extract the file name from the URL
+      try {
+        // Fetch each file and add it to the zip
 
-        zip.file(fileName, data);
-      });
+        const promises = fileUrls.map(async (url) => {
+          const response = await fetch(url);
 
-      // Wait for all files to be added to the zip
-      await Promise.all(promises);
+          if (!response.ok) {
+            throw new Error("Fetch error");
+          }
+          const data = await response.blob();
+          const fileName = getFileNameFromURL(url);
+          zip.file(fileName, data);
+        });
 
-      // Generate the zip file
-      const content = await zip.generateAsync({ type: "blob" });
+        // Wait for all files to be added to the zip
+        await Promise.all(promises);
 
-      // Set a flag to track email sending status
-      let emailSent = false;
+        // Generate the zip file
+        const content = await zip.generateAsync({ type: "blob" });
 
-      // Send the email and handle the response with a timeout
-      const response = await Promise.race([
-        createZipAndUpload(senderEmail, content, clientNamee),
-        new Promise(
-          (resolve) =>
+        // Send the email and handle the response with a timeout
+        let emailSent = false;
+        const response = await Promise.race([
+          createZipAndUpload(senderEmail, content, clientNamee),
+          new Promise((resolve) => {
             setTimeout(() => {
               resolve({
                 message: "email took more than 3 minutes to send",
               });
-            }, 180000) // 2 minutes timeout
-        ),
-      ]);
-      setIsSelectBoxChecked(false);
-      setEmailBtnLoader(false);
+            }, 60000); // 3 minutes timeout
+          }),
+        ]);
 
-      if (response.message === "email send successfully") {
-        // Email sent successfully
-        emailSent = true;
-        toast.success("Email send successfully", {
+        setEmailBtnLoader(false);
+        setIsSelectBoxChecked(false);
+
+        if (response.message === "email send successfully") {
+          // Email sent successfully
+          emailSent = true;
+          toast.success("Email sent successfully", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1000,
+          });
+        }
+
+        if (!emailSent) {
+          // Email took more than 3 minutes to send
+          toast.error("Sending email took longer than 3 minutes.", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 2000,
+          });
+        }
+      } catch (error) {
+        // Fetch error occurred while fetching the files
+        toast.error("An error occurred while fetching the files.", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 2000,
         });
-      }
-
-      if (!emailSent) {
-        // Email took more than 3 minutes to send
-        toast.error(
-          "File size exceed, Server takes time  please wait for some time ",
-          {
-            position: toast.POSITION.TOP_RIGHT,
-            autoClose: 2000,
-          }
-        );
+        setFileUrls([]);
+        getDocumentByid(clienttId);
+        setapicall(true);
+      } finally {
+        setEmailBtnLoader(false);
       }
 
       // Other logic for handling email sending and resetting state as needed
@@ -500,8 +511,6 @@ const GallarySuperAdmin = () => {
       setSenderEmail("");
       setModelVieww(false);
       setapicall(true);
-      setapicall(false);
-      setModelVieww(false);
     }
   };
 
@@ -1187,7 +1196,7 @@ const GallarySuperAdmin = () => {
                     <form
                       className="form-horizontal"
                       onSubmit={(e) => {
-                        downloadFiles(e);
+                        sendFiles(e);
                       }}
                     >
                       <div className="row clearfix">
@@ -1210,7 +1219,10 @@ const GallarySuperAdmin = () => {
                               />
                             </div>
                             {customvalidated === "email is empty" ? (
-                              <small className="text-danger">
+                              <small
+                                className="text-danger"
+                                style={{ marginLeft: "12px" }}
+                              >
                                 {" "}
                                 Email is Required!!
                               </small>

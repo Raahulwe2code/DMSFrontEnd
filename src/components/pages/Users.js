@@ -17,6 +17,7 @@ import Loader from "../comman/loader";
 
 import ReactPaginate from "react-paginate";
 const Users = () => {
+  const [getStateLoader, setGetStateLoader] = useState(false);
   const admin_id = localStorage.getItem("admin_id");
   const [apicall, setapicall] = useState(false);
   const [modelView, setModelView] = useState(false);
@@ -39,9 +40,9 @@ const Users = () => {
   const [employeeName, setemployeeName] = useState("");
   const [modelshow, setModelshow] = useState(false);
   const [getUsersData, setGetUsersData] = useState([]);
-  const [emailError, setEmailError] = useState(false);
 
   // funtion for validation employee input field
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{5,}$/;
   const validators = {
     name: [
       (value) =>
@@ -49,6 +50,8 @@ const Users = () => {
           ? "Name is required"
           : /[^A-Za-z 0-9]/g.test(value)
           ? "Cannot use special character "
+          : value.length <= 2
+          ? "Name should be atleaset 3 charcter"
           : null,
     ],
     phone_no: [
@@ -82,8 +85,10 @@ const Users = () => {
       (value) =>
         value === null || value === ""
           ? "Password is required"
-          : /[^A-Za-z 0-9]/g.test(value)
-          ? "Cannot use special character "
+          : !passwordRegex.test(value)
+          ? "Password must contain at least 5 characters, one letter, one number, and one special character (@$!%*#?&)"
+          : value.length <= 4
+          ? "Password should be atleaset 5 charcter"
           : null,
     ],
   };
@@ -114,7 +119,7 @@ const Users = () => {
         response.response ===
         "email already exist, check your mail or try after sometime"
       ) {
-        setEmailError(true);
+        setErrors("email already exist, check your mail or try after sometime");
       }
       if (response.message === "user added successfully") {
         toast.success("User added successfully", {
@@ -167,12 +172,13 @@ const Users = () => {
 
   // funtion for get list of Employee
   const getEmployee = async () => {
+    setGetStateLoader(true);
     const response = await getAllEmployeeswithFilter(
       admin_id,
       employeeName,
       currentPage
     );
-
+    setGetStateLoader(false);
     setGetUsersData(response.data);
 
     if (employeeName === "") {
@@ -198,7 +204,7 @@ const Users = () => {
   const onCloseModel = () => {
     setModelView(false);
     setState(initialFormState);
-    setEmailError(false);
+
     setErrors({});
   };
 
@@ -249,6 +255,7 @@ const Users = () => {
     <>
       <div className="theme-red ">
         <Header />
+        <Header getstateLoader={getStateLoader} />
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
 
@@ -573,8 +580,12 @@ const Users = () => {
                               })
                             : null}
 
-                          {emailError === true ? (
-                            <small className="text-danger">
+                          {errors ===
+                          "email already exist, check your mail or try after sometime" ? (
+                            <small
+                              className="text-danger"
+                              style={{ marginLeft: "14px" }}
+                            >
                               Email Already Registered Please try another email
                             </small>
                           ) : null}
@@ -597,7 +608,6 @@ const Users = () => {
                               type="password"
                               name="password"
                               id="password"
-                              minLength={4}
                               maxLength={15}
                               value={state.password}
                               onChange={onInputChange}

@@ -44,6 +44,7 @@ const Gallary = () => {
 
   // let checkboxUrl = [];
   const [isEmptyDocument, setIsEmptyDocument] = useState(null);
+  const [getStateLoader, setGetStateLoader] = useState(false);
   const [downlaodLoader, setDownloadLoader] = useState(false);
   const [isSelectboxChecked, setIsSelectBoxChecked] = useState(false);
   const [copyUrl, setCopyUrl] = useState("");
@@ -230,6 +231,7 @@ const Gallary = () => {
 
   //function for get document based on client id
   const getDocumentByid = async (clienttId) => {
+    setGetStateLoader(true);
     const response = await getDocument(
       id,
       searchDocumentName,
@@ -238,6 +240,7 @@ const Gallary = () => {
       limit
     );
     setLoading(false);
+    setGetStateLoader(false);
     setGetDocmentData(response.data);
 
     if (searchDocumentName === "" && searchDocumenttype === "") {
@@ -384,6 +387,7 @@ const Gallary = () => {
       });
     } else {
       setModelVieww(true);
+
       newArray.map((item) => {
         setFileUrls((prevArray) => [...prevArray, item.document_url]);
         return {};
@@ -429,60 +433,71 @@ const Gallary = () => {
       setcustomValidated("email is empty");
     } else {
       setEmailBtnLoader(true);
-
       const zip = new JSZip();
 
-      // Fetch each file and add it to the zip
-      const promises = fileUrls.map(async (url) => {
-        const response = await fetch(url);
-        const data = await response.blob();
-        const fileName = getFileNameFromURL(url); // Implement this function to extract the file name from the URL
+      try {
+        // Fetch each file and add it to the zip
 
-        zip.file(fileName, data);
-      });
+        const promises = fileUrls.map(async (url) => {
+          const response = await fetch(url);
 
-      // Wait for all files to be added to the zip
-      await Promise.all(promises);
+          if (!response.ok) {
+            throw new Error("Fetch error");
+          }
+          const data = await response.blob();
+          const fileName = getFileNameFromURL(url);
+          zip.file(fileName, data);
+        });
 
-      // Generate the zip file
-      const content = await zip.generateAsync({ type: "blob" });
+        // Wait for all files to be added to the zip
+        await Promise.all(promises);
 
-      // Set a flag to track email sending status
-      let emailSent = false;
+        // Generate the zip file
+        const content = await zip.generateAsync({ type: "blob" });
 
-      // Send the email and handle the response with a timeout
-      const response = await Promise.race([
-        createZipAndUpload(senderEmail, content, clientNamee),
-        new Promise(
-          (resolve) =>
+        // Send the email and handle the response with a timeout
+        let emailSent = false;
+        const response = await Promise.race([
+          createZipAndUpload(senderEmail, content, clientNamee),
+          new Promise((resolve) => {
             setTimeout(() => {
               resolve({
                 message: "email took more than 3 minutes to send",
               });
-            }, 180000) // 2 minutes timeout
-        ),
-      ]);
+            }, 60000); // 3 minutes timeout
+          }),
+        ]);
 
-      setEmailBtnLoader(false);
-      setIsSelectBoxChecked(false);
-      if (response.message === "email send successfully") {
-        // Email sent successfully
-        emailSent = true;
-        toast.success("Email send successfully", {
-          position: toast.POSITION.TOP_RIGHT,
-          autoClose: 1000,
-        });
-      }
+        setEmailBtnLoader(false);
+        setIsSelectBoxChecked(false);
 
-      if (!emailSent) {
-        // Email took more than 3 minutes to send
-        toast.error(
-          "File size exceed, Server takes time  please wait for some time ",
-          {
+        if (response.message === "email send successfully") {
+          // Email sent successfully
+          emailSent = true;
+          toast.success("Email sent successfully", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1000,
+          });
+        }
+
+        if (!emailSent) {
+          // Email took more than 3 minutes to send
+          toast.error("Sending email took longer than 3 minutes.", {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 2000,
-          }
-        );
+          });
+        }
+      } catch (error) {
+        // Fetch error occurred while fetching the files
+        toast.error("An error occurred while fetching the files.", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 2000,
+        });
+        setFileUrls([]);
+        getDocumentByid(clienttId);
+        setapicall(true);
+      } finally {
+        setEmailBtnLoader(false);
       }
 
       // Other logic for handling email sending and resetting state as needed
@@ -490,8 +505,6 @@ const Gallary = () => {
       setSenderEmail("");
       setModelVieww(false);
       setapicall(true);
-      setapicall(false);
-      setModelVieww(false);
     }
   };
 
@@ -551,7 +564,7 @@ const Gallary = () => {
   return (
     <>
       <div className="theme-red ">
-        <Header />
+        <Header getstateLoader={getStateLoader} />
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
         {downlaodLoader ? <Loader /> : null}
@@ -1203,7 +1216,10 @@ const Gallary = () => {
                               />
                             </div>
                             {customvalidated === "email is empty" ? (
-                              <small className="text-danger">
+                              <small
+                                className="text-danger"
+                                style={{ marginLeft: "12px" }}
+                              >
                                 {" "}
                                 Email is Required!!
                               </small>

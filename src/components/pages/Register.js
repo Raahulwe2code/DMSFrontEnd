@@ -86,16 +86,18 @@ const Register = () => {
       ) {
         setErrors("already");
       }
-      if (response.message === "user added successfully") {
-        Swal.fire({
-          title: "Success",
-          text: "You registered as a admin",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then(function() {
-          navigate("/");
-          setState(initialFormState);
-        });
+      if (state.type === "admin") {
+        if (response.message === "user added successfully") {
+          Swal.fire({
+            title: "Success",
+            text: "You registered as a admin please check mail",
+            icon: "success",
+            confirmButtonText: "OK",
+          }).then(function() {
+            navigate("/");
+            setState(initialFormState);
+          });
+        }
       }
     }
   };

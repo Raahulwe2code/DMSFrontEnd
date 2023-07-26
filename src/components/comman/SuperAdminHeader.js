@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import SuperAdminSideBar from "./SuperAdminSideBar";
 
-const SuperAdminHeader = () => {
+const SuperAdminHeader = ({ getstateLoader }) => {
   const [newClass, setNewClass] = useState(false);
 
   function AddBodyClassFunctionn() {
@@ -39,7 +39,13 @@ const SuperAdminHeader = () => {
       {/* <!-- #END# Search Bar --> */}
 
       {/* <!-- Top Bar --> */}
-      <nav className="navbar">
+      <nav
+        className={
+          getstateLoader === false
+            ? "navbar main_navbar "
+            : "navbar main_navbar header_loader"
+        }
+      >
         <div className="container-fluid">
           <div className="navbar-header">
             <Link

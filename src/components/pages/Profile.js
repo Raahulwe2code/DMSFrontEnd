@@ -491,7 +491,7 @@ const Profile = () => {
                           <div className="form-group">
                             <div className="col-sm-offset-2 col-sm-10">
                               <button
-                                className="btn btn-danger waves-effect"
+                                className="btn btn-primary waves-effect"
                                 type="submit"
                                 style={{ minWidth: "128px" }}
                                 disabled={
@@ -667,7 +667,7 @@ const Profile = () => {
                           <div className="form-group">
                             <div className="col-sm-offset-3 col-sm-9">
                               <button
-                                className="btn btn-danger waves-effect"
+                                className="btn btn-primary waves-effect"
                                 type="submit"
                                 style={{ minWidth: "128px" }}
                                 disabled={

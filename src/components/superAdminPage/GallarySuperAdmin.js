@@ -42,6 +42,8 @@ const GallarySuperAdmin = () => {
 
   const [searchparams] = useSearchParams();
   const [clientToken, setClientToken] = useState("");
+  const [getStateLoader, setGetStateLoader] = useState(false);
+
   const [downlaodLoader, setDownloadLoader] = useState(false);
   const [isEmptyDocument, setIsEmptyDocument] = useState(null);
   const [isSelectboxChecked, setIsSelectBoxChecked] = useState(false);
@@ -233,6 +235,7 @@ const GallarySuperAdmin = () => {
 
   //function for get document based on client id
   const getDocumentByid = async (clienttId) => {
+    setGetStateLoader(true);
     const response = await getDocument(
       id,
       searchDocumentName,
@@ -241,6 +244,8 @@ const GallarySuperAdmin = () => {
       limit
     );
     setLoading(false);
+    setGetStateLoader(false);
+
     setGetDocmentData(response.data);
 
     if (searchDocumentName === "" && searchDocumenttype === "") {
@@ -572,7 +577,8 @@ const GallarySuperAdmin = () => {
   return (
     <>
       <div className="theme-red ">
-        <SuperAdminHeader />
+        <SuperAdminHeader getstateLoader={getStateLoader} />
+
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
         {downlaodLoader ? <Loader /> : null}

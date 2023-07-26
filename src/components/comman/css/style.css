@@ -23,16 +23,16 @@
   position: absolute;
   width: 0%;
   height: 3%;
-  transition: 2s all ease-out;
+  transition: 2s width ease-out;
   z-index: 0;
   box-shadow: 1px 1px 7px 0px;
   bottom: 0px;
-  display: none;
+  opacity: 0;
 }
 
 .main_navbar.header_loader:before {
   width: 100%;
-  display: block;
+  opacity: 1;
 }
 .show_modal .back_drop {
   position: fixed;
@@ -3132,10 +3132,21 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  position: relative;
 }
 .file_name_input label {
   margin: 0;
 }
+.file_name_input .user_form_error {
+  position: absolute;
+  bottom: -24px;
+  right: 0px;
+  left: 0;
+}
+.file_name_input .user_form_error .doc_empty {
+  margin-left: -24px !important;
+}
+
 .file_name_add input {
   text-align: center;
   width: 323px;
@@ -10170,8 +10181,9 @@ fieldset[disabled] .form-control {
   white-space: nowrap;
   position: relative;
   border-bottom: 1px solid #e9e9e9;
-  background: url("../images/user-img-background.jpg") no-repeat no-repeat;
+  background: url("../images/cyanBG.jpg") no-repeat no-repeat;
   height: 135px;
+  background-size: cover;
 }
 .sidebar .user-info .image {
   margin-right: 12px;
@@ -10199,7 +10211,7 @@ fieldset[disabled] .form-control {
   overflow: hidden;
   font-size: 14px;
   max-width: 200px;
-  color: #fff;
+  color: white;
 }
 .sidebar .user-info .info-container .email {
   white-space: nowrap;
@@ -10209,7 +10221,7 @@ fieldset[disabled] .form-control {
   overflow: hidden;
   font-size: 12px;
   max-width: 200px;
-  color: #fff;
+  color: white;
 }
 .sidebar .user-info .info-container .user-helper-dropdown {
   position: absolute;
@@ -10220,7 +10232,7 @@ fieldset[disabled] .form-control {
   -ms-box-shadow: none;
   box-shadow: none;
   cursor: pointer;
-  color: #fff;
+  color: white;
 }
 .sidebar .menu {
   position: relative;
@@ -10611,7 +10623,7 @@ fieldset[disabled] .form-control {
 /* Profile Page ================================ */
 
 .profile-card .profile-header {
-  background-color: #ad1455;
+  background-color: #00bcd4;
   padding: 42px 0;
 }
 
@@ -10620,7 +10632,7 @@ fieldset[disabled] .form-control {
   margin-top: -64px;
 }
 .profile-card .profile-body .image-area img {
-  border: 2px solid #ad1455;
+  border: 2px solid #00bcd4;
   padding: 2px;
   margin: 2px;
   -webkit-border-radius: 50%;
@@ -10639,7 +10651,7 @@ fieldset[disabled] .form-control {
 }
 .profile-card .profile-body .content-area p:last-child {
   font-weight: 600;
-  color: #ad1455;
+  color: #00bcd4;
   margin-top: 5px;
 }
 

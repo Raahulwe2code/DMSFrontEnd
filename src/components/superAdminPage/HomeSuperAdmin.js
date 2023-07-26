@@ -25,7 +25,7 @@ const HomeSuperAdmin = () => {
     <>
       <div className="theme-red ">
         {loadidng ? <Loader /> : null}
-        <SuperAdminHeader />
+        <SuperAdminHeader getstateLoader={loadidng} />
 
         <section className="content">
           <div className="container-fluid">

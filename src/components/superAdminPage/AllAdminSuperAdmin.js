@@ -37,6 +37,7 @@ const AllAdminSuperAdmin = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const [loadidng, setLoading] = useState(true);
+  const [getStateLoader, setGetStateLoader] = useState(false);
   const [submitLoader, setSubmitLoader] = useState(false);
   const [AdminName, setAdminName] = useState("");
   const [modelshow, setModelshow] = useState(false);
@@ -175,7 +176,9 @@ const AllAdminSuperAdmin = () => {
 
   // funtion for get list of Employee
   const getAdmin = async () => {
+    setGetStateLoader(true);
     const response = await getAllAdminwithFilter(AdminName, currentPage);
+    setGetStateLoader(false);
 
     setGetUsersData(response.data);
 
@@ -263,7 +266,7 @@ const AllAdminSuperAdmin = () => {
   return (
     <>
       <div className="theme-red ">
-        <SuperAdminHeader />
+        <SuperAdminHeader getstateLoader={getStateLoader} />
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
 

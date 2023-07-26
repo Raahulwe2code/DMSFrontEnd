@@ -30,7 +30,7 @@ const Layout = () => {
   console.log("");
   return (
     <>
-      <div className="theme-red ">
+      <div className="theme-cyan">
         {superAdmin === true ? (
           <Routes>
             <Route path={"/superAdmin/Login"} element={<LoginSuperAdmin />} />

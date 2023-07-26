@@ -100,6 +100,8 @@ function DoumentUploadSuperAdmin() {
 
     if (documentName === "") {
       setcustomValidated("name is empty");
+    } else if (/[^A-Za-z 0-9]/g.test(documentName)) {
+      setcustomValidated("specialcharacter in name");
     } else if (DocumentUpload === "") {
       setcustomValidated("document is empty");
     } else {
@@ -195,9 +197,20 @@ function DoumentUploadSuperAdmin() {
                   }}
                 ></input>
 
-                {customvalidated === "name is empty" ? (
-                  <small className="text-danger"> Document name is empty</small>
-                ) : null}
+                <div className="user_form_error">
+                  {customvalidated === "name is empty" ? (
+                    <small className="text-danger doc_empty">
+                      {" "}
+                      Document name is empty
+                    </small>
+                  ) : null}
+                  {customvalidated === "specialcharacter in name" ? (
+                    <small className="text-danger">
+                      {" "}
+                      Special Character not allowed
+                    </small>
+                  ) : null}
+                </div>
               </div>
               <div className="sumbit_btn">
                 <button class="btn bg-light-blue" type="submit">

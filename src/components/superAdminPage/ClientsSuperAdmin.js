@@ -20,6 +20,7 @@ import SuperAdminHeader from "../comman/SuperAdminHeader";
 const ClientsSuperAdmin = () => {
   const navigate = useNavigate();
   const [searchparams] = useSearchParams();
+  const [getStateLoader, setGetStateLoader] = useState(false);
   const [isEmptyClient, setIsEmptyClient] = useState(null);
   const [AdminId, setAdminID] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -215,12 +216,14 @@ const ClientsSuperAdmin = () => {
 
   // funtion for get list of client
   const getClients = async () => {
+    setGetStateLoader(true);
     const response = await getAllClientswithFilter(
       id,
       clientName,
       clienttype,
       currentPage
     );
+    setGetStateLoader(false);
 
     setGetClientsData(response.data);
 
@@ -314,7 +317,7 @@ const ClientsSuperAdmin = () => {
   return (
     <>
       <div className="theme-red ">
-        <SuperAdminHeader />
+        <SuperAdminHeader getstateLoader={getStateLoader} />
 
         {/* <Loader /> */}
         {loadidng ? <Loader /> : null}

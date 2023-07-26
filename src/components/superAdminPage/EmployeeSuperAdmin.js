@@ -21,6 +21,8 @@ import SuperAdminHeader from "../comman/SuperAdminHeader";
 const EmployeeSuperAdmin = () => {
   const [searchparams] = useSearchParams();
   const [AdminId, setAdminID] = useState("");
+  const [getStateLoader, setGetStateLoader] = useState(false);
+
   const [apicall, setapicall] = useState(false);
   const [modelView, setModelView] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -193,11 +195,13 @@ const EmployeeSuperAdmin = () => {
 
   // funtion for get list of Employee
   const getAdmin = async (AdminId) => {
+    setGetStateLoader(true);
     const response = await getAllEmployeeswithsuperAdmin(
       id,
       employeeName,
       currentPage
     );
+    setGetStateLoader(false);
 
     setGetUsersData(response.data);
     if (employeeName === "") {
@@ -275,7 +279,7 @@ const EmployeeSuperAdmin = () => {
   return (
     <>
       <div className="theme-red ">
-        <SuperAdminHeader />
+        <SuperAdminHeader getstateLoader={getStateLoader} />
 
         {loadidng ? <Loader /> : null}
 

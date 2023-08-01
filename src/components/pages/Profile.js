@@ -12,6 +12,7 @@ import useValidation from "../comman/useValidation";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const Profile = () => {
   let encoded;
   const [getStateLoader, setGetStateLoader] = useState(false);

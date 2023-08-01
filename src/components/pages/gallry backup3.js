@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-// ../../images/image-gallery/thumb/thumb-1.jpg"
-import pdfLogo from "../comman/images/PDF.png";
 import $ from "jquery";
+import pdfLogo from "../comman/images/PDF.png";
 import msDoc from "../comman/images/msss.jpg";
 import msXls from "../comman/images/excel.png";
+import Header from "../comman/Header";
+
 import { Link, useSearchParams } from "react-router-dom";
 import {
   AddDocument,
@@ -22,6 +23,7 @@ import "lightgallery/css/lg-thumbnail.css";
 import "lightgallery/css/lg-autoplay.css";
 import "lightgallery/css/lg-share.css";
 import "lightgallery/css/lg-rotate.css";
+
 // import plugins if you need
 import lgThumbnail from "lightgallery/plugins/thumbnail";
 import lgZoom from "lightgallery/plugins/zoom";
@@ -33,27 +35,26 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import Loader from "../comman/loader";
 
-import Header from "../comman/Header";
+import ReactPaginate from "react-paginate";
 
 const Gallary = () => {
-  let encoded;
-  // let checkboxUrl = [];
-
   const [searchparams] = useSearchParams();
   const [clientToken, setClientToken] = useState("");
+  let encoded;
 
-  const [getStateLoader, setGetStateLoader] = useState(false);
-  const [isLoadMore, setLoadMore] = useState(false);
-  const [downlaodLoader, setDownloadLoader] = useState(false);
+  // let checkboxUrl = [];
+
   const [isEmptyDocument, setIsEmptyDocument] = useState(null);
+  const [getStateLoader, setGetStateLoader] = useState(false);
+  const [downlaodLoader, setDownloadLoader] = useState(false);
   const [isSelectboxChecked, setIsSelectBoxChecked] = useState(false);
   const [copyUrl, setCopyUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [pageCount, setPageCount] = useState(0);
   const [limit, setLimit] = useState(12);
   const [loadidng, setLoading] = useState(false);
   const [submitLoader, setSubmitLoader] = useState(false);
-  const admin_id = localStorage.getItem("super_admin_id");
+  const admin_id = localStorage.getItem("admin_id");
   const [fileUrls, setFileUrls] = useState([]);
   const [searchDocumentName, setSearchDocumentName] = useState("");
   const [searchDocumenttype, setSearchDocumentType] = useState("");
@@ -62,19 +63,22 @@ const Gallary = () => {
   const [emailBtnLoader, setEmailBtnLoader] = useState(false);
   const [documentType, setDocumentType] = useState("");
   const [documentName, setDocumentName] = useState("");
-  const [DocumentUpload, setDocumentUpload] = useState("");
+  const [DocumentUpload, setDocumentUpload] = useState(null);
+
   const [getDocumentData, setGetDocmentData] = useState([]);
   const [apicall, setapicall] = useState(false);
 
-  const [modelView, setModelView] = useState(false);
-  const [modelVieww, setModelVieww] = useState(false);
   const [clienttId, setClientID] = useState("");
 
   const clientNamee = localStorage.getItem("client_name");
   const clientEmail = localStorage.getItem("client_email");
-  const id = searchparams.get("client_id");
   const [senderEmail, setSenderEmail] = useState(clientEmail);
-  // UseEffect funtion for get client id and set into in state
+
+  const [modelView, setModelView] = useState(false);
+  const [modelVieww, setModelVieww] = useState(false);
+  const id = searchparams.get("client_id");
+
+  // useEffect function for get client id from parameter-----------------
   useEffect(() => {
     if (
       searchparams.get("client_id") === null ||
@@ -86,10 +90,6 @@ const Gallary = () => {
       setClientID(searchparams.get("client_id"));
     }
 
-    if (searchparams.get("loading") === "false") {
-      setLoading(true);
-    }
-
     if (
       searchparams.get("client_token") === null ||
       searchparams.get("client_token") === "" ||
@@ -99,15 +99,19 @@ const Gallary = () => {
     } else {
       setClientToken(searchparams.get("client_token"));
     }
+
+    if (searchparams.get("loading") === "false") {
+      setLoading(true);
+    }
   }, [id, clienttId, clientToken]);
 
-  // onchange for document name set into state--------
+  // onchange for document name set and empty custom validation state----
   const OndocumentName = (e) => {
     setDocumentName(e.target.value);
     setcustomValidated("");
   };
 
-  //intial state of model input field-----
+  //intial state of model input field-- for upload documnet--------------------
   const initialFormState = {
     admin_id: admin_id,
     client_id: clienttId,
@@ -135,7 +139,7 @@ const Gallary = () => {
     setDocumentUpload(null);
   };
 
-  // funtion for base 64 file reader
+  // funtion for base 64 file reader for upload document -------------
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -144,6 +148,7 @@ const Gallary = () => {
       fileReader.addEventListener("load", () => {
         resolve({ name: name, base64: fileReader.result });
       });
+
       fileReader.readAsDataURL(file);
       fileReader.onerror = (error) => {
         reject(error);
@@ -203,57 +208,41 @@ const Gallary = () => {
       if (response.message === "Document upload successfully") {
         toast.success("Document Upload Successfully", {
           position: toast.POSITION.TOP_RIGHT,
-          autoClose: 2000,
+          autoClose: 1000,
         });
 
         getDocumentByid(clienttId);
         setModelView(false);
-        $("#img_64").val("");
+
         setDocumentName("");
-        setDocumentUpload("");
+        setDocumentUpload(null);
         setapicall(true);
       }
       setSubmitLoader(false);
-
+      $("#img_64").val("");
       setModelView(false);
       setapicall(false);
     }
   };
 
-  // useEffect get document based on id----
+  // useEffect get document based on client id----
   useEffect(() => {
-    getDocumentByid();
-  }, [apicall, searchDocumentName]);
+    getDocumentByid(clienttId);
+  }, [apicall, searchDocumentName, searchDocumenttype, currentPage, limit]);
 
   //function for get document based on client id
-  const getDocumentByid = async (fromAll = "default1", newLimit = "12") => {
+  const getDocumentByid = async (clienttId) => {
     setGetStateLoader(true);
     const response = await getDocument(
       id,
       searchDocumentName,
       searchDocumenttype,
       currentPage,
-      newLimit
+      limit
     );
     setLoading(false);
     setGetStateLoader(false);
-
     setGetDocmentData(response.data);
-
-    if (fromAll === "checked") {
-      setGetDocmentData((prevData) => {
-        return prevData.map((item) => {
-          return { ...item, isChecked: true };
-        });
-      });
-    }
-    if (fromAll === "unchecked") {
-      setGetDocmentData((prevData) => {
-        return prevData.map((item) => {
-          return { ...item, isChecked: false };
-        });
-      });
-    }
 
     if (searchDocumentName === "" && searchDocumenttype === "") {
       if (response.data.length > 0) {
@@ -263,32 +252,35 @@ const Gallary = () => {
       }
     }
 
+    if (response.totalPages === null) {
+      setPageCount(1);
+    } else {
+      setPageCount(response.totalPages);
+    }
+
     setapicall(false);
   };
 
-  //onchange funtion for  set doument name search and call api-------------
+  // onchange funtion for search document and api call ------------
   const DocumentNameOnChange = (e) => {
     setSearchDocumentName(e.target.value);
     setapicall(true);
   };
 
-  // onchange funtion for set document type and call api-------------
+  // onchange funtion for search document with type and api call-----------
   const DocumentTypeOnChange = (e) => {
     setSearchDocumentType(e.target.value);
     setapicall(true);
   };
 
-  //onchange funtion for set isCheked attribute into getDocumentdata JSON-----------------
+  // onchange funtion for get document data and add the isChecked attribute in get document JSON and  its value-----------------------
   const handleSelectAllChange = (v) => {
     setIsSelectBoxChecked(v.target.checked);
-
-    if (v.target.checked === true) {
-      getDocumentByid("checked", "0");
-    }
-    if (v.target.checked === false) {
-      getDocumentByid("unchecked", "0");
-    }
-    // unSelectAllChange();
+    setGetDocmentData((prevData) => {
+      return prevData.map((item) => {
+        return { ...item, isChecked: v.target.checked };
+      });
+    });
   };
 
   const unSelectAllChange = () => {
@@ -298,7 +290,8 @@ const Gallary = () => {
       });
     });
   };
-  //onchange for  set value if ischecked value is true
+
+  // onchange funtion for checkbox value get and add into JSON if checkbox value is true/checked....
   const handleCheckboxChange = (event, id) => {
     setGetDocmentData((prevData) =>
       prevData.map((item) => {
@@ -310,7 +303,7 @@ const Gallary = () => {
     );
   };
 
-  //onclick funtion for download document------
+  // onclick funtion for download  document and if do'nt select any documet than warning message is show------
   const handleDownload = async () => {
     let newArray = getDocumentData.filter(function(el) {
       return el.isChecked === true;
@@ -382,8 +375,7 @@ const Gallary = () => {
       }
     }
   };
-
-  //onclick funtion for open mail box -------------
+  // onclick funtion for open mail box and if not select any document then warning message is show--
   const handleOpenMailBox = async () => {
     let newArray = getDocumentData.filter(function(el) {
       return el.isChecked === true;
@@ -396,6 +388,7 @@ const Gallary = () => {
       });
     } else {
       setModelVieww(true);
+
       newArray.map((item) => {
         setFileUrls((prevArray) => [...prevArray, item.document_url]);
         return {};
@@ -403,7 +396,7 @@ const Gallary = () => {
     }
   };
 
-  // funtion for delete document sweet alert------
+  // funtion for delete document  and sweet alert------
   const onDeleteModelClick = (name, id) => {
     Swal.fire({
       title: "Warning",
@@ -502,37 +495,39 @@ const Gallary = () => {
           autoClose: 2000,
         });
         setFileUrls([]);
-        setIsSelectBoxChecked(false);
-        getDocumentByid();
+        getDocumentByid(clienttId);
         setapicall(true);
       } finally {
         setEmailBtnLoader(false);
       }
 
       // Other logic for handling email sending and resetting state as needed
-      getDocumentByid();
+      getDocumentByid(clienttId);
       setSenderEmail("");
       setModelVieww(false);
       setapicall(true);
     }
   };
 
-  //onchange funtion for set send mail value into state and hide the error-------------
+  // onclick funtion for select current page
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected + 1);
+  };
+
+  //onchange funtion for get email value which is enter by the user ----------
   const handleInputChange = (e) => {
     setSenderEmail(e.target.value);
     setcustomValidated("");
   };
 
-  // useEffect for set url value into url-----------------
+  // useEffect funtion for set the copy url value  with token ---------------
   const url = window.location.origin;
-
   useEffect(() => {
     setCopyUrl(`${url}/doumentUpload?client_token=${clientToken}`);
   }, [copyUrl]);
 
-  // onclick funtion for clipboard value using getElementby Id------------------------
+  // onclick function for copy clip board the path---------
   const copyClipBoradFuntion = () => {
-    // Get the text field
     var copyText = document.getElementById("myInputforCopy");
 
     try {
@@ -563,36 +558,28 @@ const Gallary = () => {
     // Alert the copied text
     toast.success("Copied to Clipborad", {
       position: toast.POSITION.TOP_RIGHT,
-      autoClose: 2000,
+      autoClose: 1000,
     });
   };
-
   const scrollApicall = async () => {
-    setLoadMore(true);
-    try {
-      const response = await getDocument(
-        id,
-        searchDocumentName,
-        searchDocumenttype,
-        currentPage + 1,
-        limit
-      );
-      const newData = response.data;
-      const updatedData = [...getDocumentData, ...newData];
-      setGetDocmentData(updatedData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadMore(false);
-      setCurrentPage(currentPage + 1);
-    }
+    // setGetScrolldata(true);
+
+    const response = await getDocument(
+      id,
+      searchDocumentName,
+      searchDocumenttype,
+      currentPage,
+      limit
+    );
+    setGetDocmentData((prevData) => [...prevData, ...response.data]);
+    setCurrentPage((prevPage) => prevPage + 1);
+    // setGetDocmentData(response.data);
   };
 
   return (
     <>
       <div className="theme-red ">
         <Header getstateLoader={getStateLoader} />
-        {console.log(" in return loader--" + loadidng)}
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
         {downlaodLoader ? <Loader /> : null}
@@ -615,10 +602,13 @@ const Gallary = () => {
                     id="mailBox"
                     className="btn btn-primary text-end"
                     onClick={handleOpenMailBox}
+                    data-toggle="tooltip"
+                    data-placement="top"
                     title="Email"
                   >
                     <i className="material-icons">email</i>
                   </button>
+
                   <input
                     type="text"
                     value={copyUrl}
@@ -629,9 +619,11 @@ const Gallary = () => {
                   <button
                     id="mailBox"
                     className="btn  text-end"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Copy"
                     style={{ backgroundColor: "#bbbbbb" }}
                     onClick={copyClipBoradFuntion}
-                    title="Copy"
                   >
                     <i className="material-icons">content_copy</i>
                   </button>
@@ -643,7 +635,7 @@ const Gallary = () => {
                 <div className="card document_card">
                   <div className="block-header">
                     {getDocumentData.length === 0 ? null : (
-                      <div className="show_rows">
+                      <div className="show_rows" style={{ display: "none" }}>
                         <label>Show:</label>
                         <select
                           className="form-control "
@@ -658,6 +650,7 @@ const Gallary = () => {
                         </select>
                       </div>
                     )}
+
                     <div className="text-right" style={{ width: "100%" }}>
                       <button
                         className="btn btn-success"
@@ -685,11 +678,11 @@ const Gallary = () => {
                             </div>
                           </div>
                         </div>
+
                         <div
                           className="col-sm-5 filter_name_ext"
                           style={{ display: "none" }}
                         >
-                          {" "}
                           <div className="col-sm-6">
                             <select
                               className="form-control "
@@ -739,38 +732,36 @@ const Gallary = () => {
                             element.scrollHeight &&
                           !getStateLoader
                         ) {
-                          if (!isLoadMore) {
-                            setLoadMore({ isLoadMore: true });
-                            setTimeout(() => {
-                              scrollApicall();
-                            }, 1000);
-                          }
+                          scrollApicall();
                         }
                       }}
                     >
                       {getDocumentData.length === 0 ? (
                         <h1 className="text-center">No record Found</h1>
-                      ) : null}
-                      {getDocumentData.map((item) => {
-                        return (
-                          <React.Fragment key={item.id}>
-                            <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12 doucment_box">
-                              {item.document_type === "pdf" ? (
-                                <React.Fragment key={item.id}>
-                                  <Link to={item.document_url} target="_blank">
-                                    <img
-                                      className="img-responsive thumbnail"
-                                      src={pdfLogo}
-                                      alt={pdfLogo}
-                                    />
-                                  </Link>
-                                  <h4 style={{ textAlign: "center" }}>
-                                    {" "}
-                                    {item.document_title}.{item.document_type}
-                                  </h4>
+                      ) : (
+                        getDocumentData.map((item) => {
+                          return (
+                            <React.Fragment key={item.id}>
+                              <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12 doucment_box">
+                                {item.document_type === "pdf" ? (
+                                  <React.Fragment key={item.id}>
+                                    <Link
+                                      to={item.document_url}
+                                      target="_blank"
+                                    >
+                                      <img
+                                        className="img-responsive thumbnail"
+                                        src={pdfLogo}
+                                        alt={pdfLogo}
+                                      />
+                                    </Link>
+                                    <h4 style={{ textAlign: "center" }}>
+                                      {" "}
+                                      {item.document_title}.{item.document_type}
+                                    </h4>
 
-                                  <div className="profile_edit_delete">
-                                    {/* <i
+                                    <div className="profile_edit_delete">
+                                      {/* <i
                                       class="material-icons text-primary"
                                       data-toggle="modal"
                                       data-target="#exampleModal"
@@ -780,45 +771,48 @@ const Gallary = () => {
                                     >
                                       edit
                                     </i> */}
-                                    <label>
-                                      <input
-                                        type="checkbox"
-                                        checked={item.isChecked}
-                                        onChange={(e) => {
-                                          handleCheckboxChange(e, item.id);
-                                        }}
-                                      />
-                                    </label>
-                                    <i
-                                      className="material-icons text-danger"
-                                      onClick={() =>
-                                        onDeleteModelClick(
-                                          item.document_title,
-                                          item.id
-                                        )
-                                      }
+                                      <label>
+                                        <input
+                                          type="checkbox"
+                                          checked={item.isChecked}
+                                          onChange={(e) => {
+                                            handleCheckboxChange(e, item.id);
+                                          }}
+                                        />
+                                      </label>
+                                      <i
+                                        className="material-icons text-danger"
+                                        onClick={() =>
+                                          onDeleteModelClick(
+                                            item.document_title,
+                                            item.id
+                                          )
+                                        }
+                                      >
+                                        delete
+                                      </i>
+                                    </div>
+                                  </React.Fragment>
+                                ) : item.document_type === "doc" ||
+                                  item.document_type === "docx" ? (
+                                  <>
+                                    <Link
+                                      to={item.document_url}
+                                      target="_blank"
                                     >
-                                      delete
-                                    </i>
-                                  </div>
-                                </React.Fragment>
-                              ) : item.document_type === "doc" ||
-                                item.document_type === "docx" ? (
-                                <>
-                                  <Link to={item.document_url} target="_blank">
-                                    <img
-                                      className="img-responsive thumbnail"
-                                      src={msDoc}
-                                      alt={msDoc}
-                                    />
-                                  </Link>
-                                  <h4 style={{ textAlign: "center" }}>
-                                    {" "}
-                                    {item.document_title}.{item.document_type}
-                                  </h4>
+                                      <img
+                                        className="img-responsive thumbnail"
+                                        src={msDoc}
+                                        alt={msDoc}
+                                      />
+                                    </Link>
+                                    <h4 style={{ textAlign: "center" }}>
+                                      {" "}
+                                      {item.document_title}.{item.document_type}
+                                    </h4>
 
-                                  <div className="profile_edit_delete">
-                                    {/* <i
+                                    <div className="profile_edit_delete">
+                                      {/* <i
                                       class="material-icons text-primary"
                                       data-toggle="modal"
                                       data-target="#exampleModal"
@@ -828,45 +822,48 @@ const Gallary = () => {
                                     >
                                       edit
                                     </i> */}
-                                    <label>
-                                      <input
-                                        type="checkbox"
-                                        checked={item.isChecked}
-                                        onChange={(e) => {
-                                          handleCheckboxChange(e, item.id);
-                                        }}
-                                      />
-                                    </label>
-                                    <i
-                                      className="material-icons text-danger"
-                                      onClick={() =>
-                                        onDeleteModelClick(
-                                          item.document_title,
-                                          item.id
-                                        )
-                                      }
+                                      <label>
+                                        <input
+                                          type="checkbox"
+                                          checked={item.isChecked}
+                                          onChange={(e) => {
+                                            handleCheckboxChange(e, item.id);
+                                          }}
+                                        />
+                                      </label>
+                                      <i
+                                        className="material-icons text-danger"
+                                        onClick={() =>
+                                          onDeleteModelClick(
+                                            item.document_title,
+                                            item.id
+                                          )
+                                        }
+                                      >
+                                        delete
+                                      </i>
+                                    </div>
+                                  </>
+                                ) : item.document_type === "xls" ||
+                                  item.document_type === "xlsx" ||
+                                  item.document_type === "csv" ? (
+                                  <>
+                                    <Link
+                                      to={item.document_url}
+                                      target="_blank"
                                     >
-                                      delete
-                                    </i>
-                                  </div>
-                                </>
-                              ) : item.document_type === "xls" ||
-                                item.document_type === "xlsx" ||
-                                item.document_type === "csv" ? (
-                                <>
-                                  <Link to={item.document_url} target="_blank">
-                                    <img
-                                      className="img-responsive thumbnail"
-                                      src={msXls}
-                                      alt={msXls}
-                                    />
-                                  </Link>
-                                  <h4 style={{ textAlign: "center" }}>
-                                    {" "}
-                                    {item.document_title}.{item.document_type}
-                                  </h4>
-                                  <div className="profile_edit_delete">
-                                    {/* <i
+                                      <img
+                                        className="img-responsive thumbnail"
+                                        src={msXls}
+                                        alt={msXls}
+                                      />
+                                    </Link>
+                                    <h4 style={{ textAlign: "center" }}>
+                                      {" "}
+                                      {item.document_title}.{item.document_type}
+                                    </h4>
+                                    <div className="profile_edit_delete">
+                                      {/* <i
                                     class="material-icons text-primary"
                                     data-toggle="modal"
                                     data-target="#exampleModal"
@@ -876,43 +873,43 @@ const Gallary = () => {
                                   >
                                     edit
                                   </i> */}
-                                    <label>
-                                      <input
-                                        type="checkbox"
-                                        checked={item.isChecked}
-                                        onChange={(e) => {
-                                          handleCheckboxChange(e, item.id);
-                                        }}
-                                      />
-                                    </label>
+                                      <label>
+                                        <input
+                                          type="checkbox"
+                                          checked={item.isChecked}
+                                          onChange={(e) => {
+                                            handleCheckboxChange(e, item.id);
+                                          }}
+                                        />
+                                      </label>
 
-                                    <i
-                                      className="material-icons text-danger"
-                                      onClick={() =>
-                                        onDeleteModelClick(
-                                          item.document_title,
-                                          item.id
-                                        )
-                                      }
+                                      <i
+                                        className="material-icons text-danger"
+                                        onClick={() =>
+                                          onDeleteModelClick(
+                                            item.document_title,
+                                            item.id
+                                          )
+                                        }
+                                      >
+                                        delete
+                                      </i>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <LightGallery
+                                      speed={200}
+                                      plugins={[
+                                        lgThumbnail,
+                                        lgZoom,
+                                        lgShare,
+                                        lgRotate,
+                                        lgVideo,
+                                        lgAutoplay,
+                                      ]}
                                     >
-                                      delete
-                                    </i>
-                                  </div>
-                                </>
-                              ) : (
-                                <>
-                                  <LightGallery
-                                    speed={200}
-                                    plugins={[
-                                      lgThumbnail,
-                                      lgZoom,
-                                      lgShare,
-                                      lgRotate,
-                                      lgVideo,
-                                      lgAutoplay,
-                                    ]}
-                                  >
-                                    {/* <a href="https://procodestore.com/wp-content/uploads/2021/03/164508084_271381191136191_654097929788476286_n.jpg">
+                                      {/* <a href="https://procodestore.com/wp-content/uploads/2021/03/164508084_271381191136191_654097929788476286_n.jpg">
                                  <img
                                    alt="img1"
                                    src="https://procodestore.com/wp-content/uploads/2021/03/164508084_271381191136191_654097929788476286_n.jpg"
@@ -925,27 +922,28 @@ const Gallary = () => {
                                  />
                                </a>
                                  */}
-                                    {/* <a href="https://images.unsplash.com/photo-1679746584014-fb31d4eb0a5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60">
+                                      {/* <a href="https://images.unsplash.com/photo-1679746584014-fb31d4eb0a5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60">
                                  <img
                                    alt="img3"
                                    src="https://images.unsplash.com/photo-1679746584014-fb31d4eb0a5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60"
                                  />
                                </a> */}
 
-                                    <Link to={item.document_url}>
-                                      <img
-                                        alt={item.document_title}
-                                        className="img-responsive thumbnail"
-                                        src={item.document_url}
-                                      />
-                                    </Link>
-                                    <h4 style={{ textAlign: "center" }}>
-                                      {" "}
-                                      {item.document_title}.{item.document_type}
-                                    </h4>
-                                  </LightGallery>
-                                  <div className="profile_edit_delete">
-                                    {/* <i
+                                      <Link to={item.document_url}>
+                                        <img
+                                          alt={item.document_title}
+                                          className="img-responsive thumbnail"
+                                          src={item.document_url}
+                                        />
+                                      </Link>
+                                      <h4 style={{ textAlign: "center" }}>
+                                        {" "}
+                                        {item.document_title}.
+                                        {item.document_type}
+                                      </h4>
+                                    </LightGallery>
+                                    <div className="profile_edit_delete">
+                                      {/* <i
                                       class="material-icons text-primary"
                                       data-toggle="modal"
                                       data-target="#exampleModal"
@@ -956,35 +954,52 @@ const Gallary = () => {
                                       edit
                                     </i> */}
 
-                                    <label>
-                                      <input
-                                        type="checkbox"
-                                        checked={item.isChecked}
-                                        onChange={(e) => {
-                                          handleCheckboxChange(e, item.id);
-                                        }}
-                                      />
-                                    </label>
+                                      <label>
+                                        <input
+                                          type="checkbox"
+                                          checked={item.isChecked}
+                                          onChange={(e) => {
+                                            handleCheckboxChange(e, item.id);
+                                          }}
+                                        />
+                                      </label>
 
-                                    <i
-                                      className="material-icons text-danger"
-                                      onClick={() =>
-                                        onDeleteModelClick(
-                                          item.document_title,
-                                          item.id
-                                        )
-                                      }
-                                    >
-                                      delete
-                                    </i>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </React.Fragment>
-                        );
-                      })}
+                                      <i
+                                        className="material-icons text-danger"
+                                        onClick={() =>
+                                          onDeleteModelClick(
+                                            item.document_title,
+                                            item.id
+                                          )
+                                        }
+                                      >
+                                        delete
+                                      </i>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </React.Fragment>
+                          );
+                        })
+                      )}
                     </div>
+                    {getDocumentData.length === 0 ? null : (
+                      <div
+                        className="footer_pagination text-center"
+                        style={{ display: "none" }}
+                      >
+                        <ReactPaginate
+                          breakLabel="..."
+                          pageCount={pageCount}
+                          pageRangeDisplayed={3}
+                          marginPagesDisplayed={2}
+                          onPageChange={handlePageChange}
+                          containerClassName={"pagination"}
+                          activeClassName={"active"}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1080,7 +1095,7 @@ const Gallary = () => {
                                 type="file"
                                 id="img_64"
                                 name={"img_64"}
-                                // value={state.name}
+                                // value={DocumentUpload}
                                 onChange={(e) => imguploadchange(e)}
                                 className="form-control"
                               />
@@ -1163,7 +1178,6 @@ const Gallary = () => {
             </div>
           </div>
         </div>
-
         <div className={modelVieww === true ? "show_modal" : ""}>
           <div className="back_drop"></div>
           <div
@@ -1217,7 +1231,7 @@ const Gallary = () => {
                           <label htmlFor="name"> Email</label>
                           <small className="text-danger">*</small>
                         </div>
-                        <div className="col-sm-10 w-100">
+                        <div className=" col-sm-10 w-100">
                           <div className="form-group">
                             <div className="form-line">
                               <input
@@ -1226,7 +1240,6 @@ const Gallary = () => {
                                 name="email"
                                 value={senderEmail}
                                 onChange={handleInputChange}
-                                // disabled
                                 className="form-control"
                                 placeholder="Enter document name"
                               />
@@ -1276,7 +1289,7 @@ const Gallary = () => {
                             <div
                               className={
                                 emailBtnLoader === true
-                                  ? " show_loader loader_btn"
+                                  ? "show_loader loader_btn"
                                   : "none loader_btn"
                               }
                             >

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-// ../../images/image-gallery/thumb/thumb-1.jpg"
-import pdfLogo from "../comman/images/PDF.png";
 import $ from "jquery";
+import pdfLogo from "../comman/images/PDF.png";
 import msDoc from "../comman/images/msss.jpg";
 import msXls from "../comman/images/excel.png";
+import Header from "../comman/Header";
+
 import { Link, useSearchParams } from "react-router-dom";
 import {
   AddDocument,
@@ -22,6 +23,7 @@ import "lightgallery/css/lg-thumbnail.css";
 import "lightgallery/css/lg-autoplay.css";
 import "lightgallery/css/lg-share.css";
 import "lightgallery/css/lg-rotate.css";
+
 // import plugins if you need
 import lgThumbnail from "lightgallery/plugins/thumbnail";
 import lgZoom from "lightgallery/plugins/zoom";
@@ -33,27 +35,24 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import Loader from "../comman/loader";
 
-import Header from "../comman/Header";
-
 const Gallary = () => {
-  let encoded;
-  // let checkboxUrl = [];
-
   const [searchparams] = useSearchParams();
   const [clientToken, setClientToken] = useState("");
+  let encoded;
 
+  // let checkboxUrl = [];
+
+  // const [isEmptyDocument, setIsEmptyDocument] = useState(null);
   const [getStateLoader, setGetStateLoader] = useState(false);
-  const [isLoadMore, setLoadMore] = useState(false);
   const [downlaodLoader, setDownloadLoader] = useState(false);
-  const [isEmptyDocument, setIsEmptyDocument] = useState(null);
   const [isSelectboxChecked, setIsSelectBoxChecked] = useState(false);
   const [copyUrl, setCopyUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
+  // const [pageCount, setPageCount] = useState(0);
   const [limit, setLimit] = useState(12);
   const [loadidng, setLoading] = useState(false);
   const [submitLoader, setSubmitLoader] = useState(false);
-  const admin_id = localStorage.getItem("super_admin_id");
+  const admin_id = localStorage.getItem("admin_id");
   const [fileUrls, setFileUrls] = useState([]);
   const [searchDocumentName, setSearchDocumentName] = useState("");
   const [searchDocumenttype, setSearchDocumentType] = useState("");
@@ -62,19 +61,22 @@ const Gallary = () => {
   const [emailBtnLoader, setEmailBtnLoader] = useState(false);
   const [documentType, setDocumentType] = useState("");
   const [documentName, setDocumentName] = useState("");
-  const [DocumentUpload, setDocumentUpload] = useState("");
+  const [DocumentUpload, setDocumentUpload] = useState(null);
+
   const [getDocumentData, setGetDocmentData] = useState([]);
   const [apicall, setapicall] = useState(false);
 
-  const [modelView, setModelView] = useState(false);
-  const [modelVieww, setModelVieww] = useState(false);
   const [clienttId, setClientID] = useState("");
 
   const clientNamee = localStorage.getItem("client_name");
   const clientEmail = localStorage.getItem("client_email");
-  const id = searchparams.get("client_id");
   const [senderEmail, setSenderEmail] = useState(clientEmail);
-  // UseEffect funtion for get client id and set into in state
+
+  const [modelView, setModelView] = useState(false);
+  const [modelVieww, setModelVieww] = useState(false);
+  const id = searchparams.get("client_id");
+
+  // useEffect function for get client id from parameter-----------------
   useEffect(() => {
     if (
       searchparams.get("client_id") === null ||
@@ -86,10 +88,6 @@ const Gallary = () => {
       setClientID(searchparams.get("client_id"));
     }
 
-    if (searchparams.get("loading") === "false") {
-      setLoading(true);
-    }
-
     if (
       searchparams.get("client_token") === null ||
       searchparams.get("client_token") === "" ||
@@ -99,15 +97,19 @@ const Gallary = () => {
     } else {
       setClientToken(searchparams.get("client_token"));
     }
+
+    if (searchparams.get("loading") === "false") {
+      setLoading(true);
+    }
   }, [id, clienttId, clientToken]);
 
-  // onchange for document name set into state--------
+  // onchange for document name set and empty custom validation state----
   const OndocumentName = (e) => {
     setDocumentName(e.target.value);
     setcustomValidated("");
   };
 
-  //intial state of model input field-----
+  //intial state of model input field-- for upload documnet--------------------
   const initialFormState = {
     admin_id: admin_id,
     client_id: clienttId,
@@ -135,7 +137,7 @@ const Gallary = () => {
     setDocumentUpload(null);
   };
 
-  // funtion for base 64 file reader
+  // funtion for base 64 file reader for upload document -------------
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -144,6 +146,7 @@ const Gallary = () => {
       fileReader.addEventListener("load", () => {
         resolve({ name: name, base64: fileReader.result });
       });
+
       fileReader.readAsDataURL(file);
       fileReader.onerror = (error) => {
         reject(error);
@@ -203,92 +206,80 @@ const Gallary = () => {
       if (response.message === "Document upload successfully") {
         toast.success("Document Upload Successfully", {
           position: toast.POSITION.TOP_RIGHT,
-          autoClose: 2000,
+          autoClose: 1000,
         });
 
         getDocumentByid(clienttId);
         setModelView(false);
-        $("#img_64").val("");
+
         setDocumentName("");
-        setDocumentUpload("");
+        setDocumentUpload(null);
         setapicall(true);
       }
       setSubmitLoader(false);
-
+      $("#img_64").val("");
       setModelView(false);
       setapicall(false);
     }
   };
 
-  // useEffect get document based on id----
+  // useEffect get document based on client id----
   useEffect(() => {
-    getDocumentByid();
-  }, [apicall, searchDocumentName]);
+    getDocumentByid(clienttId);
+  }, [apicall, searchDocumentName, searchDocumenttype]);
 
   //function for get document based on client id
-  const getDocumentByid = async (fromAll = "default1", newLimit = "12") => {
+  const getDocumentByid = async (clienttId) => {
+    console.log("i m calling getDocument by id");
     setGetStateLoader(true);
     const response = await getDocument(
       id,
       searchDocumentName,
       searchDocumenttype,
       currentPage,
-      newLimit
+      limit
     );
     setLoading(false);
     setGetStateLoader(false);
-
     setGetDocmentData(response.data);
 
-    if (fromAll === "checked") {
-      setGetDocmentData((prevData) => {
-        return prevData.map((item) => {
-          return { ...item, isChecked: true };
-        });
-      });
-    }
-    if (fromAll === "unchecked") {
-      setGetDocmentData((prevData) => {
-        return prevData.map((item) => {
-          return { ...item, isChecked: false };
-        });
-      });
-    }
+    // if (searchDocumentName === "" && searchDocumenttype === "") {
+    //   if (response.data.length > 0) {
+    //     setIsEmptyDocument(false);
+    //   } else {
+    //     setIsEmptyDocument(true);
+    //   }
+    // }
 
-    if (searchDocumentName === "" && searchDocumenttype === "") {
-      if (response.data.length > 0) {
-        setIsEmptyDocument(false);
-      } else {
-        setIsEmptyDocument(true);
-      }
-    }
+    // if (response.totalPages === null) {
+    //   setPageCount(1);
+    // } else {
+    //   setPageCount(response.totalPages);
+    // }
 
     setapicall(false);
   };
 
-  //onchange funtion for  set doument name search and call api-------------
+  // onchange funtion for search document and api call ------------
   const DocumentNameOnChange = (e) => {
     setSearchDocumentName(e.target.value);
     setapicall(true);
   };
 
-  // onchange funtion for set document type and call api-------------
+  // onchange funtion for search document with type and api call-----------
   const DocumentTypeOnChange = (e) => {
     setSearchDocumentType(e.target.value);
     setapicall(true);
   };
 
-  //onchange funtion for set isCheked attribute into getDocumentdata JSON-----------------
+  // onchange funtion for get document data and add the isChecked attribute in get document JSON and  its value-----------------------
   const handleSelectAllChange = (v) => {
     setIsSelectBoxChecked(v.target.checked);
-
-    if (v.target.checked === true) {
-      getDocumentByid("checked", "0");
-    }
-    if (v.target.checked === false) {
-      getDocumentByid("unchecked", "0");
-    }
-    // unSelectAllChange();
+    setGetDocmentData((prevData) => {
+      return prevData.map((item) => {
+        return { ...item, isChecked: v.target.checked };
+      });
+    });
   };
 
   const unSelectAllChange = () => {
@@ -298,7 +289,8 @@ const Gallary = () => {
       });
     });
   };
-  //onchange for  set value if ischecked value is true
+
+  // onchange funtion for checkbox value get and add into JSON if checkbox value is true/checked....
   const handleCheckboxChange = (event, id) => {
     setGetDocmentData((prevData) =>
       prevData.map((item) => {
@@ -310,7 +302,7 @@ const Gallary = () => {
     );
   };
 
-  //onclick funtion for download document------
+  // onclick funtion for download  document and if do'nt select any documet than warning message is show------
   const handleDownload = async () => {
     let newArray = getDocumentData.filter(function(el) {
       return el.isChecked === true;
@@ -382,8 +374,7 @@ const Gallary = () => {
       }
     }
   };
-
-  //onclick funtion for open mail box -------------
+  // onclick funtion for open mail box and if not select any document then warning message is show--
   const handleOpenMailBox = async () => {
     let newArray = getDocumentData.filter(function(el) {
       return el.isChecked === true;
@@ -396,6 +387,7 @@ const Gallary = () => {
       });
     } else {
       setModelVieww(true);
+
       newArray.map((item) => {
         setFileUrls((prevArray) => [...prevArray, item.document_url]);
         return {};
@@ -403,7 +395,7 @@ const Gallary = () => {
     }
   };
 
-  // funtion for delete document sweet alert------
+  // funtion for delete document  and sweet alert------
   const onDeleteModelClick = (name, id) => {
     Swal.fire({
       title: "Warning",
@@ -502,37 +494,36 @@ const Gallary = () => {
           autoClose: 2000,
         });
         setFileUrls([]);
-        setIsSelectBoxChecked(false);
-        getDocumentByid();
+        getDocumentByid(clienttId);
         setapicall(true);
       } finally {
         setEmailBtnLoader(false);
       }
 
       // Other logic for handling email sending and resetting state as needed
-      getDocumentByid();
+      getDocumentByid(clienttId);
       setSenderEmail("");
       setModelVieww(false);
       setapicall(true);
     }
   };
 
-  //onchange funtion for set send mail value into state and hide the error-------------
+  // onclick funtion for select current page
+
+  //onchange funtion for get email value which is enter by the user ----------
   const handleInputChange = (e) => {
     setSenderEmail(e.target.value);
     setcustomValidated("");
   };
 
-  // useEffect for set url value into url-----------------
+  // useEffect funtion for set the copy url value  with token ---------------
   const url = window.location.origin;
-
   useEffect(() => {
     setCopyUrl(`${url}/doumentUpload?client_token=${clientToken}`);
   }, [copyUrl]);
 
-  // onclick funtion for clipboard value using getElementby Id------------------------
+  // onclick function for copy clip board the path---------
   const copyClipBoradFuntion = () => {
-    // Get the text field
     var copyText = document.getElementById("myInputforCopy");
 
     try {
@@ -563,36 +554,42 @@ const Gallary = () => {
     // Alert the copied text
     toast.success("Copied to Clipborad", {
       position: toast.POSITION.TOP_RIGHT,
-      autoClose: 2000,
+      autoClose: 1000,
     });
   };
 
-  const scrollApicall = async () => {
-    setLoadMore(true);
-    try {
-      const response = await getDocument(
-        id,
-        searchDocumentName,
-        searchDocumenttype,
-        currentPage + 1,
-        limit
-      );
-      const newData = response.data;
-      const updatedData = [...getDocumentData, ...newData];
-      setGetDocmentData(updatedData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadMore(false);
-      setCurrentPage(currentPage + 1);
-    }
+  let count = 1;
+  const getDatawithScroll = async () => {
+    const response = await getDocument(
+      id,
+      searchDocumentName,
+      searchDocumenttype,
+      count,
+      limit
+    );
+
+    console.log("API Response:", response); // Check the response in the console
+    // setGetDocmentData([]);
+
+    // setGetDocmentData(getDocumentData.concat(response.data));
+    setGetDocmentData((prevData) => [...prevData, ...response.data]);
   };
 
+  const scrollApicall = async () => {
+    count += 1;
+    setCurrentPage((prevPage) => prevPage + 1);
+
+    await getDatawithScroll();
+    console.log("Updated currentPage:", currentPage); // Check the updated currentPage value
+  };
+
+  useEffect(() => {
+    console.log("Updated currentPage in useEffect:", currentPage);
+  }, [currentPage]);
   return (
     <>
       <div className="theme-red ">
         <Header getstateLoader={getStateLoader} />
-        {console.log(" in return loader--" + loadidng)}
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
         {downlaodLoader ? <Loader /> : null}
@@ -615,10 +612,13 @@ const Gallary = () => {
                     id="mailBox"
                     className="btn btn-primary text-end"
                     onClick={handleOpenMailBox}
+                    data-toggle="tooltip"
+                    data-placement="top"
                     title="Email"
                   >
                     <i className="material-icons">email</i>
                   </button>
+
                   <input
                     type="text"
                     value={copyUrl}
@@ -629,9 +629,11 @@ const Gallary = () => {
                   <button
                     id="mailBox"
                     className="btn  text-end"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Copy"
                     style={{ backgroundColor: "#bbbbbb" }}
                     onClick={copyClipBoradFuntion}
-                    title="Copy"
                   >
                     <i className="material-icons">content_copy</i>
                   </button>
@@ -643,7 +645,7 @@ const Gallary = () => {
                 <div className="card document_card">
                   <div className="block-header">
                     {getDocumentData.length === 0 ? null : (
-                      <div className="show_rows">
+                      <div className="show_rows" style={{ display: "none" }}>
                         <label>Show:</label>
                         <select
                           className="form-control "
@@ -658,6 +660,7 @@ const Gallary = () => {
                         </select>
                       </div>
                     )}
+
                     <div className="text-right" style={{ width: "100%" }}>
                       <button
                         className="btn btn-success"
@@ -671,62 +674,60 @@ const Gallary = () => {
                   </div>
 
                   <div className="body">
-                    {isEmptyDocument ? null : (
-                      <div className="row ">
-                        <div className="col-sm-4">
-                          <div className="form-group">
-                            <div className="form-line">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Search by document name"
-                                onChange={(e) => DocumentNameOnChange(e)}
-                              />
-                            </div>
+                    <div className="row ">
+                      <div className="col-sm-4">
+                        <div className="form-group">
+                          <div className="form-line">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Search by document name"
+                              onChange={(e) => DocumentNameOnChange(e)}
+                            />
                           </div>
                         </div>
-                        <div
-                          className="col-sm-5 filter_name_ext"
-                          style={{ display: "none" }}
-                        >
-                          {" "}
-                          <div className="col-sm-6">
-                            <select
-                              className="form-control "
-                              value={searchDocumenttype}
-                              name="type"
-                              onChange={(e) => DocumentTypeOnChange(e)}
-                            >
-                              <option value="" className="text-center">
-                                -- Please select document type --
-                              </option>
-                              <option value="">All</option>
-                              <option value="jpg">Jpg</option>
-                              <option value="jpeg">Jpeg</option>
-                              <option value="png">Png</option>
-                              <option value="pdf">Pdf</option>
-                              <option value="csv">Csv</option>
-                              <option value="doc">Doc</option>
-                              <option value="docx">Docx</option>
-                              <option value="xls">Xls</option>
-                              <option value="xlsx">Xlsx</option>
-                            </select>
-                          </div>
-                        </div>
-                        {getDocumentData.length === 0 ? null : (
-                          <div className="col-sm-8 text-right">
-                            <label>
-                              <input
-                                type="checkbox"
-                                checked={isSelectboxChecked}
-                                onChange={handleSelectAllChange}
-                              />
-                              <span> Select All</span>
-                            </label>
-                          </div>
-                        )}
                       </div>
-                    )}
+
+                      <div
+                        className="col-sm-5 filter_name_ext"
+                        style={{ display: "none" }}
+                      >
+                        <div className="col-sm-6">
+                          <select
+                            className="form-control "
+                            value={searchDocumenttype}
+                            name="type"
+                            onChange={(e) => DocumentTypeOnChange(e)}
+                          >
+                            <option value="" className="text-center">
+                              -- Please select document type --
+                            </option>
+                            <option value="">All</option>
+                            <option value="jpg">Jpg</option>
+                            <option value="jpeg">Jpeg</option>
+                            <option value="png">Png</option>
+                            <option value="pdf">Pdf</option>
+                            <option value="csv">Csv</option>
+                            <option value="doc">Doc</option>
+                            <option value="docx">Docx</option>
+                            <option value="xls">Xls</option>
+                            <option value="xlsx">Xlsx</option>
+                          </select>
+                        </div>
+                      </div>
+                      {getDocumentData.length === 0 ? null : (
+                        <div className="col-sm-8 text-right">
+                          <label>
+                            <input
+                              type="checkbox"
+                              checked={isSelectboxChecked}
+                              onChange={handleSelectAllChange}
+                            />
+                            <span> Select All</span>
+                          </label>
+                        </div>
+                      )}
+                    </div>
 
                     <div
                       id="aniimated-thumbnials"
@@ -739,18 +740,10 @@ const Gallary = () => {
                             element.scrollHeight &&
                           !getStateLoader
                         ) {
-                          if (!isLoadMore) {
-                            setLoadMore({ isLoadMore: true });
-                            setTimeout(() => {
-                              scrollApicall();
-                            }, 1000);
-                          }
+                          scrollApicall();
                         }
                       }}
                     >
-                      {getDocumentData.length === 0 ? (
-                        <h1 className="text-center">No record Found</h1>
-                      ) : null}
                       {getDocumentData.map((item) => {
                         return (
                           <React.Fragment key={item.id}>
@@ -1080,7 +1073,7 @@ const Gallary = () => {
                                 type="file"
                                 id="img_64"
                                 name={"img_64"}
-                                // value={state.name}
+                                // value={DocumentUpload}
                                 onChange={(e) => imguploadchange(e)}
                                 className="form-control"
                               />
@@ -1163,7 +1156,6 @@ const Gallary = () => {
             </div>
           </div>
         </div>
-
         <div className={modelVieww === true ? "show_modal" : ""}>
           <div className="back_drop"></div>
           <div
@@ -1217,7 +1209,7 @@ const Gallary = () => {
                           <label htmlFor="name"> Email</label>
                           <small className="text-danger">*</small>
                         </div>
-                        <div className="col-sm-10 w-100">
+                        <div className=" col-sm-10 w-100">
                           <div className="form-group">
                             <div className="form-line">
                               <input
@@ -1226,7 +1218,6 @@ const Gallary = () => {
                                 name="email"
                                 value={senderEmail}
                                 onChange={handleInputChange}
-                                // disabled
                                 className="form-control"
                                 placeholder="Enter document name"
                               />
@@ -1276,7 +1267,7 @@ const Gallary = () => {
                             <div
                               className={
                                 emailBtnLoader === true
-                                  ? " show_loader loader_btn"
+                                  ? "show_loader loader_btn"
                                   : "none loader_btn"
                               }
                             >

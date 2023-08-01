@@ -33,7 +33,6 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import Loader from "../comman/loader";
 
-import ReactPaginate from "react-paginate";
 import SuperAdminHeader from "../comman/SuperAdminHeader";
 
 const GallarySuperAdmin = () => {
@@ -42,15 +41,16 @@ const GallarySuperAdmin = () => {
 
   const [searchparams] = useSearchParams();
   const [clientToken, setClientToken] = useState("");
-  const [getStateLoader, setGetStateLoader] = useState(false);
 
+  const [getStateLoader, setGetStateLoader] = useState(false);
+  const [isLoadMore, setLoadMore] = useState(false);
   const [downlaodLoader, setDownloadLoader] = useState(false);
   const [isEmptyDocument, setIsEmptyDocument] = useState(null);
   const [isSelectboxChecked, setIsSelectBoxChecked] = useState(false);
   const [copyUrl, setCopyUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageCount, setPageCount] = useState(0);
-  const [limit, setLimit] = useState(8);
+
+  const [limit, setLimit] = useState(12);
   const [loadidng, setLoading] = useState(false);
   const [submitLoader, setSubmitLoader] = useState(false);
   const admin_id = localStorage.getItem("super_admin_id");
@@ -222,31 +222,38 @@ const GallarySuperAdmin = () => {
 
   // useEffect get document based on id----
   useEffect(() => {
-    getDocumentByid(clienttId);
-  }, [
-    // clientToken,
-    // clienttId,
-    apicall,
-    searchDocumentName,
-    searchDocumenttype,
-    currentPage,
-    limit,
-  ]);
+    getDocumentByid();
+  }, [apicall, searchDocumentName]);
 
   //function for get document based on client id
-  const getDocumentByid = async (clienttId) => {
+  const getDocumentByid = async (fromAll = "default1", newLimit = "12") => {
     setGetStateLoader(true);
     const response = await getDocument(
       id,
       searchDocumentName,
       searchDocumenttype,
       currentPage,
-      limit
+      newLimit
     );
     setLoading(false);
     setGetStateLoader(false);
 
     setGetDocmentData(response.data);
+
+    if (fromAll === "checked") {
+      setGetDocmentData((prevData) => {
+        return prevData.map((item) => {
+          return { ...item, isChecked: true };
+        });
+      });
+    }
+    if (fromAll === "unchecked") {
+      setGetDocmentData((prevData) => {
+        return prevData.map((item) => {
+          return { ...item, isChecked: false };
+        });
+      });
+    }
 
     if (searchDocumentName === "" && searchDocumenttype === "") {
       if (response.data.length > 0) {
@@ -254,12 +261,6 @@ const GallarySuperAdmin = () => {
       } else {
         setIsEmptyDocument(true);
       }
-    }
-
-    if (response.totalPages === null) {
-      setPageCount(1);
-    } else {
-      setPageCount(response.totalPages);
     }
 
     setapicall(false);
@@ -280,11 +281,14 @@ const GallarySuperAdmin = () => {
   //onchange funtion for set isCheked attribute into getDocumentdata JSON-----------------
   const handleSelectAllChange = (v) => {
     setIsSelectBoxChecked(v.target.checked);
-    setGetDocmentData((prevData) => {
-      return prevData.map((item) => {
-        return { ...item, isChecked: v.target.checked };
-      });
-    });
+
+    if (v.target.checked === true) {
+      getDocumentByid("checked", "0");
+    }
+    if (v.target.checked === false) {
+      getDocumentByid("unchecked", "0");
+    }
+    // unSelectAllChange();
   };
 
   const unSelectAllChange = () => {
@@ -430,13 +434,6 @@ const GallarySuperAdmin = () => {
     return urlParts[urlParts.length - 1];
   };
 
-  // const response = await toast.promise(
-  //   createZipAndUpload(senderEmail, content, clientNamee),
-  //   {
-  //     pending: "sending mail",
-  //     // success: "Upload compelete👌",
-  //   }
-  // );
   //funtion for create zip and and send upload on server in certain folder------
   const sendFiles = async (e) => {
     e.preventDefault();
@@ -505,23 +502,18 @@ const GallarySuperAdmin = () => {
           autoClose: 2000,
         });
         setFileUrls([]);
-        getDocumentByid(clienttId);
+        getDocumentByid();
         setapicall(true);
       } finally {
         setEmailBtnLoader(false);
       }
 
       // Other logic for handling email sending and resetting state as needed
-      getDocumentByid(clienttId);
+      getDocumentByid();
       setSenderEmail("");
       setModelVieww(false);
       setapicall(true);
     }
-  };
-
-  //onclick funtion set current page value--------------------
-  const handlePageChange = ({ selected }) => {
-    setCurrentPage(selected + 1);
   };
 
   //onchange funtion for set send mail value into state and hide the error-------------
@@ -574,11 +566,32 @@ const GallarySuperAdmin = () => {
     });
   };
 
+  const scrollApicall = async () => {
+    setLoadMore(true);
+    try {
+      const response = await getDocument(
+        id,
+        searchDocumentName,
+        searchDocumenttype,
+        currentPage + 1,
+        limit
+      );
+      const newData = response.data;
+      const updatedData = [...getDocumentData, ...newData];
+      setGetDocmentData(updatedData);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadMore(false);
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
   return (
     <>
       <div className="theme-red ">
         <SuperAdminHeader getstateLoader={getStateLoader} />
-
+        {console.log(" in return loader--" + loadidng)}
         {/* <SideBar /> */}
         {loadidng ? <Loader /> : null}
         {downlaodLoader ? <Loader /> : null}
@@ -717,33 +730,46 @@ const GallarySuperAdmin = () => {
                     <div
                       id="aniimated-thumbnials"
                       className="list-unstyled row clearfix"
+                      style={{ height: "300px", overflowY: "scroll" }}
+                      onScroll={(e) => {
+                        const element = e.target;
+                        if (
+                          element.scrollTop + element.clientHeight >=
+                            element.scrollHeight &&
+                          !getStateLoader
+                        ) {
+                          if (!isLoadMore) {
+                            setLoadMore({ isLoadMore: true });
+                            setTimeout(() => {
+                              scrollApicall();
+                            }, 1000);
+                          }
+                        }
+                      }}
                     >
                       {getDocumentData.length === 0 ? (
                         <h1 className="text-center">No record Found</h1>
-                      ) : (
-                        getDocumentData.map((item) => {
-                          return (
-                            <React.Fragment key={item.id}>
-                              <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12 doucment_box">
-                                {item.document_type === "pdf" ? (
-                                  <React.Fragment key={item.id}>
-                                    <Link
-                                      to={item.document_url}
-                                      target="_blank"
-                                    >
-                                      <img
-                                        className="img-responsive thumbnail"
-                                        src={pdfLogo}
-                                        alt={pdfLogo}
-                                      />
-                                    </Link>
-                                    <h4 style={{ textAlign: "center" }}>
-                                      {" "}
-                                      {item.document_title}.{item.document_type}
-                                    </h4>
+                      ) : null}
+                      {getDocumentData.map((item) => {
+                        return (
+                          <React.Fragment key={item.id}>
+                            <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12 doucment_box">
+                              {item.document_type === "pdf" ? (
+                                <React.Fragment key={item.id}>
+                                  <Link to={item.document_url} target="_blank">
+                                    <img
+                                      className="img-responsive thumbnail"
+                                      src={pdfLogo}
+                                      alt={pdfLogo}
+                                    />
+                                  </Link>
+                                  <h4 style={{ textAlign: "center" }}>
+                                    {" "}
+                                    {item.document_title}.{item.document_type}
+                                  </h4>
 
-                                    <div className="profile_edit_delete">
-                                      {/* <i
+                                  <div className="profile_edit_delete">
+                                    {/* <i
                                       class="material-icons text-primary"
                                       data-toggle="modal"
                                       data-target="#exampleModal"
@@ -753,47 +779,45 @@ const GallarySuperAdmin = () => {
                                     >
                                       edit
                                     </i> */}
-                                      <label>
-                                        <input
-                                          type="checkbox"
-                                          checked={item.isChecked}
-                                          onChange={(e) => {
-                                            handleCheckboxChange(e, item.id);
-                                          }}
-                                        />
-                                      </label>
-                                      <i
-                                        className="material-icons text-danger"
-                                        onClick={() =>
-                                          onDeleteModelClick(
-                                            item.document_title,
-                                            item.id
-                                          )
-                                        }
-                                      >
-                                        delete
-                                      </i>
-                                    </div>
-                                  </React.Fragment>
-                                ) : item.document_type === "doc" ||
-                                  item.document_type === "docx" ? (
-                                  <>
-                                    <Link
-                                      to={item.document_url}
-                                      target="_blank"
-                                    >
-                                      <img
-                                        className="img-responsive thumbnail"
-                                        src={msDoc}
-                                        alt={msDoc}
+                                    <label>
+                                      <input
+                                        type="checkbox"
+                                        checked={item.isChecked}
+                                        onChange={(e) => {
+                                          handleCheckboxChange(e, item.id);
+                                        }}
                                       />
-                                    </Link>
-                                    <h4 style={{ textAlign: "center" }}>
-                                      {" "}
-                                      {item.document_title}.{item.document_type}
-                                    </h4>
-                                    <div className="profile_edit_delete">
-                                      {/* <i
+                                    </label>
+                                    <i
+                                      className="material-icons text-danger"
+                                      onClick={() =>
+                                        onDeleteModelClick(
+                                          item.document_title,
+                                          item.id
+                                        )
+                                      }
+                                    >
+                                      delete
+                                    </i>
+                                  </div>
+                                </React.Fragment>
+                              ) : item.document_type === "doc" ||
+                                item.document_type === "docx" ? (
+                                <>
+                                  <Link to={item.document_url} target="_blank">
+                                    <img
+                                      className="img-responsive thumbnail"
+                                      src={msDoc}
+                                      alt={msDoc}
+                                    />
+                                  </Link>
+                                  <h4 style={{ textAlign: "center" }}>
+                                    {" "}
+                                    {item.document_title}.{item.document_type}
+                                  </h4>
+
+                                  <div className="profile_edit_delete">
+                                    {/* <i
                                       class="material-icons text-primary"
                                       data-toggle="modal"
                                       data-target="#exampleModal"
@@ -803,48 +827,45 @@ const GallarySuperAdmin = () => {
                                     >
                                       edit
                                     </i> */}
-                                      <label>
-                                        <input
-                                          type="checkbox"
-                                          checked={item.isChecked}
-                                          onChange={(e) => {
-                                            handleCheckboxChange(e, item.id);
-                                          }}
-                                        />
-                                      </label>
-                                      <i
-                                        className="material-icons text-danger"
-                                        onClick={() =>
-                                          onDeleteModelClick(
-                                            item.document_title,
-                                            item.id
-                                          )
-                                        }
-                                      >
-                                        delete
-                                      </i>
-                                    </div>
-                                  </>
-                                ) : item.document_type === "xls" ||
-                                  item.document_type === "xlsx" ||
-                                  item.document_type === "csv" ? (
-                                  <>
-                                    <Link
-                                      to={item.document_url}
-                                      target="_blank"
-                                    >
-                                      <img
-                                        className="img-responsive thumbnail"
-                                        src={msXls}
-                                        alt={msXls}
+                                    <label>
+                                      <input
+                                        type="checkbox"
+                                        checked={item.isChecked}
+                                        onChange={(e) => {
+                                          handleCheckboxChange(e, item.id);
+                                        }}
                                       />
-                                    </Link>
-                                    <h4 style={{ textAlign: "center" }}>
-                                      {" "}
-                                      {item.document_title}.{item.document_type}
-                                    </h4>
-                                    <div className="profile_edit_delete">
-                                      {/* <i
+                                    </label>
+                                    <i
+                                      className="material-icons text-danger"
+                                      onClick={() =>
+                                        onDeleteModelClick(
+                                          item.document_title,
+                                          item.id
+                                        )
+                                      }
+                                    >
+                                      delete
+                                    </i>
+                                  </div>
+                                </>
+                              ) : item.document_type === "xls" ||
+                                item.document_type === "xlsx" ||
+                                item.document_type === "csv" ? (
+                                <>
+                                  <Link to={item.document_url} target="_blank">
+                                    <img
+                                      className="img-responsive thumbnail"
+                                      src={msXls}
+                                      alt={msXls}
+                                    />
+                                  </Link>
+                                  <h4 style={{ textAlign: "center" }}>
+                                    {" "}
+                                    {item.document_title}.{item.document_type}
+                                  </h4>
+                                  <div className="profile_edit_delete">
+                                    {/* <i
                                     class="material-icons text-primary"
                                     data-toggle="modal"
                                     data-target="#exampleModal"
@@ -854,43 +875,43 @@ const GallarySuperAdmin = () => {
                                   >
                                     edit
                                   </i> */}
-                                      <label>
-                                        <input
-                                          type="checkbox"
-                                          checked={item.isChecked}
-                                          onChange={(e) => {
-                                            handleCheckboxChange(e, item.id);
-                                          }}
-                                        />
-                                      </label>
+                                    <label>
+                                      <input
+                                        type="checkbox"
+                                        checked={item.isChecked}
+                                        onChange={(e) => {
+                                          handleCheckboxChange(e, item.id);
+                                        }}
+                                      />
+                                    </label>
 
-                                      <i
-                                        className="material-icons text-danger"
-                                        onClick={() =>
-                                          onDeleteModelClick(
-                                            item.document_title,
-                                            item.id
-                                          )
-                                        }
-                                      >
-                                        delete
-                                      </i>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <LightGallery
-                                      speed={200}
-                                      plugins={[
-                                        lgThumbnail,
-                                        lgZoom,
-                                        lgShare,
-                                        lgRotate,
-                                        lgVideo,
-                                        lgAutoplay,
-                                      ]}
+                                    <i
+                                      className="material-icons text-danger"
+                                      onClick={() =>
+                                        onDeleteModelClick(
+                                          item.document_title,
+                                          item.id
+                                        )
+                                      }
                                     >
-                                      {/* <a href="https://procodestore.com/wp-content/uploads/2021/03/164508084_271381191136191_654097929788476286_n.jpg">
+                                      delete
+                                    </i>
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <LightGallery
+                                    speed={200}
+                                    plugins={[
+                                      lgThumbnail,
+                                      lgZoom,
+                                      lgShare,
+                                      lgRotate,
+                                      lgVideo,
+                                      lgAutoplay,
+                                    ]}
+                                  >
+                                    {/* <a href="https://procodestore.com/wp-content/uploads/2021/03/164508084_271381191136191_654097929788476286_n.jpg">
                                  <img
                                    alt="img1"
                                    src="https://procodestore.com/wp-content/uploads/2021/03/164508084_271381191136191_654097929788476286_n.jpg"
@@ -903,28 +924,27 @@ const GallarySuperAdmin = () => {
                                  />
                                </a>
                                  */}
-                                      {/* <a href="https://images.unsplash.com/photo-1679746584014-fb31d4eb0a5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60">
+                                    {/* <a href="https://images.unsplash.com/photo-1679746584014-fb31d4eb0a5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60">
                                  <img
                                    alt="img3"
                                    src="https://images.unsplash.com/photo-1679746584014-fb31d4eb0a5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60"
                                  />
                                </a> */}
 
-                                      <Link to={item.document_url}>
-                                        <img
-                                          alt={item.document_title}
-                                          className="img-responsive thumbnail"
-                                          src={item.document_url}
-                                        />
-                                      </Link>
-                                      <h4 style={{ textAlign: "center" }}>
-                                        {" "}
-                                        {item.document_title}.
-                                        {item.document_type}
-                                      </h4>
-                                    </LightGallery>
-                                    <div className="profile_edit_delete">
-                                      {/* <i
+                                    <Link to={item.document_url}>
+                                      <img
+                                        alt={item.document_title}
+                                        className="img-responsive thumbnail"
+                                        src={item.document_url}
+                                      />
+                                    </Link>
+                                    <h4 style={{ textAlign: "center" }}>
+                                      {" "}
+                                      {item.document_title}.{item.document_type}
+                                    </h4>
+                                  </LightGallery>
+                                  <div className="profile_edit_delete">
+                                    {/* <i
                                       class="material-icons text-primary"
                                       data-toggle="modal"
                                       data-target="#exampleModal"
@@ -935,49 +955,35 @@ const GallarySuperAdmin = () => {
                                       edit
                                     </i> */}
 
-                                      <label>
-                                        <input
-                                          type="checkbox"
-                                          checked={item.isChecked}
-                                          onChange={(e) => {
-                                            handleCheckboxChange(e, item.id);
-                                          }}
-                                        />
-                                      </label>
+                                    <label>
+                                      <input
+                                        type="checkbox"
+                                        checked={item.isChecked}
+                                        onChange={(e) => {
+                                          handleCheckboxChange(e, item.id);
+                                        }}
+                                      />
+                                    </label>
 
-                                      <i
-                                        className="material-icons text-danger"
-                                        onClick={() =>
-                                          onDeleteModelClick(
-                                            item.document_title,
-                                            item.id
-                                          )
-                                        }
-                                      >
-                                        delete
-                                      </i>
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                            </React.Fragment>
-                          );
-                        })
-                      )}
+                                    <i
+                                      className="material-icons text-danger"
+                                      onClick={() =>
+                                        onDeleteModelClick(
+                                          item.document_title,
+                                          item.id
+                                        )
+                                      }
+                                    >
+                                      delete
+                                    </i>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </React.Fragment>
+                        );
+                      })}
                     </div>
-                    {getDocumentData.length === 0 ? null : (
-                      <div className="footer_pagination text-center">
-                        <ReactPaginate
-                          breakLabel="..."
-                          pageCount={pageCount}
-                          pageRangeDisplayed={3}
-                          marginPagesDisplayed={2}
-                          onPageChange={handlePageChange}
-                          containerClassName={"pagination"}
-                          activeClassName={"active"}
-                        />
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>

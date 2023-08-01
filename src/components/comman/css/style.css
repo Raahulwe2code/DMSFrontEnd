@@ -17,6 +17,11 @@
   z-index: 12;
   width: 100%;
 }
+
+/* #root {
+  height: 60vh;
+  overflow-y: scroll;
+} */
 .main_navbar.navbar:before {
   content: "";
   background: #ffffff;
